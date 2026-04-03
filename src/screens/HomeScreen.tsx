@@ -9,7 +9,7 @@ import { HomeStyles } from '../styles/HomeStyle';
 import { getSessions } from '../services/localStoreService';
 
 import type { RootStackParamList } from '../navigation/AppNavigator';
-import type { DriveSession } from '../types/driveSession';
+import type { DriveSession } from '../types/DriveSession';
 
 import DriveSessionCard from '../components/DriveSessionCard';
 

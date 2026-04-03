@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import NavigationBar from './NavBar';
 import SessionDetailsScreen from '../screens/SessionDetailsScreen';
-import type { DriveSession } from '../types/driveSession';
+import type { DriveSession } from '../types/DriveSession';
 
     export type RootStackParamList = {
         MainTabs: undefined;

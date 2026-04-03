@@ -1,4 +1,4 @@
-import { Coord } from "../types/location";
+import { Coord } from "../types/Coord";
 import { getDistance } from "geolib";
 import * as Location from 'expo-location';
 

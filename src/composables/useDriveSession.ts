@@ -7,18 +7,20 @@ import { addSession } from '../services/localStoreService';
 import { requestPermission, compressRouteByDistance } from '../utils/locationAccess';
 import { useLocationTracking } from './useLocationTracking';
 
-import { Coord } from '../types/location';
+import { Coord } from '../types/Coord';
 
 
 export function useDriveSession() {
 
     // Initial Session
     const [isStart, setIsStart] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
     const [locStart, setLocStart] = useState<Coord | null>(null);
     const [timeStampStart, setTimeStampStart] = useState<number | null>(null);
 
     // Live Session
     const [elapsed, setElapsed] = useState(0);
+    const [pauseTime, setPauseTime] = useState<number | null>(null);
     const [speedKmh, setSpeedKmh] = useState(0);
     const [distanceMeters, setDistanceMeters] = useState(0);
     const [route, setRoute] = useState<Coord[]>([]);
@@ -35,14 +37,14 @@ export function useDriveSession() {
 
     // Use Effects
     useEffect(() => {
-        if (!isStart || timeStampStart === null) return;
+        if (!isStart || isPaused || timeStampStart === null) return;
 
         const interval = setInterval(() => {
             setElapsed(Date.now() - timeStampStart);
         }, 50);
 
         return () => clearInterval(interval);
-    }, [isStart, timeStampStart]);
+    }, [isStart, isPaused, timeStampStart]);
 
 
     // Session Handlings
@@ -58,7 +60,7 @@ export function useDriveSession() {
         const startPoint = { latitude: location.coords.latitude, longitude: location.coords.longitude };
         const now = Date.now();
 
-        resetVars();
+        resetSession();
 
         setLocStart(startPoint);
         setTimeStampStart(now);
@@ -67,35 +69,58 @@ export function useDriveSession() {
         return true;
     };
 
-
-
     const handleSession = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
+        // pause
         if (isStart) {
             setIsStart(false);
+            setIsPaused(true);
+            setPauseTime(Date.now());
             await stopTracking();
-        } else {
-            const started = await handleStartSession();
-            if (!started) return;
+            return;
+        }
 
+        // resume
+        if (isPaused && pauseTime !== null && timeStampStart !== null) {
+            const pausedDuration = Date.now() - pauseTime;
+            setTimeStampStart(timeStampStart + pausedDuration);
+
+            setIsPaused(false);
             setIsStart(true);
             await startTracking();
+            return;
         }
-    };
 
+        // brand new start
+        const started = await handleStartSession();
+        if (!started) return;
+
+        setIsStart(true);
+        setIsPaused(false);
+        await startTracking();
+    };
 
     const handleEndSession = async () => {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-        if (!isStart) {
-            // already stopped, just open title prompt
-            setTitleModalVisible(true);
+        if (isStart) {
+            setIsStart(false);
+            await stopTracking();
+        }
+
+        const granted = await requestPermission();
+            if (!granted) {
+            console.log('Permission denied');
             return;
         }
 
-        setIsStart(false);
-        await stopTracking();
+        const location = await Location.getCurrentPositionAsync({});
+        setLocEnd({ latitude: location.coords.latitude, longitude: location.coords.longitude });
+        setTimeStampEnd(Date.now());
+
+        setIsPaused(false);
+        setPauseTime(null);
         setTitleModalVisible(true);
     };
 
@@ -141,7 +166,7 @@ export function useDriveSession() {
             setTitleModalVisible(false);
             console.log('9. modal closed');
             
-            resetVars();
+            resetSession();
 
             console.log('10. state reset done');
         } catch (e) {
@@ -150,7 +175,7 @@ export function useDriveSession() {
         }
     };
 
-    function resetVars() {
+    function resetSession() {
         setSessionTitle('');
         setIsStart(false);
         setElapsed(0);
@@ -165,7 +190,7 @@ export function useDriveSession() {
 
     return {
         // Vars
-        isStart, locStart, timeStampStart, //start
+        isStart, locStart, isPaused, timeStampStart, //start
         elapsed, speedKmh, distanceMeters, route, //live
         locEnd, timeStampEnd, //end
         titleModalVisible, sessionTitle, //save
@@ -175,7 +200,8 @@ export function useDriveSession() {
         setSessionTitle, setTitleModalVisible, //title
         
         // Functions
-        handleSession, handleEndSession, handleSaveSession,
+        handleSession, handleEndSession, handleSaveSession, resetSession
+
     };
 }
 

@@ -3,7 +3,7 @@ import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 
 import { requestPermission } from '../utils/locationAccess';
-import type { Coord } from '../types/location';
+import type { Coord } from '../types/Coord';
 
 type UseLocationTrackingProps = {
     setSpeedKmh: React.Dispatch<React.SetStateAction<number>>;

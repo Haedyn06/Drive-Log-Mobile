@@ -10,6 +10,7 @@ type SessionDetailsRouteProp = RouteProp<RootStackParamList, 'SessionDetails'>;
 
 import { formatDateTime, formatDuration } from '../utils/format';
 
+import DriveSessionMap from '../components/DriveSessionMap';
 
 export default function SessionDetailsScreen() {
     const route = useRoute<SessionDetailsRouteProp>();
@@ -53,15 +54,7 @@ export default function SessionDetailsScreen() {
                     <Text>{session.route.length}</Text>
                 </View>
 
-                <View style={SessionDetailsStyles.mapWrapper}>
-                    <MapView style={SessionDetailsStyles.map}
-                        initialRegion={{ latitude: initialLat, longitude: initialLng, latitudeDelta: 0.01, longitudeDelta: 0.01 }}
-                    >
-                        { session.startLocation && (<Marker coordinate={session.startLocation} title="Start" pinColor="green" />) }
-                        { session.endLocation && (<Marker coordinate={session.endLocation} title="End" pinColor="red" />) }
-                        { session.route.length > 1 && (<Polyline coordinates={session.route} strokeColor="#000" strokeWidth={4} />) }
-                    </MapView>
-                </View>
+                <DriveSessionMap title="Saved Route" locStart={session.startLocation} locEnd={session.endLocation} route={session.route} />
             </ScrollView>
         </SafeAreaView>
     );

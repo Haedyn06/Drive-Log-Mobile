@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { formatTime } from '../utils/format';
 
-import type { DriveSession } from "../types/driveSession";
+import type { DriveSession } from "../types/DriveSession";
 
 type DriveSessionCardProps = {
     item: DriveSession

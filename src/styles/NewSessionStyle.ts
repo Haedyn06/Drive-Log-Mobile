@@ -7,11 +7,25 @@ export const NewSessionStyles = StyleSheet.create({
         alignItems: 'center',
     },
 
+    sessionControls: {
+        // height: 200,
+        padding: 10,
+        margin: 10,
+        borderWidth: 1,
+        borderRadius: 12,
+
+    },
+
+    sessionManage: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 30
+
+    },
+
     sessionBtn: {
-        width: 150,
-        height: 150,
         borderRadius: 150,
-        backgroundColor: 'black',
 
         justifyContent: 'center',
         alignItems: 'center',
@@ -25,6 +39,13 @@ export const NewSessionStyles = StyleSheet.create({
 
         // Android shadow
         elevation: 6,
+    },
+
+
+    liveStats: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 10
     },
 
     logs: {
@@ -47,31 +68,27 @@ export const NewSessionStyles = StyleSheet.create({
 
     },
 
-    mapWrapper: {
-        marginTop: 20,
-        borderRadius: 16,
-        overflow: 'hidden',
-    },
 
-    map: {
-        width: '100%',
-        height: 220,
-    },
 
 
 
     endSessionBtn: {
         marginTop: 20,
-        backgroundColor: '#000',
         paddingVertical: 14,
         borderRadius: 12,
         alignItems: 'center',
+        borderWidth: 2,
+
     },
 
     endSessionBtnText: {
-        color: '#fff',
         fontSize: 16,
         fontWeight: '600',
+    },
+
+    map: {
+        width: '100%',
+        height: 320,
     },
 
 });
