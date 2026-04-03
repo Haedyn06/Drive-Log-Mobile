@@ -2,7 +2,7 @@ import { Text, View, ScrollView, Pressable, Modal, TextInput } from 'react-nativ
 import { NewSessionStyles } from '../styles/NewSessionStyle';
 import { Ionicons } from '@expo/vector-icons';
 import { useDriveSession } from '../composables/useDriveSession';
-import { formatTime } from '../utils/format';
+import { formatTime, formatDistance } from '../utils/format';
 
 import SaveSessionModal from '../components/SaveSession';
 import DriveSessionMap from '../components/DriveSessionMap';
@@ -10,7 +10,7 @@ import DriveSessionMap from '../components/DriveSessionMap';
 
 export default function NewSessionScreen() {
     const { 
-        isStart, locStart, timeStampStart, 
+        isStart, locStart, 
         elapsed, speedKmh, distanceMeters, route,
         locEnd,
 
@@ -32,34 +32,29 @@ export default function NewSessionScreen() {
 
                         <View>
                             <Text style={{fontSize: 30}}>{formatTime(elapsed)}</Text>
-
-                            <View style={NewSessionStyles.liveStats}>
-                                <Text >Speed: {speedKmh.toFixed(1)} km/h</Text>
-                                <Text>Distance: {distanceMeters.toFixed(0)} m</Text>
-                            </View>
+                            {(isStart || elapsed > 0) && (
+                                <View style={NewSessionStyles.liveStats}>
+                                    <Text >Speed: {speedKmh.toFixed(1)} km/h</Text>
+                                    <Text>Distance: {formatDistance(distanceMeters)}</Text>
+                                </View>
+                            )}
                         </View>
                     </View>
 
 
                     {(isStart || elapsed > 0) && (
                         <View>
-
                             <Pressable style={NewSessionStyles.endSessionBtn} onPress={handleEndSession}>
                                 <Text style={NewSessionStyles.endSessionBtnText}>End Session</Text>
                             </Pressable>
 
-
                             <Pressable style={NewSessionStyles.endSessionBtn} onPress={resetSession}>
                                 <Text style={NewSessionStyles.endSessionBtnText}>Reset</Text>
                             </Pressable>
-
                         </View>
-
                     )}
 
                 </View>
-                {/* New Session */}
-
 
                 {/* Map */}
                 <DriveSessionMap title="Live Route" isStart={isStart} showUserLocation locStart={locStart} locEnd={locEnd} route={route} />                

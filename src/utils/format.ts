@@ -23,3 +23,8 @@ export const formatDateTime = (ts: number | null) => {
     if (ts === null) return '--';
     return new Date(ts).toLocaleString();
 };
+
+
+export const formatDistance = (meters: number) => {
+    return meters >= 1000 ? `${(meters / 1000).toFixed(2)} km` : `${meters.toFixed(0)} m`;
+};
