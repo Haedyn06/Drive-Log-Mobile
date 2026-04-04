@@ -11,5 +11,6 @@ export type DriveSession = {
     durationMs: number;
     distanceMeters: number;
     averageSpeedKmh: number;
+    maxSpeedKmh: number;
     route: Coord[];
 };

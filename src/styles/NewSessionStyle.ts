@@ -1,94 +1,107 @@
 import { StyleSheet } from 'react-native';
 
 export const NewSessionStyles = StyleSheet.create({
-    container: {
+    screen: {
         flex: 1,
-        // justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: '#f3eef1',
     },
 
-    sessionControls: {
-        // height: 200,
-        padding: 10,
-        margin: 10,
-        borderWidth: 1,
-        borderRadius: 12,
-
+    content: {
+        paddingTop: 28,
+        paddingBottom: 32,
     },
 
-    sessionManage: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 30
-
+    pageTitle: {
+        fontSize: 24,
+        fontWeight: '800',
+        textAlign: 'center',
+        color: '#111',
+        marginBottom: 18,
     },
 
-    sessionBtn: {
-        borderRadius: 150,
+    sectionGap: {
+        marginTop: 2,
+    },
 
-        justifyContent: 'center',
-        alignItems: 'center',
-
-
-        // iOS shadow
+    timeCard: {
+        marginHorizontal: 18,
+        marginBottom: 18,
+        paddingHorizontal: 14,
+        paddingVertical: 12,
+        borderRadius: 14,
+        backgroundColor: '#ffffff',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 6,
-
-        // Android shadow
-        elevation: 6,
+        shadowOpacity: 0.16,
+        shadowRadius: 5,
+        elevation: 4,
     },
 
+    cardLabel: {
+        fontSize: 14,
+        color: '#222',
+        marginBottom: 10,
+    },
 
-    liveStats: {
-        display: 'flex',
+    timeValue: {
+        fontSize: 34,
+        fontWeight: '400',
+        textAlign: 'center',
+        color: '#111',
+    },
+
+    statsRow: {
         flexDirection: 'row',
-        gap: 10
+        gap: 18,
+        marginHorizontal: 18,
+        marginBottom: 18,
     },
 
-    logs: {
+    statCard: {
         flex: 1,
-        flexDirection: 'column',
-        gap: 20
-    },
-
-    startLog: {
-        marginTop: 20
-    },
-
-    liveLog: {
-
-
-    },
-
-    endLog: {
-
-
-    },
-
-
-
-
-
-    endSessionBtn: {
-        marginTop: 20,
         paddingVertical: 14,
-        borderRadius: 12,
-        alignItems: 'center',
-        borderWidth: 2,
-
+        paddingHorizontal: 14,
+        borderRadius: 18,
+        backgroundColor: '#ffffff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.16,
+        shadowRadius: 5,
+        elevation: 4,
     },
 
-    endSessionBtnText: {
+    statLabel: {
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '700',
+        textAlign: 'center',
+        color: '#111',
+        marginBottom: 10,
     },
 
-    map: {
-        width: '100%',
-        height: 320,
+    statValue: {
+        fontSize: 26,
+        fontWeight: '400',
+        textAlign: 'center',
+        color: '#111',
     },
 
+    mapCard: {
+        marginHorizontal: 18,
+        borderRadius: 18,
+        backgroundColor: '#dcd6db',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.16,
+        shadowRadius: 5,
+        elevation: 4,
+        padding: 12,
+    },
+
+    mapWrapperOverride: {
+        marginHorizontal: 0,
+        marginTop: 0,
+        borderWidth: 0,
+        padding: 0,
+        backgroundColor: 'transparent',
+    },
 });

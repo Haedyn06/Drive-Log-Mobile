@@ -10,3 +10,4 @@ Checks Route For Driving And Stats
 2. Open Repo
 3. Run `npm install`
 4. Run `npx expo start -c`
+5. Scan QR Code

@@ -24,7 +24,7 @@ export function useDriveSession() {
     const [speedKmh, setSpeedKmh] = useState(0);
     const [distanceMeters, setDistanceMeters] = useState(0);
     const [route, setRoute] = useState<Coord[]>([]);
-
+    const [maxSpeedKmh, setMaxSpeedKmh] = useState(0);
     // End Session
     const [locEnd, setLocEnd] = useState<Coord | null>(null);
     const [timeStampEnd, setTimeStampEnd] = useState<number | null>(null);
@@ -33,8 +33,12 @@ export function useDriveSession() {
     const [titleModalVisible, setTitleModalVisible] = useState(false);
     const [sessionTitle, setSessionTitle] = useState('');
 
-    const { startTracking, stopTracking } = useLocationTracking({ setSpeedKmh, setRoute, setDistanceMeters });
-
+    const { startTracking, stopTracking } = useLocationTracking({
+        setSpeedKmh,
+        setMaxSpeedKmh,
+        setRoute,
+        setDistanceMeters
+    });
     // Use Effects
     useEffect(() => {
         if (!isStart || isPaused || timeStampStart === null) return;
@@ -151,6 +155,7 @@ export function useDriveSession() {
                 durationMs: elapsed,
                 distanceMeters,
                 averageSpeedKmh: avgSpeed,
+                maxSpeedKmh,
                 route: compressedRoute,
             };
 

@@ -1,69 +1,123 @@
-import { Text, View, ScrollView, Pressable, Modal, TextInput } from 'react-native';
-import { NewSessionStyles } from '../styles/NewSessionStyle';
-import { Ionicons } from '@expo/vector-icons';
-import { useDriveSession } from '../composables/useDriveSession';
-import { formatTime, formatDistance } from '../utils/format';
+import { Text, View, ScrollView, StyleSheet } from 'react-native';
+import { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 
+import { getSessions } from '../services/localStoreService';
+import type { DriveSession } from '../types/DriveSession';
+
+import { useSharedDriveSession } from '../context/DriveSessionContext';
+
+import StartSessionComp from '../components/StartSessionComp';
 import SaveSessionModal from '../components/SaveSession';
 import DriveSessionMap from '../components/DriveSessionMap';
+import RecentDriveSession from '../components/RecentDriveSession';
+import StartSessionCompB from '../components/StartSessionCompB';
 
+import { NewSessionStyles } from '../styles/NewSessionStyle';
 
 export default function NewSessionScreen() {
-    const { 
-        isStart, locStart, 
+    const {
+        isStart, locStart, isPaused,
         elapsed, speedKmh, distanceMeters, route,
         locEnd,
-
         titleModalVisible, sessionTitle,
         setTitleModalVisible, setSessionTitle,
-
         handleSession, handleEndSession, handleSaveSession, resetSession
-    } = useDriveSession();
+    } = useSharedDriveSession();
+
+    const [recentSession, setRecentSession] = useState<DriveSession | null>(null);
+
+    useFocusEffect(
+        useCallback(() => {
+            async function loadRecentSession() {
+                try {
+                    const data = await getSessions();
+                    const sorted = [...data].reverse();
+                    setRecentSession(sorted.length > 0 ? sorted[0] : null);
+                } catch (e) {
+                    console.log('Failed loading recent session', e);
+                }
+            }
+
+            loadRecentSession();
+        }, [])
+    );
+
+    const isIdle = !isStart && elapsed === 0;
+    const isLiveOrEnded = isStart || elapsed > 0;
 
     return (
-        <ScrollView >
-            <View>
-                <View style={NewSessionStyles.sessionControls}>
-                    <View style={NewSessionStyles.sessionManage}>
-                        <Pressable style={NewSessionStyles.sessionBtn} onPress={handleSession}>
-                            {isStart ? (<Ionicons name="stop-circle-outline" size={100} color="#767676" />) 
-                                : (<Ionicons name="caret-forward-circle-outline" size={100} color="#767676" />)}
-                        </Pressable>
+        <ScrollView style={NewSessionStyles.screen} contentContainerStyle={NewSessionStyles.content}>
+            <Text style={NewSessionStyles.pageTitle}>New Session</Text>
 
-                        <View>
-                            <Text style={{fontSize: 30}}>{formatTime(elapsed)}</Text>
-                            {(isStart || elapsed > 0) && (
-                                <View style={NewSessionStyles.liveStats}>
-                                    <Text >Speed: {speedKmh.toFixed(1)} km/h</Text>
-                                    <Text>Distance: {formatDistance(distanceMeters)}</Text>
-                                </View>
-                            )}
+            <StartSessionCompB
+                isPaused={isPaused}
+                isStart={isStart}
+                elapsed={elapsed}
+                speedKmh={speedKmh}
+                distanceMeters={distanceMeters}
+                handleSession={handleSession}
+                handleEndSession={handleEndSession}
+                resetSession={resetSession}
+            />
+
+            {isIdle && (
+                <View style={NewSessionStyles.sectionGap}>
+                    <RecentDriveSession item={recentSession} />
+                </View>
+            )}
+
+            {isLiveOrEnded && (
+                <>
+                    <View style={NewSessionStyles.timeCard}>
+                        <Text style={NewSessionStyles.cardLabel}>Elapsed Time</Text>
+                        <Text style={NewSessionStyles.timeValue}>
+                            {Math.floor(elapsed / 3600000).toString().padStart(2, '0')}:
+                            {Math.floor((elapsed % 3600000) / 60000).toString().padStart(2, '0')}:
+                            {Math.floor((elapsed % 60000) / 1000).toString().padStart(2, '0')}.
+                            {Math.floor((elapsed % 1000) / 10).toString().padStart(2, '0')}
+                        </Text>
+                    </View>
+
+                    <View style={NewSessionStyles.statsRow}>
+                        <View style={NewSessionStyles.statCard}>
+                            <Text style={NewSessionStyles.statLabel}>Distance</Text>
+                            <Text style={NewSessionStyles.statValue}>
+                                {distanceMeters >= 1000
+                                    ? `${(distanceMeters / 1000).toFixed(1)}KM`
+                                    : `${distanceMeters.toFixed(0)}M`}
+                            </Text>
+                        </View>
+
+                        <View style={NewSessionStyles.statCard}>
+                            <Text style={NewSessionStyles.statLabel}>Speed</Text>
+                            <Text style={NewSessionStyles.statValue}>{speedKmh.toFixed(0)}km/h</Text>
                         </View>
                     </View>
 
+                    <View style={NewSessionStyles.mapCard}>
+                        <DriveSessionMap
+                            title=""
+                            isStart={isStart}
+                            showUserLocation
+                            locStart={locStart}
+                            locEnd={locEnd}
+                            route={route}
+                            mapStyle={{ height: 230 }}
+                            wrapperStyle={NewSessionStyles.mapWrapperOverride}
+                            previewOnly={false}
+                        />
+                    </View>
+                </>
+            )}
 
-                    {(isStart || elapsed > 0) && (
-                        <View>
-                            <Pressable style={NewSessionStyles.endSessionBtn} onPress={handleEndSession}>
-                                <Text style={NewSessionStyles.endSessionBtnText}>End Session</Text>
-                            </Pressable>
-
-                            <Pressable style={NewSessionStyles.endSessionBtn} onPress={resetSession}>
-                                <Text style={NewSessionStyles.endSessionBtnText}>Reset</Text>
-                            </Pressable>
-                        </View>
-                    )}
-
-                </View>
-
-                {/* Map */}
-                <DriveSessionMap title="Live Route" isStart={isStart} showUserLocation locStart={locStart} locEnd={locEnd} route={route} />                
-                
-                
-
-                <SaveSessionModal visible={titleModalVisible} sessionTitle={sessionTitle} setSessionTitle={setSessionTitle}
-                    onClose={() => setTitleModalVisible(false)} onSave={handleSaveSession} />
-            </View>
+            <SaveSessionModal
+                visible={titleModalVisible}
+                sessionTitle={sessionTitle}
+                setSessionTitle={setSessionTitle}
+                onClose={() => setTitleModalVisible(false)}
+                onSave={handleSaveSession}
+            />
         </ScrollView>
     );
 }

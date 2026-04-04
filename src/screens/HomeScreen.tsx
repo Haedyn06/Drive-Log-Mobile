@@ -1,58 +1,39 @@
-import { useCallback, useState } from 'react';
-import { Text, View, FlatList, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import * as Haptics from 'expo-haptics';
+import { Text, View, FlatList, Pressable, ScrollView } from 'react-native';
+
+import { useSharedDriveSession } from '../context/DriveSessionContext';
+
 
 import { HomeStyles } from '../styles/HomeStyle';
-import { getSessions } from '../services/localStoreService';
 
-import type { RootStackParamList } from '../navigation/AppNavigator';
-import type { DriveSession } from '../types/DriveSession';
-
-import DriveSessionCard from '../components/DriveSessionCard';
-
+import StartSessionComp from '../components/StartSessionComp';
+import DriveSessionList from '../components/DriveSessionList';
+import SaveSessionModal from '../components/SaveSession';
 
 export default function HomeScreen() {
-    const [sessions, setSessions] = useState<DriveSession[]>([]);
-    const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-    useFocusEffect(
-        useCallback(() => {
-            async function loadSessions() {
-                try {
-                    const data = await getSessions();
-                    setSessions(data.reverse()); // newest first
-                } catch (e) {
-                    console.log('Failed loading sessions', e);
-                }
-            }
 
-            loadSessions();
-        }, [])
-    );
+    const { 
+        isStart, locStart, 
+        elapsed, speedKmh, distanceMeters, route,
+        locEnd,
 
-    const handleSessionCard = async (item: DriveSession) => {
-        navigation.navigate('SessionDetails', { session: item })
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    }
+        titleModalVisible, sessionTitle,
+        setTitleModalVisible, setSessionTitle,
+
+        handleSession, handleEndSession, handleSaveSession, resetSession
+    } = useSharedDriveSession();
 
     return (
-        <SafeAreaView style={HomeStyles.container}>
-            <Text style={HomeStyles.title}>Saved Sessions</Text>
+        <ScrollView style={HomeStyles.container}>
+            <StartSessionComp isStart={isStart} elapsed={elapsed} speedKmh={speedKmh} distanceMeters={distanceMeters} handleSession={handleSession} handleEndSession={handleEndSession} resetSession={resetSession} />
+            
+            <View style={HomeStyles.recentList}>
+                <Text style={HomeStyles.recentTitle}>Your Recents</Text>
 
-            {sessions.length === 0 ? (
-                <Text>No saved sessions yet.</Text>
-            ) : (
-                <FlatList data={sessions} keyExtractor={(item) => item.id} renderItem={({ item }) => (
-                        <Pressable onPress={() => handleSessionCard(item)}>
-                            <DriveSessionCard item={item} />
-                        </Pressable>
-                    )}
-                />
-            )}
-        </SafeAreaView>
+                <DriveSessionList limit={3} />
+            </View>
+            
+
+        </ScrollView>
     );
 }

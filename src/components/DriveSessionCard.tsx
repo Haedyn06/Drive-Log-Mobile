@@ -1,36 +1,127 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { formatTime } from '../utils/format';
-
+import { View, Text, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { formatReadableElapsed, formatDistance, formatDateNum } from "../utils/format";
 import type { DriveSession } from "../types/DriveSession";
 
 type DriveSessionCardProps = {
-    item: DriveSession
+    item: DriveSession;
+};
 
-}
+export default function DriveSessionCard({ item }: DriveSessionCardProps) {
+    const endLat = item.endLocation?.latitude;
+    const endLng = item.endLocation?.longitude;
 
-export default function DriveSessionCard({item}:DriveSessionCardProps) {
     return (
         <View style={styles.card}>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text>{new Date(item.date).toLocaleString()}</Text>
-            <Text>Distance: {item.distanceMeters.toFixed(0)} m</Text>
-            <Text>Avg Speed: {item.averageSpeedKmh.toFixed(1)} km/h</Text>
-            <Text>Duration: {formatTime(item.durationMs)}</Text>
+            <View style={styles.left}>
+                <View style={styles.icon}>
+                    <Ionicons name="car-sport-outline" size={28} color="#fff" />
+                </View>
+            </View>
+
+            <View style={styles.center}>
+                <Text style={styles.statTitle} numberOfLines={1}>
+                    {item.title}
+                </Text>
+
+                <View style={styles.metaRow}>
+                    <Text style={styles.metaText}>{formatReadableElapsed(item.durationMs)}</Text>
+                    <Text style={styles.dot}>•</Text>
+                    <Text style={styles.metaText}>{formatDistance(item.distanceMeters)}</Text>
+                </View>
+
+                <View style={styles.locationRow}>
+                    <Ionicons name="location-outline" size={16} color="#767676" />
+                    <Text style={styles.locationText} numberOfLines={1}>
+                        {endLat !== undefined && endLng !== undefined
+                            ? `(${endLat.toFixed(2)}, ${endLng.toFixed(2)})`
+                            : "No end location"}
+                    </Text>
+                </View>
+            </View>
+
+            <View style={styles.right}>
+                <Text style={styles.dateText}>{formatDateNum(item.date)}</Text>
+            </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#f4f4f4',
-        borderRadius: 12,
+        flexDirection: "row",
+        alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#e3e3e3",
+        backgroundColor: "#fff",
+        borderRadius: 16,
         padding: 14,
+        gap: 12,
         marginBottom: 12,
     },
 
-    cardTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        marginBottom: 6,
+    left: {
+        justifyContent: "center",
+        alignItems: "center",
     },
-})
+
+    icon: {
+        width: 80,
+        height: 80,
+        borderRadius: 10,
+        backgroundColor: "#767676",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    center: {
+        flex: 1,
+        justifyContent: "center",
+        gap: 1,
+        marginLeft: 6
+    },
+
+    statTitle: {
+        fontSize: 20, // or 24 if u want it bold bold
+        fontWeight: "600",
+        color: "#111",
+    },
+
+    metaRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+    },
+
+    metaText: {
+        fontSize: 14,
+        color: "#444",
+    },
+
+    dot: {
+        fontSize: 14,
+        color: "#999",
+    },
+
+    locationRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+        maxWidth: "95%",
+    },
+
+    locationText: {
+        fontSize: 13,
+        color: "#767676",
+        flexShrink: 1,
+    },
+
+    right: {
+        alignSelf: "flex-end",
+    },
+
+    dateText: {
+        fontSize: 12,
+        color: "#888",
+    },
+});

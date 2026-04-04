@@ -7,13 +7,19 @@ import type { Coord } from '../types/Coord';
 
 type UseLocationTrackingProps = {
     setSpeedKmh: React.Dispatch<React.SetStateAction<number>>;
+    setMaxSpeedKmh: React.Dispatch<React.SetStateAction<number>>;
     setRoute: React.Dispatch<React.SetStateAction<Coord[]>>;
     setDistanceMeters: React.Dispatch<React.SetStateAction<number>>;
 };
 
-export function useLocationTracking({ setSpeedKmh, setRoute, setDistanceMeters }: UseLocationTrackingProps) {
+export function useLocationTracking({
+    setSpeedKmh,
+    setMaxSpeedKmh,
+    setRoute,
+    setDistanceMeters
+}: UseLocationTrackingProps) {
     const [watchSubscription, setWatchSubscription] =
-    useState<Location.LocationSubscription | null>(null);
+        useState<Location.LocationSubscription | null>(null);
 
     useEffect(() => {
         return () => watchSubscription?.remove();
@@ -21,21 +27,29 @@ export function useLocationTracking({ setSpeedKmh, setRoute, setDistanceMeters }
 
     const startTracking = async () => {
         const granted = await requestPermission();
-        
+
         if (!granted) {
             console.log('Permission denied');
             return;
         }
 
         const subscription = await Location.watchPositionAsync(
-            { accuracy: Location.Accuracy.BestForNavigation, timeInterval: 1000, distanceInterval: 1 },
-            
+            {
+                accuracy: Location.Accuracy.BestForNavigation,
+                timeInterval: 1000,
+                distanceInterval: 1
+            },
             (location) => {
-                const newPoint = { latitude: location.coords.latitude, longitude: location.coords.longitude };
+                const newPoint = {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude
+                };
 
                 const rawSpeed = location.coords.speed ?? 0;
                 const safeSpeed = rawSpeed < 0 ? 0 : rawSpeed * 3.6;
+
                 setSpeedKmh(safeSpeed);
+                setMaxSpeedKmh((prev) => Math.max(prev, safeSpeed));
 
                 setRoute((prevRoute) => {
                     if (prevRoute.length === 0) return [newPoint];
@@ -43,7 +57,7 @@ export function useLocationTracking({ setSpeedKmh, setRoute, setDistanceMeters }
                     const lastPoint = prevRoute[prevRoute.length - 1];
                     const segmentDistance = getDistance(lastPoint, newPoint);
 
-                    if (segmentDistance >= 3) {
+                    if (segmentDistance >= 5) {
                         setDistanceMeters((prev) => prev + segmentDistance);
                         return [...prevRoute, newPoint];
                     }
@@ -56,7 +70,6 @@ export function useLocationTracking({ setSpeedKmh, setRoute, setDistanceMeters }
         setWatchSubscription(subscription);
     };
 
-    
     const stopTracking = async () => {
         if (watchSubscription) {
             watchSubscription.remove();

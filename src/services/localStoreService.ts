@@ -10,10 +10,14 @@ export const saveSessions = async (sessions: any[]) => {
     }
 };
 
-export const getSessions = async () => {
+export const getSessions = async (limit?: number) => {
     try {
         const data = await AsyncStorage.getItem(sessionStorage);
-        return data ? JSON.parse(data) : [];
+        const sessions = data ? JSON.parse(data) : [];
+
+        const sorted = [...sessions].reverse();
+
+        return limit ? sorted.slice(0, limit) : sorted;
     } catch (e) {
         console.log('Error getting sessions', e);
         return [];

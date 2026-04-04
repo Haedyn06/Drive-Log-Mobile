@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 10,
         marginBottom: 16,
+        color: 'black'
     },
 
     modalButtons: {

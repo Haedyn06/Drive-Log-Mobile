@@ -31,12 +31,12 @@ const tabs = [
         haptic: Haptics.ImpactFeedbackStyle.Medium,
         title: 'Start Your Drive',
     },
-    {
-        name: 'Profile',
-        component: ProfileScreen,
-        haptic: Haptics.ImpactFeedbackStyle.Medium,
-        title: 'Profile',
-    },
+    // {
+    //     name: 'Profile',
+    //     component: ProfileScreen,
+    //     haptic: Haptics.ImpactFeedbackStyle.Medium,
+    //     title: 'Profile',
+    // },
 ];
 
 const withHaptics = (style: Haptics.ImpactFeedbackStyle) => ({
