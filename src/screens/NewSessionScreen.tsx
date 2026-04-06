@@ -1,4 +1,4 @@
-import { Text, View, ScrollView, StyleSheet } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -12,6 +12,7 @@ import SaveSessionModal from '../components/SaveSession';
 import DriveSessionMap from '../components/DriveSessionMap';
 import RecentDriveSession from '../components/RecentDriveSession';
 import StartSessionCompB from '../components/StartSessionCompB';
+import LiveMapModal from '../components/LiveMapSession';
 
 import { NewSessionStyles } from '../styles/NewSessionStyle';
 
@@ -21,11 +22,25 @@ export default function NewSessionScreen() {
         elapsed, speedKmh, distanceMeters, route, altitudeMeters,
         locEnd,
         titleModalVisible, sessionTitle,
+
         setTitleModalVisible, setSessionTitle,
-        handleSession, handleEndSession, handleSaveSession, resetSession
+
+        handleSession, handleEndSession, handleSaveSession, resetSession,
+
+        // ADD THESE 👇
+        startLocationLabel,
+        endLocationLabel,
+        carType,
+
+        setStartLocationLabel,
+        setEndLocationLabel,
+        setCarType
+
     } = useSharedDriveSession();
 
     const [recentSession, setRecentSession] = useState<DriveSession | null>(null);
+    const [routeModalVisible, setRouteModalVisible] = useState(false);
+
 
     useFocusEffect(
         useCallback(() => {
@@ -48,17 +63,19 @@ export default function NewSessionScreen() {
 
     return (
         <ScrollView style={NewSessionStyles.screen} contentContainerStyle={NewSessionStyles.content}>
-            <Text style={NewSessionStyles.pageTitle}>New Session</Text>
-
             <StartSessionCompB
                 isPaused={isPaused}
                 isStart={isStart}
                 elapsed={elapsed}
                 speedKmh={speedKmh}
                 distanceMeters={distanceMeters}
+                altitudeMeters={altitudeMeters}
                 handleSession={handleSession}
                 handleEndSession={handleEndSession}
                 resetSession={resetSession}
+                locStart={locStart}
+                locEnd={locEnd}
+                route={route}
             />
 
             {isIdle && (
@@ -103,18 +120,38 @@ export default function NewSessionScreen() {
                     </View>
 
                     <View style={NewSessionStyles.mapCard}>
-                        <DriveSessionMap
-                            title=""
-                            isStart={isStart}
-                            showUserLocation
-                            locStart={locStart}
-                            locEnd={locEnd}
-                            route={route}
-                            mapStyle={{ height: 230 }}
-                            wrapperStyle={NewSessionStyles.mapWrapperOverride}
-                            previewOnly={false}
-                        />
+                        <Pressable onPress={() => setRouteModalVisible(true)}>
+                            <DriveSessionMap
+                                title=""
+                                isStart={isStart}
+                                showUserLocation
+                                locStart={locStart}
+                                locEnd={locEnd}
+                                route={route}
+                                mapStyle={{ height: 230 }}
+                                wrapperStyle={NewSessionStyles.mapWrapperOverride}
+                                previewOnly={false}
+                            />
+                        </Pressable>
                     </View>
+
+
+                    <LiveMapModal
+                        visible={routeModalVisible}
+                        onClose={() => setRouteModalVisible(false)}
+                        isStart={isStart}
+                        isPaused={isPaused}
+                        elapsed={elapsed}
+                        speedKmh={speedKmh}
+                        distanceMeters={distanceMeters}
+                        locStart={locStart}
+                        locEnd={locEnd}
+                        route={route}
+                        handleSession={handleSession}
+                        handleEndSession={handleEndSession}
+                        resetSession={resetSession}
+                        altitudeMeters={altitudeMeters}
+                    />
                 </>
             )}
 
@@ -122,6 +159,12 @@ export default function NewSessionScreen() {
                 visible={titleModalVisible}
                 sessionTitle={sessionTitle}
                 setSessionTitle={setSessionTitle}
+                startLocationLabel={startLocationLabel}
+                setStartLocationLabel={setStartLocationLabel}
+                endLocationLabel={endLocationLabel}
+                setEndLocationLabel={setEndLocationLabel}
+                carType={carType}
+                setCarType={setCarType}
                 onClose={() => setTitleModalVisible(false)}
                 onSave={handleSaveSession}
             />

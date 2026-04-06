@@ -37,6 +37,11 @@ export function useDriveSession() {
     const [maxAltitudeMeters, setMaxAltitudeMeters] = useState(0);
     const [altitudeGainMeters, setAltitudeGainMeters] = useState(0);
 
+
+    const [startLocationLabel, setStartLocationLabel] = useState('');
+    const [endLocationLabel, setEndLocationLabel] = useState('');
+    const [carType, setCarType] = useState('');
+
     const { startTracking, stopTracking } = useLocationTracking({
         setSpeedKmh,
         setMaxSpeedKmh,
@@ -160,11 +165,13 @@ export function useDriveSession() {
                 endTime: timeStampEnd ?? Date.now(),
                 startLocation: locStart,
                 endLocation: locEnd,
+                startLocationLabel: startLocationLabel.trim(),
+                endLocationLabel: endLocationLabel.trim(),
+                carType: carType.trim(),
                 durationMs: elapsed,
                 distanceMeters,
                 averageSpeedKmh: avgSpeed,
                 maxSpeedKmh,
-                altitudeMeters,
                 maxAltitudeMeters,
                 altitudeGainMeters,
                 route: compressedRoute,
@@ -194,30 +201,54 @@ export function useDriveSession() {
     function resetSession() {
         setSessionTitle('');
         setIsStart(false);
+        setIsPaused(false);
+        setPauseTime(null);
+
         setElapsed(0);
         setLocStart(null);
         setTimeStampStart(null);
         setLocEnd(null);
         setTimeStampEnd(null);
+
         setSpeedKmh(0);
         setDistanceMeters(0);
         setRoute([]);
+
+        setMaxSpeedKmh(0);
+
+        setAltitudeMeters(0);
+        setMaxAltitudeMeters(0);
+        setAltitudeGainMeters(0);
+
+        setStartLocationLabel('');
+        setEndLocationLabel('');
+        setCarType('');
     }
 
     return {
         // Vars
-        isStart, locStart, isPaused, timeStampStart, //start
-        elapsed, speedKmh, distanceMeters, route, altitudeMeters, maxAltitudeMeters, altitudeGainMeters, //live
-        locEnd, timeStampEnd, //end
-        titleModalVisible, sessionTitle, //save
+        isStart, locStart, isPaused, timeStampStart,
+        elapsed, speedKmh, distanceMeters, route,
+        altitudeMeters, maxAltitudeMeters, altitudeGainMeters,
+        locEnd, timeStampEnd,
+        titleModalVisible, sessionTitle,
+
+        // ADD THESE 👇
+        startLocationLabel,
+        endLocationLabel,
+        carType,
 
         // Set
-        setSpeedKmh, setRoute, setDistanceMeters, //locations
-        setSessionTitle, setTitleModalVisible, //title
-        
+        setSpeedKmh, setRoute, setDistanceMeters,
+        setSessionTitle, setTitleModalVisible,
+
+        // ADD THESE 👇
+        setStartLocationLabel,
+        setEndLocationLabel,
+        setCarType,
+
         // Functions
         handleSession, handleEndSession, handleSaveSession, resetSession
-
     };
 }
 

@@ -8,13 +8,16 @@ export type DriveSession = {
     endTime: number | null;
     startLocation: Coord | null;
     endLocation: Coord | null;
+
+    startLocationLabel?: string;
+    endLocationLabel?: string;
+    carType?: string;
+
     durationMs: number;
     distanceMeters: number;
     averageSpeedKmh: number;
     maxSpeedKmh: number;
-
     maxAltitudeMeters: number;
     altitudeGainMeters: number;
-
     route: Coord[];
 };

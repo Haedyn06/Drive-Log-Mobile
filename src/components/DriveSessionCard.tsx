@@ -11,6 +11,17 @@ export default function DriveSessionCard({ item }: DriveSessionCardProps) {
     const endLat = item.endLocation?.latitude;
     const endLng = item.endLocation?.longitude;
 
+    // location fallback logic
+    let locationDisplay = "No end location";
+
+    if (item.startLocationLabel?.trim() && item.endLocationLabel?.trim()) {
+        locationDisplay = `${item.startLocationLabel} → ${item.endLocationLabel}`;
+    } else if (item.endLocationLabel?.trim()) {
+        locationDisplay = item.endLocationLabel;
+    } else if (endLat !== undefined && endLng !== undefined) {
+        locationDisplay = `(${endLat.toFixed(2)}, ${endLng.toFixed(2)})`;
+    }
+
     return (
         <View style={styles.card}>
             <View style={styles.left}>
@@ -25,23 +36,27 @@ export default function DriveSessionCard({ item }: DriveSessionCardProps) {
                 </Text>
 
                 <View style={styles.metaRow}>
-                    <Text style={styles.metaText}>{formatReadableElapsed(item.durationMs)}</Text>
+                    <Text style={styles.metaText}>
+                        {formatReadableElapsed(item.durationMs)}
+                    </Text>
                     <Text style={styles.dot}>•</Text>
-                    <Text style={styles.metaText}>{formatDistance(item.distanceMeters)}</Text>
+                    <Text style={styles.metaText}>
+                        {formatDistance(item.distanceMeters)}
+                    </Text>
                 </View>
 
                 <View style={styles.locationRow}>
                     <Ionicons name="location-outline" size={16} color="#767676" />
                     <Text style={styles.locationText} numberOfLines={1}>
-                        {endLat !== undefined && endLng !== undefined
-                            ? `(${endLat.toFixed(2)}, ${endLng.toFixed(2)})`
-                            : "No end location"}
+                        {locationDisplay}
                     </Text>
                 </View>
             </View>
 
             <View style={styles.right}>
-                <Text style={styles.dateText}>{formatDateNum(item.date)}</Text>
+                <Text style={styles.dateText}>
+                    {formatDateNum(item.date)}
+                </Text>
             </View>
         </View>
     );
@@ -78,11 +93,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         gap: 1,
-        marginLeft: 6
+        marginLeft: 6,
     },
 
     statTitle: {
-        fontSize: 20, // or 24 if u want it bold bold
+        fontSize: 20,
         fontWeight: "600",
         color: "#111",
     },

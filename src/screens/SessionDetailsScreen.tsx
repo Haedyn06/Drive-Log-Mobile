@@ -47,8 +47,8 @@ export default function SessionDetailsScreen() {
                 </View>
 
                 <View style={SessionDetailsStyles.statCard}>
-                    <Text style={SessionDetailsStyles.statLabel}>Max Speed</Text>
-                    <Text style={SessionDetailsStyles.statValue}>{(session.maxSpeedKmh ?? 0).toFixed(1)} km/h</Text>
+                    <Text style={SessionDetailsStyles.statLabel}>Altitude Gained</Text>
+                    <Text style={SessionDetailsStyles.statValue}>{(session.altitudeGainMeters ?? 0).toFixed(1)} m</Text>
                 </View>
             </View>
 
@@ -110,6 +110,13 @@ export default function SessionDetailsScreen() {
                     <Text style={SessionDetailsStyles.detailLabel}>Max Altitude</Text>
                     <Text style={SessionDetailsStyles.detailValue}>{(session.maxAltitudeMeters ?? 0).toFixed(1)}m </Text>
                 </View>
+
+                <View style={SessionDetailsStyles.detailRow}>
+                    <Text style={SessionDetailsStyles.detailLabel}>Car Type</Text>
+                    <Text style={SessionDetailsStyles.detailValue}>
+                        {session.carType?.trim() ? session.carType : '--'}
+                    </Text>
+                </View>
             </View>
 
             <View style={SessionDetailsStyles.detailsCard}>
@@ -122,9 +129,11 @@ export default function SessionDetailsScreen() {
                     </View>
 
                     <Text style={SessionDetailsStyles.locationText}>
-                        {session.startLocation
-                            ? `${session.startLocation.latitude.toFixed(6)}, ${session.startLocation.longitude.toFixed(6)}`
-                            : '--'}
+                        {session.startLocationLabel?.trim()
+                            ? session.startLocationLabel
+                            : session.startLocation
+                                ? `${session.startLocation.latitude.toFixed(6)}, ${session.startLocation.longitude.toFixed(6)}`
+                                : '--'}
                     </Text>
                 </View>
 
@@ -135,9 +144,11 @@ export default function SessionDetailsScreen() {
                     </View>
 
                     <Text style={SessionDetailsStyles.locationText}>
-                        {session.endLocation
-                            ? `${session.endLocation.latitude.toFixed(6)}, ${session.endLocation.longitude.toFixed(6)}`
-                            : '--'}
+                        {session.endLocationLabel?.trim()
+                            ? session.endLocationLabel
+                            : session.endLocation
+                                ? `${session.endLocation.latitude.toFixed(6)}, ${session.endLocation.longitude.toFixed(6)}`
+                                : '--'}
                     </Text>
                 </View>
             </View>

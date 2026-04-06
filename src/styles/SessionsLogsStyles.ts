@@ -1,9 +1,15 @@
 import { StyleSheet } from 'react-native';
 
 export const SessionLogsStyles = StyleSheet.create({
+    sessionLogsFrame: {
+        margin: 15
+
+
+    },
+
 
     sessionList: {
-        margin: 15
+        // margin: 15
 
 
     },

@@ -9,7 +9,7 @@ import type { DriveSession } from '../types/DriveSession';
 import { DriveSessionProvider } from '../context/DriveSessionContext';
 
 export type RootStackParamList = {
-    MainTabs: undefined;
+    Back: undefined;
     SessionDetails: { session: DriveSession };
     SessionLogs: undefined;
 };
@@ -22,7 +22,7 @@ export default function AppNavigator() {
 
             <NavigationContainer>
                 <Stack.Navigator>
-                    <Stack.Screen name="MainTabs" component={NavigationBar} options={{ headerShown: false }} />
+                    <Stack.Screen name="Back" component={NavigationBar} options={{ headerShown: false }} />
                     <Stack.Screen name="SessionDetails" component={SessionDetailsScreen} options={{ title: 'Session Details' }} />
                     <Stack.Screen name="SessionLogs" component={SessionsLogsScreen} options={{ title: 'Sessions' }} />
                 </Stack.Navigator>

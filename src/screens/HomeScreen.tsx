@@ -1,4 +1,5 @@
-import { Text, View, Pressable, ScrollView } from 'react-native';
+import { useState } from 'react';
+import { Text, View, Pressable, ScrollView, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';
@@ -13,7 +14,7 @@ import type { RootStackParamList } from '../navigation/AppNavigator';
 
 export default function HomeScreen() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
+    const [refreshing, setRefreshing] = useState(false);
     const handleSessions = async () => {
         navigation.navigate('SessionLogs');
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -29,8 +30,18 @@ export default function HomeScreen() {
         resetSession
     } = useSharedDriveSession();
 
+    
+    const onRefresh = async () => {
+        setRefreshing(true);
+
+        setRefreshing(false);
+    };
+
+
     return (
-        <ScrollView style={HomeStyles.container}>
+        <ScrollView style={HomeStyles.container}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        >
             <StartSessionComp
                 isStart={isStart}
                 elapsed={elapsed}
@@ -49,7 +60,7 @@ export default function HomeScreen() {
                     </Pressable>
                 </View>
 
-                <DriveSessionList limit={3} />
+                <DriveSessionList limit={5} />
             </View>
         </ScrollView>
     );
