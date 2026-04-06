@@ -133,7 +133,7 @@ export default function LiveMapModal({
 const styles = StyleSheet.create({
     fullScreenContainer: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#000', // darker for contrast
     },
 
     fullScreenMap: {
@@ -145,46 +145,48 @@ const styles = StyleSheet.create({
         top: 60,
         left: 16,
         right: 16,
-        gap: 12,
+        gap: 14,
     },
 
     elapsedText: {
         alignSelf: 'center',
-        backgroundColor: 'rgba(255,255,255,0.95)',
-        paddingHorizontal: 16,
-        paddingVertical: 10,
+        backgroundColor: 'rgba(20,20,20,0.85)',
+        paddingHorizontal: 20,
+        paddingVertical: 12,
         borderRadius: 999,
-        fontSize: 28,
-        fontWeight: '800',
-        color: '#111',
+        fontSize: 26,
+        fontWeight: '900',
+        color: '#fff',
+        letterSpacing: 1,
     },
 
     statsRow: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         gap: 10,
     },
 
     statPill: {
-        backgroundColor: 'rgba(255,255,255,0.95)',
-        borderRadius: 18,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        minWidth: 120,
+        flex: 1,
+        backgroundColor: 'rgba(20,20,20,0.85)',
+        borderRadius: 20,
+        paddingVertical: 14,
         alignItems: 'center',
     },
 
     statLabel: {
-        fontSize: 12,
-        color: '#666',
+        fontSize: 11,
+        color: '#aaa',
         fontWeight: '600',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
     },
 
     statValue: {
-        fontSize: 18,
-        color: '#111',
-        fontWeight: '800',
-        marginTop: 2,
+        fontSize: 20,
+        color: '#fff',
+        fontWeight: '900',
+        marginTop: 4,
     },
 
     bottomOverlay: {
@@ -195,50 +197,45 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 10,
+        gap: 12,
     },
 
     closeBtn: {
         width: 56,
         height: 56,
         borderRadius: 999,
-        backgroundColor: 'rgba(255,255,255,0.96)',
+        backgroundColor: 'rgba(255,255,255,0.9)',
         justifyContent: 'center',
         alignItems: 'center',
+        elevation: 5,
     },
 
     controlBtn: {
-        width: 72,
-        height: 72,
+        width: 80,
+        height: 80,
         borderRadius: 999,
-        backgroundColor: '#111',
+        backgroundColor: '#ff3b30', // red accent (record vibe)
         justifyContent: 'center',
         alignItems: 'center',
+        elevation: 8,
     },
 
     finishBtn: {
         flex: 1,
         height: 56,
         borderRadius: 999,
-        backgroundColor: 'rgba(255,255,255,0.96)',
+        backgroundColor: '#fff',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
+        elevation: 5,
     },
 
     finishText: {
-        fontSize: 16,
-        fontWeight: '800',
+        fontSize: 15,
+        fontWeight: '900',
         color: '#111',
-    },
-
-    resetBtn: {
-        width: 56,
-        height: 56,
-        borderRadius: 999,
-        backgroundColor: '#2b2328',
-        justifyContent: 'center',
-        alignItems: 'center',
+        letterSpacing: 0.5,
     },
 });

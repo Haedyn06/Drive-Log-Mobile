@@ -27,10 +27,10 @@ export default function NewSessionScreen() {
 
         handleSession, handleEndSession, handleSaveSession, resetSession,
 
-        // ADD THESE 👇
         startLocationLabel,
         endLocationLabel,
         carType,
+        notes, setNotes,
 
         setStartLocationLabel,
         setEndLocationLabel,
@@ -165,6 +165,8 @@ export default function NewSessionScreen() {
                 setEndLocationLabel={setEndLocationLabel}
                 carType={carType}
                 setCarType={setCarType}
+                notes={notes}
+                setNotes={setNotes}
                 onClose={() => setTitleModalVisible(false)}
                 onSave={handleSaveSession}
             />

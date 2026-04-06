@@ -41,7 +41,8 @@ export function useDriveSession() {
     const [startLocationLabel, setStartLocationLabel] = useState('');
     const [endLocationLabel, setEndLocationLabel] = useState('');
     const [carType, setCarType] = useState('');
-
+    const [notes, setNotes] = useState('');
+    
     const { startTracking, stopTracking } = useLocationTracking({
         setSpeedKmh,
         setMaxSpeedKmh,
@@ -175,6 +176,7 @@ export function useDriveSession() {
                 maxAltitudeMeters,
                 altitudeGainMeters,
                 route: compressedRoute,
+                notes: notes.trim(),
             };
 
             console.log('5. session object created');
@@ -223,6 +225,7 @@ export function useDriveSession() {
         setStartLocationLabel('');
         setEndLocationLabel('');
         setCarType('');
+        setNotes('');
     }
 
     return {
@@ -233,11 +236,11 @@ export function useDriveSession() {
         locEnd, timeStampEnd,
         titleModalVisible, sessionTitle,
 
-        // ADD THESE 👇
         startLocationLabel,
         endLocationLabel,
         carType,
-
+        notes,
+        setNotes,
         // Set
         setSpeedKmh, setRoute, setDistanceMeters,
         setSessionTitle, setTitleModalVisible,

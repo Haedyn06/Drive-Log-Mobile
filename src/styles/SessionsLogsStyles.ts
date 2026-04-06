@@ -1,32 +1,46 @@
 import { StyleSheet } from 'react-native';
 
 export const SessionLogsStyles = StyleSheet.create({
-    sessionLogsFrame: {
-        margin: 15
-
-
+    screen: {
+        flex: 1,
+        backgroundColor: '#f5f5f7',
     },
 
-
-    sessionList: {
-        // margin: 15
-
-
+    content: {
+        paddingTop: 18,
+        paddingBottom: 36,
     },
 
-    recentHeading: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
+    header: {
+        paddingHorizontal: 20,
+        marginBottom: 10,
     },
 
-    recentTitle: {
-        fontSize: 24,
+    eyebrow: {
+        fontSize: 12,
         fontWeight: '700',
-        marginBottom: 16,
-        marginTop: 10
+        color: '#6b7280',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        marginBottom: 6,
     },
 
+    title: {
+        fontSize: 28,
+        fontWeight: '800',
+        color: '#111827',
+        letterSpacing: -0.5,
+    },
 
+    subtitle: {
+        marginTop: 6,
+        fontSize: 14,
+        color: '#6b7280',
+        lineHeight: 20,
+    },
+
+    listSection: {
+        marginTop: 8,
+        margin: 15
+    },
 });

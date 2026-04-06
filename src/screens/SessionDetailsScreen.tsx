@@ -57,7 +57,9 @@ export default function SessionDetailsScreen() {
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Saved At</Text>
-                    <Text style={SessionDetailsStyles.detailValue}>{formatDateTime(new Date(session.date).getTime())}</Text>
+                    <Text style={SessionDetailsStyles.detailValue}>
+                        {formatDateTime(new Date(session.date).getTime())}
+                    </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
@@ -76,7 +78,9 @@ export default function SessionDetailsScreen() {
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Duration</Text>
-                    <Text style={SessionDetailsStyles.detailValue}>{formatDuration(session.durationMs)}</Text>
+                    <Text style={SessionDetailsStyles.detailValue}>
+                        {formatDuration(session.durationMs)}
+                    </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
@@ -88,27 +92,37 @@ export default function SessionDetailsScreen() {
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Average Speed</Text>
-                    <Text style={SessionDetailsStyles.detailValue}>{session.averageSpeedKmh.toFixed(1)} km/h</Text>
+                    <Text style={SessionDetailsStyles.detailValue}>
+                        {session.averageSpeedKmh.toFixed(1)} km/h
+                    </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Max Speed</Text>
-                    <Text style={SessionDetailsStyles.detailValue}>{(session.maxSpeedKmh ?? 0).toFixed(1)} km/h</Text>
+                    <Text style={SessionDetailsStyles.detailValue}>
+                        {(session.maxSpeedKmh ?? 0).toFixed(1)} km/h
+                    </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Route Points</Text>
-                    <Text style={SessionDetailsStyles.detailValue}>{session.route.length}</Text>
+                    <Text style={SessionDetailsStyles.detailValue}>
+                        {session.route.length}
+                    </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Altitude Gained</Text>
-                    <Text style={SessionDetailsStyles.detailValue}>{(session.altitudeGainMeters ?? 0).toFixed(1)}m</Text>
+                    <Text style={SessionDetailsStyles.detailValue}>
+                        {(session.altitudeGainMeters ?? 0).toFixed(1)} m
+                    </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Max Altitude</Text>
-                    <Text style={SessionDetailsStyles.detailValue}>{(session.maxAltitudeMeters ?? 0).toFixed(1)}m </Text>
+                    <Text style={SessionDetailsStyles.detailValue}>
+                        {(session.maxAltitudeMeters ?? 0).toFixed(1)} m
+                    </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
@@ -117,6 +131,15 @@ export default function SessionDetailsScreen() {
                         {session.carType?.trim() ? session.carType : '--'}
                     </Text>
                 </View>
+
+                {/* ✅ NOTES SECTION */}
+                <View style={SessionDetailsStyles.detailRow}>
+                    <Text style={SessionDetailsStyles.detailLabel}>Notes</Text>
+                </View>
+
+                <Text style={SessionDetailsStyles.detailValue}>
+                    {session.notes?.trim() ? session.notes : 'No notes'}
+                </Text>
             </View>
 
             <View style={SessionDetailsStyles.detailsCard}>
@@ -170,6 +193,4 @@ export default function SessionDetailsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-
-});
+const styles = StyleSheet.create({});

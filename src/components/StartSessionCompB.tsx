@@ -14,8 +14,8 @@ type StartSessionCompBProps = {
     locStart: Coord | null;
     locEnd: Coord | null;
     route: Coord[];
-    handleSession: () => void;
-    handleEndSession: () => void;
+    handleSession: () => Promise<void> | void;
+    handleEndSession: () => Promise<void> | void;
     resetSession: () => void;
 };
 
@@ -37,6 +37,7 @@ export default function StartSessionCompB({
 
     const hasSession = isStart || isPaused || elapsed > 0;
     const mainIcon = isStart ? 'pause' : 'play';
+    const statusLabel = isStart ? 'LIVE' : isPaused ? 'PAUSED' : 'READY';
 
     const handleMainPress = async () => {
         if (!isStart && !isPaused && elapsed === 0) {
@@ -60,26 +61,55 @@ export default function StartSessionCompB({
 
     return (
         <View style={styles.wrapper}>
-            <View style={styles.card}>
-                <Pressable style={styles.mainPill} onPress={handleMainPress}>
-                    <Ionicons
-                        name={mainIcon}
-                        size={58}
-                        color="#ffffff"
-                        style={styles.mainIcon}
-                    />
-                </Pressable>
+            <View style={styles.topFrame}>
+                <View style={styles.leftStack}>
+                    <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
+                        <View style={styles.liveWrap}>
+                            <View
+                                style={[
+                                    styles.liveDot,
+                                    isStart
+                                        ? styles.liveDotLive
+                                        : isPaused
+                                            ? styles.liveDotPaused
+                                            : styles.liveDotReady,
+                                ]}
+                            />
+                            <Text style={styles.liveText}>{statusLabel}</Text>
+                        </View>
+
+                        <Pressable
+                            style={styles.mapBtn}
+                            onPress={() => setMapVisible(true)}
+                        >
+                                <Ionicons name="map-outline" size={22} color="#1e293b" />
+                        </Pressable>
+                    </View>
+
+
+                    <Pressable style={styles.playBtn} onPress={handleMainPress}>
+                        <View style={styles.playInner}>
+                            <Ionicons name={mainIcon} size={55} color="#fff" />
+                        </View>
+                    </Pressable>
+                </View>
             </View>
 
             {hasSession && (
                 <View style={styles.bottomRow}>
-                    <Pressable style={[styles.bottomBtn, styles.finishBtn]} onPress={handleFinishAndClose}>
-                        <Ionicons name="flag-outline" size={20} color="#111" />
+                    <Pressable
+                        style={[styles.actionBtn, styles.finishBtn]}
+                        onPress={handleFinishAndClose}
+                    >
+                        <Ionicons name="flag-outline" size={18} color="#15803d" />
                         <Text style={styles.finishText}>Finish</Text>
                     </Pressable>
 
-                    <Pressable style={[styles.bottomBtn, styles.resetBtn]} onPress={handleResetAndClose}>
-                        <Ionicons name="refresh-outline" size={20} color="#fff" />
+                    <Pressable
+                        style={[styles.actionBtn, styles.resetBtn]}
+                        onPress={handleResetAndClose}
+                    >
+                        <Ionicons name="refresh-outline" size={18} color="#dc2626" />
                         <Text style={styles.resetText}>Reset</Text>
                     </Pressable>
                 </View>
@@ -108,39 +138,102 @@ export default function StartSessionCompB({
 const styles = StyleSheet.create({
     wrapper: {
         marginHorizontal: 18,
-        marginTop: 12,
-        marginBottom: 18,
+        marginTop: 14,
+        marginBottom: 20,
     },
 
-    card: {
-        borderRadius: 20,
-        paddingHorizontal: 18,
-        paddingTop: 16,
-        paddingBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.16,
-        shadowRadius: 5,
+    topFrame: {
+        flexDirection: 'row',
+        alignItems: 'stretch',
+        gap: 12,
+        backgroundColor: '#ffffff',
+        borderRadius: 28,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
+        shadowColor: '#0f172a',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.05,
+        shadowRadius: 16,
+        elevation: 4,
+    },
+
+    leftStack: {
+        flex: 1,
+        gap: 10,
+    },
+
+    liveWrap: {
+        alignSelf: 'flex-start',
+        minHeight: 34,
+        borderRadius: 999,
+        backgroundColor: '#f8fafc',
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 7,
+    },
+
+    liveDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 999,
+    },
+
+    liveDotLive: {
+        backgroundColor: '#22c55e',
+    },
+
+    liveDotPaused: {
+        backgroundColor: '#f59e0b',
+    },
+
+    liveDotReady: {
+        backgroundColor: '#94a3b8',
+    },
+
+    liveText: {
+        fontSize: 11,
+        fontWeight: '800',
+        color: '#0f172a',
+        letterSpacing: 0.8,
+    },
+
+    playBtn: {
+        width: '100%',
+        height: 80,
+        borderRadius: 24,
+    },
+
+    playInner: {
+        flex: 1,
+        borderRadius: 24,
+        backgroundColor: '#2563eb',
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#2563eb',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.18,
+        shadowRadius: 14,
         elevation: 5,
     },
 
-    mainPill: {
-        height: 82,
-        borderRadius: 999,
-        backgroundColor: '#000000',
+    mapBtn: {
+        width: 50,
+        borderRadius: 24,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.14,
-        shadowRadius: 4,
-        elevation: 3,
+        gap: 10,
     },
 
-    mainIcon: {
-        textShadowColor: 'rgba(0,0,0,0.25)',
-        textShadowOffset: { width: 0, height: 1 },
-        textShadowRadius: 2,
+    mapText: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: '#334155',
     },
 
     bottomRow: {
@@ -149,40 +242,41 @@ const styles = StyleSheet.create({
         marginTop: 14,
     },
 
-    bottomBtn: {
+    actionBtn: {
         flex: 1,
-        borderRadius: 999,
-        paddingVertical: 15,
+        height: 54,
+        borderRadius: 18,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.14,
-        shadowRadius: 4,
-        elevation: 4,
+        borderWidth: 1,
+        shadowColor: '#0f172a',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.04,
+        shadowRadius: 12,
+        elevation: 2,
     },
 
     finishBtn: {
-        backgroundColor: '#ffffff',
-        borderWidth: 1,
-        borderColor: '#2b2328',
+        backgroundColor: '#ecfdf5',
+        borderColor: '#bbf7d0',
     },
 
     resetBtn: {
-        backgroundColor: '#2b2328',
+        backgroundColor: '#fef2f2',
+        borderColor: '#fecaca',
     },
 
     finishText: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '800',
-        color: '#111',
+        color: '#15803d',
     },
 
     resetText: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '800',
-        color: '#fff',
+        color: '#dc2626',
     },
 });
