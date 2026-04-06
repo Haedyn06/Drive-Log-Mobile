@@ -100,6 +100,16 @@ export default function SessionDetailsScreen() {
                     <Text style={SessionDetailsStyles.detailLabel}>Route Points</Text>
                     <Text style={SessionDetailsStyles.detailValue}>{session.route.length}</Text>
                 </View>
+
+                <View style={SessionDetailsStyles.detailRow}>
+                    <Text style={SessionDetailsStyles.detailLabel}>Altitude Gained</Text>
+                    <Text style={SessionDetailsStyles.detailValue}>{(session.altitudeGainMeters ?? 0).toFixed(1)}m</Text>
+                </View>
+
+                <View style={SessionDetailsStyles.detailRow}>
+                    <Text style={SessionDetailsStyles.detailLabel}>Max Altitude</Text>
+                    <Text style={SessionDetailsStyles.detailValue}>{(session.maxAltitudeMeters ?? 0).toFixed(1)}m </Text>
+                </View>
             </View>
 
             <View style={SessionDetailsStyles.detailsCard}>

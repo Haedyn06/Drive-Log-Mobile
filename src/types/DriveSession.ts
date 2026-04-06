@@ -12,5 +12,9 @@ export type DriveSession = {
     distanceMeters: number;
     averageSpeedKmh: number;
     maxSpeedKmh: number;
+
+    maxAltitudeMeters: number;
+    altitudeGainMeters: number;
+
     route: Coord[];
 };

@@ -1,12 +1,9 @@
 import { StyleSheet } from 'react-native';
 
-export const HomeStyles = StyleSheet.create({
-    container: {
+export const SessionLogsStyles = StyleSheet.create({
 
-    },
-
-    recentList: {
-        padding: 15
+    sessionList: {
+        margin: 15
 
 
     },
@@ -24,5 +21,6 @@ export const HomeStyles = StyleSheet.create({
         marginBottom: 16,
         marginTop: 10
     },
+
 
 });

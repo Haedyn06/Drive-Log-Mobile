@@ -15,9 +15,7 @@ export const getSessions = async (limit?: number) => {
         const data = await AsyncStorage.getItem(sessionStorage);
         const sessions = data ? JSON.parse(data) : [];
 
-        const sorted = [...sessions].reverse();
-
-        return limit ? sorted.slice(0, limit) : sorted;
+        return limit ? sessions.slice(0, limit) : sessions;
     } catch (e) {
         console.log('Error getting sessions', e);
         return [];
@@ -28,6 +26,16 @@ export const addSession = async (session: any) => {
     const sessions = await getSessions();
     sessions.push(session);
     await saveSessions(sessions);
+};
+
+export const deleteSession = async (id: string) => {
+    try {
+        const sessions = await getSessions();
+        const updatedSessions = sessions.filter((session: any) => session.id !== id);
+        await saveSessions(updatedSessions);
+    } catch (e) {
+        console.log("Error deleting session", e);
+    }
 };
 
 export const clearSessions = async () => {

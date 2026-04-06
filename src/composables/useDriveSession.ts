@@ -33,12 +33,20 @@ export function useDriveSession() {
     const [titleModalVisible, setTitleModalVisible] = useState(false);
     const [sessionTitle, setSessionTitle] = useState('');
 
+    const [altitudeMeters, setAltitudeMeters] = useState(0);
+    const [maxAltitudeMeters, setMaxAltitudeMeters] = useState(0);
+    const [altitudeGainMeters, setAltitudeGainMeters] = useState(0);
+
     const { startTracking, stopTracking } = useLocationTracking({
         setSpeedKmh,
         setMaxSpeedKmh,
         setRoute,
-        setDistanceMeters
+        setDistanceMeters,
+        setAltitudeMeters,
+        setMaxAltitudeMeters,
+        setAltitudeGainMeters
     });
+
     // Use Effects
     useEffect(() => {
         if (!isStart || isPaused || timeStampStart === null) return;
@@ -156,6 +164,9 @@ export function useDriveSession() {
                 distanceMeters,
                 averageSpeedKmh: avgSpeed,
                 maxSpeedKmh,
+                altitudeMeters,
+                maxAltitudeMeters,
+                altitudeGainMeters,
                 route: compressedRoute,
             };
 
@@ -196,7 +207,7 @@ export function useDriveSession() {
     return {
         // Vars
         isStart, locStart, isPaused, timeStampStart, //start
-        elapsed, speedKmh, distanceMeters, route, //live
+        elapsed, speedKmh, distanceMeters, route, altitudeMeters, maxAltitudeMeters, altitudeGainMeters, //live
         locEnd, timeStampEnd, //end
         titleModalVisible, sessionTitle, //save
 

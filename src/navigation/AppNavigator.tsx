@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import NavigationBar from './NavBar';
 import SessionDetailsScreen from '../screens/SessionDetailsScreen';
+import SessionsLogsScreen from '../screens/SessionLogsScreen';
 import type { DriveSession } from '../types/DriveSession';
 
 import { DriveSessionProvider } from '../context/DriveSessionContext';
@@ -10,6 +11,7 @@ import { DriveSessionProvider } from '../context/DriveSessionContext';
 export type RootStackParamList = {
     MainTabs: undefined;
     SessionDetails: { session: DriveSession };
+    SessionLogs: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -22,6 +24,7 @@ export default function AppNavigator() {
                 <Stack.Navigator>
                     <Stack.Screen name="MainTabs" component={NavigationBar} options={{ headerShown: false }} />
                     <Stack.Screen name="SessionDetails" component={SessionDetailsScreen} options={{ title: 'Session Details' }} />
+                    <Stack.Screen name="SessionLogs" component={SessionsLogsScreen} options={{ title: 'Sessions' }} />
                 </Stack.Navigator>
             </NavigationContainer>
 

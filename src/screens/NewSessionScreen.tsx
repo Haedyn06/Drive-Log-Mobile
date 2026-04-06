@@ -18,7 +18,7 @@ import { NewSessionStyles } from '../styles/NewSessionStyle';
 export default function NewSessionScreen() {
     const {
         isStart, locStart, isPaused,
-        elapsed, speedKmh, distanceMeters, route,
+        elapsed, speedKmh, distanceMeters, route, altitudeMeters,
         locEnd,
         titleModalVisible, sessionTitle,
         setTitleModalVisible, setSessionTitle,
@@ -92,6 +92,13 @@ export default function NewSessionScreen() {
                         <View style={NewSessionStyles.statCard}>
                             <Text style={NewSessionStyles.statLabel}>Speed</Text>
                             <Text style={NewSessionStyles.statValue}>{speedKmh.toFixed(0)}km/h</Text>
+                        </View>
+
+                        <View style={NewSessionStyles.statCard}>
+                            <Text style={NewSessionStyles.statLabel}>Altitude</Text>
+                            <Text style={NewSessionStyles.statValue}>
+                                {altitudeMeters.toFixed(0)}m
+                            </Text>
                         </View>
                     </View>
 

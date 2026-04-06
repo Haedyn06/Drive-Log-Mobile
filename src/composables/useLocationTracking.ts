@@ -10,13 +10,14 @@ type UseLocationTrackingProps = {
     setMaxSpeedKmh: React.Dispatch<React.SetStateAction<number>>;
     setRoute: React.Dispatch<React.SetStateAction<Coord[]>>;
     setDistanceMeters: React.Dispatch<React.SetStateAction<number>>;
+    setAltitudeMeters: React.Dispatch<React.SetStateAction<number>>;
+    setMaxAltitudeMeters: React.Dispatch<React.SetStateAction<number>>;
+    setAltitudeGainMeters: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export function useLocationTracking({
-    setSpeedKmh,
-    setMaxSpeedKmh,
-    setRoute,
-    setDistanceMeters
+    setSpeedKmh, setMaxSpeedKmh, setRoute, setDistanceMeters, 
+    setAltitudeMeters, setMaxAltitudeMeters, setAltitudeGainMeters
 }: UseLocationTrackingProps) {
     const [watchSubscription, setWatchSubscription] =
         useState<Location.LocationSubscription | null>(null);
@@ -40,9 +41,12 @@ export function useLocationTracking({
                 distanceInterval: 1
             },
             (location) => {
+                const altitude = location.coords.altitude ?? 0;
+
                 const newPoint = {
                     latitude: location.coords.latitude,
-                    longitude: location.coords.longitude
+                    longitude: location.coords.longitude,
+                    altitude
                 };
 
                 const rawSpeed = location.coords.speed ?? 0;
@@ -50,6 +54,9 @@ export function useLocationTracking({
 
                 setSpeedKmh(safeSpeed);
                 setMaxSpeedKmh((prev) => Math.max(prev, safeSpeed));
+
+                setAltitudeMeters(altitude);
+                setMaxAltitudeMeters((prev) => Math.max(prev, altitude));
 
                 setRoute((prevRoute) => {
                     if (prevRoute.length === 0) return [newPoint];
@@ -59,6 +66,14 @@ export function useLocationTracking({
 
                     if (segmentDistance >= 5) {
                         setDistanceMeters((prev) => prev + segmentDistance);
+
+                        const lastAltitude = lastPoint.altitude ?? 0;
+                        const altitudeDiff = altitude - lastAltitude;
+
+                        if (altitudeDiff > 0) {
+                            setAltitudeGainMeters((prev) => prev + altitudeDiff);
+                        }
+
                         return [...prevRoute, newPoint];
                     }
 
