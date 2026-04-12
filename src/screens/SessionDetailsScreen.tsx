@@ -10,11 +10,31 @@ import { SessionDetailsStyles } from '../styles/SessionDetailsStyle';
 
 import DriveSessionMap from '../components/DriveSessionMap';
 
+import { useEffect, useState } from 'react';
+import { getCars } from '../services/carService';
+import type { CarInfo } from '../types/CarInfo';
+
 type SessionDetailsRouteProp = RouteProp<RootStackParamList, 'SessionDetails'>;
 
 export default function SessionDetailsScreen() {
     const route = useRoute<SessionDetailsRouteProp>();
     const { session } = route.params;
+
+    const [car, setCar] = useState<CarInfo | null>(null);
+
+    useEffect(() => {
+        const loadCar = async () => {
+            try {
+                const cars = await getCars();
+                const foundCar = cars.find((c) => c.id === session.carId) ?? null;
+                setCar(foundCar);
+            } catch (e) {
+                console.log('Failed to load car', e);
+            }
+        };
+
+        loadCar();
+    }, [session.carId]);
 
     return (
         <ScrollView contentContainerStyle={SessionDetailsStyles.content}>
@@ -126,13 +146,12 @@ export default function SessionDetailsScreen() {
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
-                    <Text style={SessionDetailsStyles.detailLabel}>Car Type</Text>
+                    <Text style={SessionDetailsStyles.detailLabel}>Car</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
-                        {session.carType?.trim() ? session.carType : '--'}
+                        {car ? `${car.year} ${car.brand} ${car.model}` : '--'}
                     </Text>
                 </View>
 
-                {/* ✅ NOTES SECTION */}
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Notes</Text>
                 </View>

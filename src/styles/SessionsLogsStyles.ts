@@ -1,6 +1,24 @@
 import { StyleSheet } from 'react-native';
 
 export const SessionLogsStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+
+    filterBar: {
+        padding: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 12
+    },
+
+    filterBtn: {
+        borderWidth: 1,
+        padding: 5,
+        borderRadius: 16
+
+    },
+
     screen: {
         flex: 1,
         backgroundColor: '#f5f5f7',

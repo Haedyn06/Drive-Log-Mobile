@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Text, View, Pressable, ScrollView, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -15,6 +15,7 @@ import type { RootStackParamList } from '../navigation/AppNavigator';
 export default function HomeScreen() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [refreshing, setRefreshing] = useState(false);
+
     const handleSessions = async () => {
         navigation.navigate('SessionLogs');
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -30,7 +31,7 @@ export default function HomeScreen() {
         resetSession
     } = useSharedDriveSession();
 
-    
+
     const onRefresh = async () => {
         setRefreshing(true);
 
@@ -54,7 +55,7 @@ export default function HomeScreen() {
 
             <View style={HomeStyles.recentList}>
                 <View style={HomeStyles.recentHeading}>
-                    <Text style={HomeStyles.recentTitle}>Your Recents</Text>
+                    <Text style={HomeStyles.recentTitle}>Recent Drives</Text>
                     <Pressable onPress={handleSessions}>
                         <Text style={{ textDecorationLine: 'underline' }}>See All</Text>
                     </Pressable>

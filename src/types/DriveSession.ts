@@ -11,7 +11,7 @@ export type DriveSession = {
 
     startLocationLabel?: string;
     endLocationLabel?: string;
-    carType?: string;
+    carId?: string;
     notes?: string;
 
     durationMs: number;

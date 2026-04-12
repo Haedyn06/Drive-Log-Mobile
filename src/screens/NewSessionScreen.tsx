@@ -1,13 +1,15 @@
-import { Text, View, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { Text, View, ScrollView, Pressable } from 'react-native';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { getSessions } from '../services/localStoreService';
+import { getCars } from '../services/carService';
+
 import type { DriveSession } from '../types/DriveSession';
+import type { CarInfo } from '../types/CarInfo';
 
 import { useSharedDriveSession } from '../context/DriveSessionContext';
 
-import StartSessionComp from '../components/StartSessionComp';
 import SaveSessionModal from '../components/SaveSession';
 import DriveSessionMap from '../components/DriveSessionMap';
 import RecentDriveSession from '../components/RecentDriveSession';
@@ -25,36 +27,38 @@ export default function NewSessionScreen() {
 
         setTitleModalVisible, setSessionTitle,
 
-        handleSession, handleEndSession, handleSaveSession, resetSession,
+        handleSession, handleEndSession, handleSaveSession, resetSession, handleCancelSave,
 
         startLocationLabel,
         endLocationLabel,
-        carType,
+        selectedCarId,
         notes, setNotes,
 
         setStartLocationLabel,
         setEndLocationLabel,
-        setCarType
-
+        setSelectedCarId
     } = useSharedDriveSession();
-
+    
+    const [cars, setCars] = useState<CarInfo[]>([]);
     const [recentSession, setRecentSession] = useState<DriveSession | null>(null);
     const [routeModalVisible, setRouteModalVisible] = useState(false);
 
-
     useFocusEffect(
         useCallback(() => {
-            async function loadRecentSession() {
+            async function loadData() {
                 try {
-                    const data = await getSessions();
-                    const sorted = [...data].reverse();
+                    const sessionData = await getSessions();
+                    const sorted = [...sessionData].reverse();
                     setRecentSession(sorted.length > 0 ? sorted[0] : null);
+
+                    const carData = await getCars();
+                    setCars(carData);
                 } catch (e) {
-                    console.log('Failed loading recent session', e);
+                    console.log('Failed loading data', e);
                 }
             }
 
-            loadRecentSession();
+            loadData();
         }, [])
     );
 
@@ -155,21 +159,22 @@ export default function NewSessionScreen() {
                 </>
             )}
 
-            <SaveSessionModal
-                visible={titleModalVisible}
-                sessionTitle={sessionTitle}
-                setSessionTitle={setSessionTitle}
-                startLocationLabel={startLocationLabel}
-                setStartLocationLabel={setStartLocationLabel}
-                endLocationLabel={endLocationLabel}
-                setEndLocationLabel={setEndLocationLabel}
-                carType={carType}
-                setCarType={setCarType}
-                notes={notes}
-                setNotes={setNotes}
-                onClose={() => setTitleModalVisible(false)}
-                onSave={handleSaveSession}
-            />
+        <SaveSessionModal
+            visible={titleModalVisible}
+            sessionTitle={sessionTitle}
+            setSessionTitle={setSessionTitle}
+            startLocationLabel={startLocationLabel}
+            setStartLocationLabel={setStartLocationLabel}
+            endLocationLabel={endLocationLabel}
+            setEndLocationLabel={setEndLocationLabel}
+            cars={cars}
+            selectedCar={selectedCarId}
+            setSelectedCar={setSelectedCarId}
+            notes={notes}
+            setNotes={setNotes}
+            onClose={handleCancelSave}
+            onSave={handleSaveSession}
+        />
         </ScrollView>
     );
 }

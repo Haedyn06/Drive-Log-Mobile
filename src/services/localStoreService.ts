@@ -41,3 +41,100 @@ export const deleteSession = async (id: string) => {
 export const clearSessions = async () => {
     await AsyncStorage.removeItem(sessionStorage);
 };
+
+
+// Total Stats
+
+export const getTotalDistance = async () => {
+    try {
+        const sessions = await getSessions();
+
+        const totalMeters = sessions.reduce((sum: number, session: any) => {
+            return sum + (session.distanceMeters || 0);
+        }, 0);
+
+        return totalMeters; // keep meters
+    } catch (e) {
+        console.log("Error getting total distance", e);
+        return 0;
+    }
+};
+
+
+export const getTotalDriveTime = async () => {
+    try {
+        const sessions = await getSessions();
+
+        const totalMs = sessions.reduce((sum: number, session: any) => {
+            return sum + (session.durationMs || 0);
+        }, 0);
+
+        return totalMs;
+    } catch (e) {
+        console.log("Error getting total drive time", e);
+        return 0;
+    }
+};
+
+export const getTotalElevationGain = async () => {
+    try {
+        const sessions = await getSessions();
+
+        const totalGain = sessions.reduce((sum: number, session: any) => {
+            return sum + (session.altitudeGainMeters || 0);
+        }, 0);
+
+        return totalGain; // meters
+    } catch (e) {
+        console.log("Error getting elevation gain", e);
+        return 0;
+    }
+};
+
+
+
+// High Record Sessions
+
+export const getMaxSpeedSession = async () => {
+    try {
+        const sessions = await getSessions();
+
+        if (!sessions.length) return null;
+
+        const bestSession = sessions.reduce((best: any, current: any) => {
+            if (!best) return current;
+
+            return (current.maxSpeedKmh || 0) > (best.maxSpeedKmh || 0)
+                ? current
+                : best;
+        }, null);
+
+        return bestSession;
+    } catch (e) {
+        console.log("Error finding max speed session", e);
+        return null;
+    }
+};
+
+
+export const getLongestDistanceSession = async () => {
+    try {
+        const sessions = await getSessions();
+
+        if (!sessions.length) return null;
+
+        const longest = sessions.reduce((best: any, current: any) => {
+            if (!best) return current;
+
+            return (current.distanceMeters || 0) > (best.distanceMeters || 0)
+                ? current
+                : best;
+        }, null);
+
+        return longest;
+    } catch (e) {
+        console.log("Error finding longest session", e);
+        return null;
+    }
+};
+

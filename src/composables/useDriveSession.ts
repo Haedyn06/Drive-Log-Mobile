@@ -40,7 +40,7 @@ export function useDriveSession() {
 
     const [startLocationLabel, setStartLocationLabel] = useState('');
     const [endLocationLabel, setEndLocationLabel] = useState('');
-    const [carType, setCarType] = useState('');
+    const [selectedCarId, setSelectedCarId] = useState('');
     const [notes, setNotes] = useState('');
     
     const { startTracking, stopTracking } = useLocationTracking({
@@ -168,7 +168,7 @@ export function useDriveSession() {
                 endLocation: locEnd,
                 startLocationLabel: startLocationLabel.trim(),
                 endLocationLabel: endLocationLabel.trim(),
-                carType: carType.trim(),
+                carId: selectedCarId || undefined,
                 durationMs: elapsed,
                 distanceMeters,
                 averageSpeedKmh: avgSpeed,
@@ -200,6 +200,12 @@ export function useDriveSession() {
         }
     };
 
+    const handleCancelSave = () => {
+        setTitleModalVisible(false);
+        setIsPaused(true);
+        setPauseTime(Date.now());
+    };
+
     function resetSession() {
         setSessionTitle('');
         setIsStart(false);
@@ -224,7 +230,7 @@ export function useDriveSession() {
 
         setStartLocationLabel('');
         setEndLocationLabel('');
-        setCarType('');
+        setSelectedCarId('');
         setNotes('');
     }
 
@@ -238,20 +244,20 @@ export function useDriveSession() {
 
         startLocationLabel,
         endLocationLabel,
-        carType,
+        selectedCarId,
         notes,
         setNotes,
         // Set
         setSpeedKmh, setRoute, setDistanceMeters,
         setSessionTitle, setTitleModalVisible,
 
-        // ADD THESE 👇
         setStartLocationLabel,
         setEndLocationLabel,
-        setCarType,
+        setSelectedCarId,
+        
 
         // Functions
-        handleSession, handleEndSession, handleSaveSession, resetSession
+        handleSession, handleEndSession, handleSaveSession, resetSession, handleCancelSave
     };
 }
 

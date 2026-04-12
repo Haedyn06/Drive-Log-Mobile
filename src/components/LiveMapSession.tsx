@@ -75,7 +75,7 @@ export default function LiveMapModal({
                     )}
 
                     {route.length > 1 && (
-                        <Polyline coordinates={route} strokeColor="#000000" strokeWidth={4} />
+                        <Polyline coordinates={route} strokeColor="#00a2ff" strokeWidth={6} />
                     )}
                 </MapView>
 

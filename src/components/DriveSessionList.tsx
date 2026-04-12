@@ -74,6 +74,7 @@ export default function DriveSessionList({ limit }: Props) {
         <View>
             {sessions.map((item) => (
                 <ReanimatedSwipeable
+                    key={item.id}
                     friction={1.2}
                     overshootRight
                     overshootFriction={2.5}
