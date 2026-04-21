@@ -9,6 +9,7 @@ import { useLocationTracking } from './useLocationTracking';
 
 import { Coord } from '../types/Coord';
 
+import type { SessionCheckpoint } from '../types/SessionCheckpoint';
 
 export function useDriveSession() {
 
@@ -42,6 +43,9 @@ export function useDriveSession() {
     const [endLocationLabel, setEndLocationLabel] = useState('');
     const [selectedCarId, setSelectedCarId] = useState('');
     const [notes, setNotes] = useState('');
+
+    const [checkpoints, setCheckpoints] = useState<SessionCheckpoint[]>([]);
+
     
     const { startTracking, stopTracking } = useLocationTracking({
         setSpeedKmh,
@@ -177,6 +181,7 @@ export function useDriveSession() {
                 altitudeGainMeters,
                 route: compressedRoute,
                 notes: notes.trim(),
+                checkpoints: checkpoints
             };
 
             console.log('5. session object created');
@@ -232,7 +237,28 @@ export function useDriveSession() {
         setEndLocationLabel('');
         setSelectedCarId('');
         setNotes('');
+        setCheckpoints([]);
     }
+
+    async function newCheckpoint(notes: string, types: SessionCheckpoint['type']) {
+        const location = await Location.getCurrentPositionAsync({});
+
+        const checkpoint: SessionCheckpoint = {
+            id: Date.now().toString(),
+            location: {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                altitude: location.coords.altitude ?? 0,
+            },
+            timestamp: Date.now(),
+            note: notes,
+            type: types || 'checkpoint',
+            distance: distanceMeters
+        };
+
+        setCheckpoints((prev) => [...prev, checkpoint]);
+    }
+
 
     return {
         // Vars
@@ -255,9 +281,10 @@ export function useDriveSession() {
         setEndLocationLabel,
         setSelectedCarId,
         
+        checkpoints,
 
         // Functions
-        handleSession, handleEndSession, handleSaveSession, resetSession, handleCancelSave
+        handleSession, handleEndSession, handleSaveSession, resetSession, handleCancelSave, newCheckpoint
     };
 }
 

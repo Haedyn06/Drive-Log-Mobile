@@ -7,12 +7,7 @@ type Props = {
     onCancel: () => void;
 };
 
-export default function ConfirmationPopup({
-    visible,
-    label,
-    onConfirm,
-    onCancel,
-}: Props) {
+export default function ConfirmationPopup({ visible, label, onConfirm, onCancel, }: Props) {
     return (
         <Modal
             transparent

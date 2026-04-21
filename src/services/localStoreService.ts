@@ -2,6 +2,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const sessionStorage = 'sessions';
 
+export type SessionSortType =
+    | 'newest'
+    | 'oldest'
+    | 'distance-desc'
+    | 'distance-asc'
+    | 'duration-desc'
+    | 'duration-asc';
+
 export const saveSessions = async (sessions: any[]) => {
     try {
         await AsyncStorage.setItem(sessionStorage, JSON.stringify(sessions));
@@ -10,12 +18,40 @@ export const saveSessions = async (sessions: any[]) => {
     }
 };
 
-export const getSessions = async (limit?: number) => {
+export const getSessions = async (
+    limit?: number,
+    sortBy: SessionSortType = 'newest'
+) => {
     try {
         const data = await AsyncStorage.getItem(sessionStorage);
         const sessions = data ? JSON.parse(data) : [];
 
-        return limit ? sessions.slice(0, limit) : sessions;
+        const sorted = [...sessions].sort((a: any, b: any) => {
+            switch (sortBy) {
+                case 'oldest':
+                    return (a.startTime || 0) - (b.startTime || 0);
+
+                case 'newest':
+                    return (b.startTime || 0) - (a.startTime || 0);
+
+                case 'distance-desc':
+                    return (b.distanceMeters || 0) - (a.distanceMeters || 0);
+
+                case 'distance-asc':
+                    return (a.distanceMeters || 0) - (b.distanceMeters || 0);
+
+                case 'duration-desc':
+                    return (b.durationMs || 0) - (a.durationMs || 0);
+
+                case 'duration-asc':
+                    return (a.durationMs || 0) - (b.durationMs || 0);
+
+                default:
+                    return (b.startTime || 0) - (a.startTime || 0);
+            }
+        });
+
+        return limit ? sorted.slice(0, limit) : sorted;
     } catch (e) {
         console.log('Error getting sessions', e);
         return [];

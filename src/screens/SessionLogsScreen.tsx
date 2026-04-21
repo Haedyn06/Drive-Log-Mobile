@@ -1,27 +1,86 @@
-import { Text, View, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { Text, View, ScrollView, Pressable } from 'react-native';
 
 import { SessionLogsStyles } from '../styles/SessionsLogsStyles';
 import DriveSessionList from '../components/DriveSessionList';
+import type { SessionSortType } from '../services/localStoreService';
 
 export default function SessionsLogsScreen() {
+    const [sortType, setSortType] = useState<SessionSortType>('newest');
+
     return (
         <View style={SessionLogsStyles.container}>
             <View style={SessionLogsStyles.filterBar}>
-                <Pressable style={SessionLogsStyles.filterBtn}>
-                    <Text>Newest</Text>
+                {/* Newest */}
+                <Pressable
+                    style={[
+                        SessionLogsStyles.filterBtn,
+                        sortType === 'newest' && SessionLogsStyles.activeFilterBtn
+                    ]}
+                    onPress={() => setSortType('newest')}
+                >
+                    <Text
+                        style={[
+                            SessionLogsStyles.filterText,
+                            sortType === 'newest' && SessionLogsStyles.activeFilterText
+                        ]}
+                    >
+                        Newest
+                    </Text>
                 </Pressable>
 
-                <Pressable style={SessionLogsStyles.filterBtn}>
-                    <Text>Oldest</Text>
+                {/* Oldest */}
+                <Pressable
+                    style={[
+                        SessionLogsStyles.filterBtn,
+                        sortType === 'oldest' && SessionLogsStyles.activeFilterBtn
+                    ]}
+                    onPress={() => setSortType('oldest')}
+                >
+                    <Text
+                        style={[
+                            SessionLogsStyles.filterText,
+                            sortType === 'oldest' && SessionLogsStyles.activeFilterText
+                        ]}
+                    >
+                        Oldest
+                    </Text>
                 </Pressable>
 
-
-                <Pressable style={SessionLogsStyles.filterBtn}>
-                    <Text>Furthest</Text>
+                {/* Furthest */}
+                <Pressable
+                    style={[
+                        SessionLogsStyles.filterBtn,
+                        sortType === 'distance-desc' && SessionLogsStyles.activeFilterBtn
+                    ]}
+                    onPress={() => setSortType('distance-desc')}
+                >
+                    <Text
+                        style={[
+                            SessionLogsStyles.filterText,
+                            sortType === 'distance-desc' && SessionLogsStyles.activeFilterText
+                        ]}
+                    >
+                        Furthest
+                    </Text>
                 </Pressable>
 
-                <Pressable style={SessionLogsStyles.filterBtn}>
-                    <Text>Longest</Text>
+                {/* Longest */}
+                <Pressable
+                    style={[
+                        SessionLogsStyles.filterBtn,
+                        sortType === 'duration-desc' && SessionLogsStyles.activeFilterBtn
+                    ]}
+                    onPress={() => setSortType('duration-desc')}
+                >
+                    <Text
+                        style={[
+                            SessionLogsStyles.filterText,
+                            sortType === 'duration-desc' && SessionLogsStyles.activeFilterText
+                        ]}
+                    >
+                        Longest
+                    </Text>
                 </Pressable>
             </View>
 
@@ -35,7 +94,7 @@ export default function SessionsLogsScreen() {
                 </View>
 
                 <View style={SessionLogsStyles.listSection}>
-                    <DriveSessionList />
+                    <DriveSessionList sortType={sortType} />
                 </View>
             </ScrollView>
         </View>

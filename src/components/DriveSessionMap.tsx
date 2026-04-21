@@ -11,6 +11,9 @@ import {
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import type { Coord } from '../types/Coord';
 
+import { SessionCheckpoint } from '../types/SessionCheckpoint';
+import { formatTimeOnly } from '../utils/format';
+
 type DriveSessionMapProps = {
     title?: string;
     isStart?: boolean;
@@ -20,6 +23,7 @@ type DriveSessionMapProps = {
     route: Coord[];
     mapStyle?: StyleProp<ViewStyle>;
     wrapperStyle?: StyleProp<ViewStyle>;
+    checkpoints?: SessionCheckpoint[];
     previewOnly?: boolean;
 };
 
@@ -32,6 +36,7 @@ export default function DriveSessionMap({
     route,
     mapStyle,
     wrapperStyle,
+    checkpoints,
     previewOnly = true,
 }: DriveSessionMapProps) {
     const [fullScreen, setFullScreen] = useState(false);
@@ -65,6 +70,16 @@ export default function DriveSessionMap({
                 <Marker coordinate={locEnd} title="End" pinColor="red" />
             )}
 
+            {checkpoints?.map((i) => (
+                <Marker
+                    key={i.id}
+                    coordinate={i.location}
+                    title={i.type ? `${i.type} (${i.distance ?? 0}m)` : "Checkpoint"}
+                    description={`${i.note || "No note"} • ${formatTimeOnly(i.timestamp)}`}
+                    pinColor="orange"
+                />
+            ))}
+            
             {route.length > 1 && (
                 <Polyline coordinates={route} strokeColor="#00a2ff" strokeWidth={6} />
             )}
@@ -115,6 +130,16 @@ export default function DriveSessionMap({
                             <Marker coordinate={locEnd} title="End" pinColor="red" />
                         )}
 
+                        {checkpoints?.map((i) => (
+                            <Marker
+                                key={i.id}
+                                coordinate={i.location}
+                                title={i.type ? `${i.type} (${i.distance ?? 0}m)` : "Checkpoint"}
+                                description={`${i.note || "No note"} • ${formatTimeOnly(i.timestamp)}`}
+                                pinColor="orange"
+                            />
+                        ))}
+                        
                         {route.length > 1 && (
                             <Polyline coordinates={route} strokeColor="#00a2ff" strokeWidth={6} />
                         )}

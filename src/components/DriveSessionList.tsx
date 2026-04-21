@@ -14,28 +14,27 @@ import type { DriveSession } from '../types/DriveSession';
 import DriveSessionCard from '../components/DriveSessionCard';
 
 import ConfirmationPopup from './ConfirmationPopup';
+import { SessionSortType } from '../services/localStoreService';
 
-type Props = {
+type DriveSessionListProps = {
     limit?: number;
+    sortType: SessionSortType;
 };
 
-export default function DriveSessionList({ limit }: Props) {
+export default function DriveSessionList({ limit, sortType }: DriveSessionListProps) {
     const [sessions, setSessions] = useState<DriveSession[]>([]);
     const [showPopup, setShowPopup] = useState(false);
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     const loadSessions = useCallback(async () => {
         try {
-            const data = await getSessions();
-            const sorted = [...data].reverse();
-            const limited = limit ? sorted.slice(0, limit) : sorted;
-            setSessions(limited);
+            const data = await getSessions(limit, sortType);
+            setSessions(data);
         } catch (e) {
             console.log('Failed loading sessions', e);
         }
-    }, [limit]);
+    }, [limit, sortType]);
 
     useFocusEffect(
         useCallback(() => {

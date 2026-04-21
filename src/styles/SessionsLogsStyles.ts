@@ -3,25 +3,40 @@ import { StyleSheet } from 'react-native';
 export const SessionLogsStyles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#f5f5f7',
     },
 
     filterBar: {
-        padding: 10,
-        display: 'flex',
+        paddingHorizontal: 16,
+        paddingTop: 12,
+        paddingBottom: 6,
         flexDirection: 'row',
-        gap: 12
+        gap: 10,
     },
 
     filterBtn: {
-        borderWidth: 1,
-        padding: 5,
-        borderRadius: 16
+        paddingVertical: 8,
+        paddingHorizontal: 14,
+        borderRadius: 999,
+        backgroundColor: '#e5e7eb',
+    },
 
+    activeFilterBtn: {
+        backgroundColor: '#111827',
+    },
+
+    filterText: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#111827',
+    },
+
+    activeFilterText: {
+        color: '#fff',
     },
 
     screen: {
         flex: 1,
-        backgroundColor: '#f5f5f7',
     },
 
     content: {
@@ -34,15 +49,6 @@ export const SessionLogsStyles = StyleSheet.create({
         marginBottom: 10,
     },
 
-    eyebrow: {
-        fontSize: 12,
-        fontWeight: '700',
-        color: '#6b7280',
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        marginBottom: 6,
-    },
-
     title: {
         fontSize: 28,
         fontWeight: '800',
@@ -50,15 +56,8 @@ export const SessionLogsStyles = StyleSheet.create({
         letterSpacing: -0.5,
     },
 
-    subtitle: {
-        marginTop: 6,
-        fontSize: 14,
-        color: '#6b7280',
-        lineHeight: 20,
-    },
-
     listSection: {
         marginTop: 8,
-        margin: 15
+        margin: 15,
     },
 });

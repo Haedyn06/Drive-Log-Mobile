@@ -4,9 +4,24 @@ import { useState } from 'react';
 import LiveMapModal from './LiveMapSession';
 
 import ConfirmationPopup from './ConfirmationPopup';
+import { Coord } from '../types/Coord';
+import { SessionCheckpoint } from '../types/SessionCheckpoint';
 
-import type { LiveSession } from '../types/LiveSession';
-
+export type StartSessionCompBProps = {
+    isStart: boolean;
+    isPaused: boolean;
+    elapsed: number;
+    speedKmh: number;
+    distanceMeters: number;
+    altitudeMeters: number;
+    locStart: Coord | null;
+    locEnd: Coord | null;
+    route: Coord[];
+    checkpoints: SessionCheckpoint[];
+    handleSession: () => Promise<void> | void;
+    handleEndSession: () => Promise<void> | void;
+    resetSession: () => void;
+};
 
 export default function StartSessionCompB({
     isStart,
@@ -20,8 +35,9 @@ export default function StartSessionCompB({
     route,
     handleSession,
     handleEndSession,
-    resetSession
-}: LiveSession) {
+    resetSession,
+    checkpoints
+}: StartSessionCompBProps) {
     const [mapVisible, setMapVisible] = useState(false);
 
     const hasSession = isStart || isPaused || elapsed > 0;
@@ -119,6 +135,7 @@ export default function StartSessionCompB({
                 handleEndSession={handleFinishAndClose}
                 resetSession={handleResetAndClose}
                 altitudeMeters={altitudeMeters}
+                checkpoints={checkpoints}
             />
 
             <ConfirmationPopup

@@ -1,9 +1,12 @@
 import { View, Text, StyleSheet, Pressable, Modal, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker, Polyline } from 'react-native-maps';
+import { useState } from 'react';
 
+import CheckpointFormModal from './CheckpointForm';
 
-
+import { SessionCheckpoint } from '../types/SessionCheckpoint';
+import { formatTimeOnly } from '../utils/format';
 import type { Coord } from '../types/Coord';
 
 type LiveMapModalProps = {
@@ -18,27 +21,22 @@ type LiveMapModalProps = {
     locStart: Coord | null;
     locEnd: Coord | null;
     route: Coord[];
+    checkpoints: SessionCheckpoint[];
     handleSession: () => void;
     handleEndSession: () => void;
     resetSession: () => void;
 };
 
-export default function LiveMapModal({
-    visible,
-    onClose,
-    isStart,
-    isPaused,
-    elapsed,
-    speedKmh,
-    distanceMeters,
-    altitudeMeters,
-    locStart,
-    locEnd,
-    route = [],
-    handleSession,
-    handleEndSession,
-    resetSession,
-}: LiveMapModalProps) {
+export default function LiveMapModal({ 
+        visible, onClose, isStart, isPaused, 
+        elapsed, speedKmh, distanceMeters, altitudeMeters, 
+        locStart, locEnd, route = [], 
+        handleSession, handleEndSession, resetSession, checkpoints
+
+    }: LiveMapModalProps)
+{
+    const [checkpointModalVisible, setCheckpointModalVisible] = useState(false);
+    
     const initialLat = route?.[0]?.latitude ?? locStart?.latitude ?? 51.0447;
     const initialLng = route?.[0]?.longitude ?? locStart?.longitude ?? -114.0719;
 
@@ -48,6 +46,15 @@ export default function LiveMapModal({
         await handleEndSession();
         onClose();
     };
+
+    function handleCheckpointForm() {
+        setCheckpointModalVisible(true);
+    }
+
+    function handleCloseCheckpointForm() {
+        setCheckpointModalVisible(false);
+    }
+
 
     return (
         <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
@@ -75,6 +82,16 @@ export default function LiveMapModal({
                     {locEnd && (
                         <Marker coordinate={locEnd} title="End" pinColor="red" />
                     )}
+
+                    {checkpoints.map((i) => (
+                        <Marker
+                            key={i.id}
+                            coordinate={i.location}
+                            title={i.type ? `${i.type} (${i.distance ?? 0}m)` : "Checkpoint"}
+                            description={`${i.note || "No note"} • ${formatTimeOnly(i.timestamp)}`}
+                            pinColor="orange"
+                        />
+                    ))}
 
                     {route.length > 1 && (
                         <Polyline coordinates={route} strokeColor="#00a2ff" strokeWidth={6} />
@@ -122,13 +139,20 @@ export default function LiveMapModal({
                         <Ionicons name={mainIcon} size={28} color="#fff" />
                     </Pressable>
 
+                    <Pressable style={styles.checkpntBtn} onPress={handleCheckpointForm}>
+                        <Ionicons name="add-circle-outline" size={30} color="#fff" />
+                    </Pressable>
+
                     <Pressable style={styles.finishBtn} onPress={handleFinish}>
                         <Ionicons name="flag-outline" size={22} color="#111" />
                         <Text style={styles.finishText}>Finish</Text>
                     </Pressable>
-
-
                 </View>
+
+                <CheckpointFormModal
+                    visible={checkpointModalVisible}
+                    onClose={handleCloseCheckpointForm}
+                />
             </View>
         </Modal>
     );
@@ -219,6 +243,17 @@ const styles = StyleSheet.create({
         height: 80,
         borderRadius: 999,
         backgroundColor: '#ff3b30', // red accent (record vibe)
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 8,
+    },
+
+
+    checkpntBtn: {
+        width: 60,
+        height: 60,
+        borderRadius: 999,
+        backgroundColor: '#3094ff', // red accent (record vibe)
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 8,

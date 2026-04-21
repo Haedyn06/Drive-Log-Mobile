@@ -300,6 +300,7 @@ export default function SessionDetailsScreen() {
                     route={session.route}
                     mapStyle={{ height: 260 }}
                     wrapperStyle={SessionDetailsStyles.mapWrapperOverride}
+                    checkpoints={session?.checkpoints}
                     previewOnly={true}
                 />
             </View>

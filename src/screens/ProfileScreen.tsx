@@ -170,13 +170,7 @@ export default function ProfileScreen() {
                 )}
             </View>
 
-            <View style={HomeStyles.recentList}>
-                <View style={HomeStyles.recentHeading}>
-                    <Text style={HomeStyles.recentTitle}>Saved</Text>
-                </View>
 
-                <SavedSessions limit={5} />
-            </View>
 
             <View>
                 <Pressable style={ProfileStyles.carAddBtn} onPress={() => setCarAddVis(true)}>
@@ -186,7 +180,13 @@ export default function ProfileScreen() {
 
             <CarAddForm visible={carAddVis} onClose={onClose} onSave={onSave} />
 
+            <View style={HomeStyles.recentList}>
+                <View style={HomeStyles.recentHeading}>
+                    <Text style={HomeStyles.recentTitle}>Saved</Text>
+                </View>
 
+                <SavedSessions limit={5} />
+            </View>
             
         </ScrollView>
     );

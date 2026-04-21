@@ -1,4 +1,5 @@
 import { Coord } from "./Coord";
+import { SessionCheckpoint } from "./SessionCheckpoint";
 
 export type DriveSession = {
     id: string;
@@ -21,4 +22,5 @@ export type DriveSession = {
     maxAltitudeMeters: number;
     altitudeGainMeters: number;
     route: Coord[];
+    checkpoints: SessionCheckpoint[];
 };

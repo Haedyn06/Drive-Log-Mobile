@@ -36,7 +36,8 @@ export default function NewSessionScreen() {
 
         setStartLocationLabel,
         setEndLocationLabel,
-        setSelectedCarId
+        setSelectedCarId,
+        checkpoints
     } = useSharedDriveSession();
     
     const [cars, setCars] = useState<CarInfo[]>([]);
@@ -81,6 +82,7 @@ export default function NewSessionScreen() {
                 locStart={locStart}
                 locEnd={locEnd}
                 route={route}
+                checkpoints={checkpoints}
             />
 
             {isIdle && (
@@ -135,6 +137,7 @@ export default function NewSessionScreen() {
                                 route={route}
                                 mapStyle={{ height: 230 }}
                                 wrapperStyle={NewSessionStyles.mapWrapperOverride}
+                                checkpoints={checkpoints}
                                 previewOnly={false}
                             />
                         </Pressable>
@@ -156,6 +159,7 @@ export default function NewSessionScreen() {
                         handleEndSession={handleEndSession}
                         resetSession={resetSession}
                         altitudeMeters={altitudeMeters}
+                        checkpoints={checkpoints}
                     />
                 </>
             )}
