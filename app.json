@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.haedyn06.driveloggermobile",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["location"]
       }
     },
     "android": {

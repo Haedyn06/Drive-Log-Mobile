@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
-
 import { addSession } from '../services/localStoreService';
 
 import { requestPermission, compressRouteByDistance } from '../utils/locationAccess';

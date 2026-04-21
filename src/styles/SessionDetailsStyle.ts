@@ -206,4 +206,47 @@ export const SessionDetailsStyles = StyleSheet.create({
         borderRadius: 18,
         overflow: 'hidden',
     },
+
+    titleInput: {
+        borderWidth: 1,
+        borderColor: '#d9d9d9',
+        borderRadius: 12,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        fontSize: 20,
+        fontWeight: '600',
+        backgroundColor: '#fff'
+    },
+
+    saveTitleBtn: {
+        backgroundColor: '#111',
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        borderRadius: 10
+    },
+
+    cancelTitleBtn: {
+        backgroundColor: '#ededed',
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        borderRadius: 10,
+    },
+
+    inEditTitle: {
+        flexDirection: 'row',
+    },
+
+    editTitleBtn: {
+    },
+
+    noteInput: {
+        borderWidth: 1,
+        borderColor: '#d9d9d9',
+        borderRadius: 10,
+        padding: 10,
+        minHeight: 100,
+        backgroundColor: '#fff',
+    },
+
+
 });

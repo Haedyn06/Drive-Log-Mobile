@@ -1,4 +1,4 @@
-import { Text, View, ScrollView, StyleSheet } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Pressable, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +14,9 @@ import { useEffect, useState } from 'react';
 import { getCars } from '../services/carService';
 import type { CarInfo } from '../types/CarInfo';
 
+import { isExist, saveSession, unsaveSession } from '../services/savesService';
+import { editSessionName, editSessionNotes } from '../services/localStoreService';
+
 type SessionDetailsRouteProp = RouteProp<RootStackParamList, 'SessionDetails'>;
 
 export default function SessionDetailsScreen() {
@@ -21,6 +24,15 @@ export default function SessionDetailsScreen() {
     const { session } = route.params;
 
     const [car, setCar] = useState<CarInfo | null>(null);
+    const [isSaved, setIsSaved] = useState(false);
+
+    const [title, setTitle] = useState(session.title);
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [editedTitle, setEditedTitle] = useState(session.title);
+    
+    const [notes, setNotes] = useState(session.notes ?? '');
+    const [isEditingNotes, setIsEditingNotes] = useState(false);
+    const [editedNotes, setEditedNotes] = useState(session.notes ?? '');
 
     useEffect(() => {
         const loadCar = async () => {
@@ -28,6 +40,7 @@ export default function SessionDetailsScreen() {
                 const cars = await getCars();
                 const foundCar = cars.find((c) => c.id === session.carId) ?? null;
                 setCar(foundCar);
+                setIsSaved(await isExist(session.id));
             } catch (e) {
                 console.log('Failed to load car', e);
             }
@@ -36,11 +49,88 @@ export default function SessionDetailsScreen() {
         loadCar();
     }, [session.carId]);
 
+    const handleSave = async () => {
+        await saveSession(session.id);
+        setIsSaved(true);
+    };
+
+    const handleUnsave = async () => {
+        await unsaveSession(session.id);
+        setIsSaved(false);
+    };
+
+    const handleEditTitle = async () => {
+        const trimmed = editedTitle.trim();
+
+        if (!trimmed) return;
+
+        await editSessionName(session.id, trimmed);
+        setTitle(trimmed);
+        setEditedTitle(trimmed);
+        setIsEditingTitle(false);
+    };
+
+    const handleCancelEditTitle = () => {
+        setEditedTitle(title);
+        setIsEditingTitle(false);
+    };
+
+
+    const handleEditNotes = async () => {
+        await editSessionNotes(session.id, editedNotes);
+        setNotes(editedNotes);
+        setIsEditingNotes(false);
+    };
+
+    const handleCancelEditNotes = () => {
+        setEditedNotes(notes);
+        setIsEditingNotes(false);
+    };
+
     return (
         <ScrollView contentContainerStyle={SessionDetailsStyles.content}>
             <View style={SessionDetailsStyles.headerCard}>
-                <Text style={SessionDetailsStyles.pageLabel}>Session Details</Text>
-                <Text style={SessionDetailsStyles.title}>{session.title}</Text>
+                <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <Text style={SessionDetailsStyles.pageLabel}>Session Details</Text>
+                    
+                    {isSaved ? 
+                        <Pressable onPress={handleUnsave}>
+                            <Text>Unsave</Text>
+                        </Pressable>
+                    : 
+                    
+                        <Pressable onPress={handleSave}>
+                            <Text>Save</Text>
+                        </Pressable>
+                    }
+                </View>
+
+                <View style={{ marginTop: 8 }}>
+                    {isEditingTitle ? (
+                        <View style={{ gap: 10, marginBottom: 20 }}>
+                            <TextInput value={editedTitle} onChangeText={setEditedTitle} 
+                                placeholder="Enter session title" style={SessionDetailsStyles.titleInput} />
+
+                            <View style={{ flexDirection: 'row', gap: 10 }}>
+                                <Pressable onPress={handleEditTitle} style={SessionDetailsStyles.saveTitleBtn}>
+                                    <Text style={{ color: '#fff', fontWeight: '600' }}>Save</Text>
+                                </Pressable>
+
+                                <Pressable onPress={handleCancelEditTitle} style={SessionDetailsStyles.cancelTitleBtn}>
+                                    <Text style={{ fontWeight: '600' }}>Cancel</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+                    ) : (
+                        <View style={SessionDetailsStyles.inEditTitle}>
+                            <Text style={[SessionDetailsStyles.title, { flex: 1 }]}>{title}</Text>
+
+                            <Pressable onPress={() => setIsEditingTitle(true)} style={SessionDetailsStyles.editTitleBtn}>
+                                <Ionicons name="create-outline" size={18} color="#333" />
+                            </Pressable>
+                        </View>
+                    )}
+                </View>
 
                 <View style={SessionDetailsStyles.headerMetaRow}>
                     <View style={SessionDetailsStyles.headerMetaChip}>
@@ -154,13 +244,17 @@ export default function SessionDetailsScreen() {
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Notes</Text>
+
+
+                    <Text style={SessionDetailsStyles.detailValue}>
+                        {session.notes?.trim() ? session.notes : 'No notes'}
+                    </Text>
                 </View>
 
-                <Text style={SessionDetailsStyles.detailValue}>
-                    {session.notes?.trim() ? session.notes : 'No notes'}
-                </Text>
-            </View>
 
+            </View>
+            
+            {/* Location */}
             <View style={SessionDetailsStyles.detailsCard}>
                 <Text style={SessionDetailsStyles.sectionTitle}>Locations</Text>
 
@@ -194,7 +288,8 @@ export default function SessionDetailsScreen() {
                     </Text>
                 </View>
             </View>
-
+            
+            {/* Map */}
             <View style={SessionDetailsStyles.mapCard}>
                 <Text style={SessionDetailsStyles.sectionTitle}>Saved Route</Text>
 
@@ -208,6 +303,37 @@ export default function SessionDetailsScreen() {
                     previewOnly={true}
                 />
             </View>
+            
+            {/* Notes */}
+            <View style={SessionDetailsStyles.detailsCard}>
+                <Text style={SessionDetailsStyles.sectionTitle}>Notes</Text>
+
+                <View style={SessionDetailsStyles.locationBlock}>
+                    {isEditingNotes ? (
+                        <View style={{ gap: 10 }}>
+                            <TextInput value={editedNotes} onChangeText={setEditedNotes} placeholder="Enter notes"
+                                multiline textAlignVertical="top" style={SessionDetailsStyles.noteInput} />
+
+                            <View style={{ flexDirection: 'row', gap: 10 }}>
+                                <Pressable onPress={handleEditNotes}>
+                                    <Text style={{ fontWeight: '600' }}>Save</Text>
+                                </Pressable>
+
+                                <Pressable onPress={handleCancelEditNotes}>
+                                    <Text style={{ color: '#888' }}>Cancel</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+                    ) : (
+                        <Pressable onPress={() => setIsEditingNotes(true)}>
+                            <Text style={SessionDetailsStyles.detailLabel}>
+                                {notes?.trim() ? notes : 'No notes'}
+                            </Text>
+                        </Pressable>
+                    )}
+                </View>
+            </View>
+
         </ScrollView>
     );
 }

@@ -14,7 +14,9 @@ import CarInfoCard from '../components/CarInfoCard';
 import { CarInfo } from '../types/CarInfo';
 
 import { saveCarInfo, getCars } from '../services/carService';
+import { HomeStyles } from '../styles/HomeStyle';
 
+import SavedSessions from '../components/SavedSessions';
 
 export default function ProfileScreen() {
     const [totalDistance, setTotalDistance] = useState(0);
@@ -168,6 +170,13 @@ export default function ProfileScreen() {
                 )}
             </View>
 
+            <View style={HomeStyles.recentList}>
+                <View style={HomeStyles.recentHeading}>
+                    <Text style={HomeStyles.recentTitle}>Saved</Text>
+                </View>
+
+                <SavedSessions limit={5} />
+            </View>
 
             <View>
                 <Pressable style={ProfileStyles.carAddBtn} onPress={() => setCarAddVis(true)}>
@@ -176,6 +185,9 @@ export default function ProfileScreen() {
             </View>
 
             <CarAddForm visible={carAddVis} onClose={onClose} onSave={onSave} />
+
+
+            
         </ScrollView>
     );
 }

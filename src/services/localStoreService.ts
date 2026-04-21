@@ -22,6 +22,16 @@ export const getSessions = async (limit?: number) => {
     }
 };
 
+export const getSessionById = async (id: string) => {
+    try {
+        const sessions = await getSessions();
+        return sessions.find((session: any) => session.id === id) || null;
+    } catch (e) {
+        console.log("Error getting session by id", e);
+        return null;
+    }
+};
+
 export const addSession = async (session: any) => {
     const sessions = await getSessions();
     sessions.push(session);
@@ -138,3 +148,21 @@ export const getLongestDistanceSession = async () => {
     }
 };
 
+
+// Edits
+
+
+const updateSession = async (id: string, updates: any) => {
+    const sessions = await getSessions();
+
+    const updated = sessions.map((session: any) =>
+        session.id === id ? { ...session, ...updates } : session
+    );
+
+    await saveSessions(updated);
+};
+
+
+export const editSessionName = (id: string, name: string) => updateSession(id, { title: name });
+
+export const editSessionNotes = (id: string, notes: string) => updateSession(id, { notes });
