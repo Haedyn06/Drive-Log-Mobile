@@ -15,7 +15,6 @@ import DriveSessionMap from '../components/DriveSessionMap';
 import RecentDriveSession from '../components/RecentDriveSession';
 import StartSessionCompB from '../components/StartSessionCompB';
 import LiveMapModal from '../components/LiveMapSession';
-import ConfirmationPopup from '../components/ConfirmationPopup';
 
 import { NewSessionStyles } from '../styles/NewSessionStyle';
 

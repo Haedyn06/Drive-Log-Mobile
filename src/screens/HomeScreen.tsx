@@ -27,12 +27,25 @@ export default function HomeScreen() {
         setRefreshing(false);
     };
 
+    const {
+        isStart,
+        elapsed, speedKmh, distanceMeters,
+        handleSession, handleEndSession, resetSession
+    } = useSharedDriveSession();
 
     return (
         <ScrollView style={HomeStyles.container}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
-            <StartSessionCompA />
+            <StartSessionCompA
+                isStart={isStart}
+                elapsed={elapsed}
+                speedKmh={speedKmh}
+                distanceMeters={distanceMeters} 
+                handleSession={handleSession}
+                handleEndSession={handleEndSession}
+                resetSession={resetSession}
+            />
 
             <View style={HomeStyles.recentList}>
                 <View style={HomeStyles.recentHeading}>

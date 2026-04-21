@@ -2,26 +2,11 @@ import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import LiveMapModal from './LiveMapSession';
-import type { Coord } from '../types/Coord';
 
 import ConfirmationPopup from './ConfirmationPopup';
-import SaveSessionModal from './SaveSession';
 
+import type { LiveSession } from '../types/LiveSession';
 
-type StartSessionCompBProps = {
-    isStart: boolean;
-    isPaused: boolean;
-    elapsed: number;
-    speedKmh: number;
-    distanceMeters: number;
-    altitudeMeters: number;
-    locStart: Coord | null;
-    locEnd: Coord | null;
-    route: Coord[];
-    handleSession: () => Promise<void> | void;
-    handleEndSession: () => Promise<void> | void;
-    resetSession: () => void;
-};
 
 export default function StartSessionCompB({
     isStart,
@@ -36,7 +21,7 @@ export default function StartSessionCompB({
     handleSession,
     handleEndSession,
     resetSession
-}: StartSessionCompBProps) {
+}: LiveSession) {
     const [mapVisible, setMapVisible] = useState(false);
 
     const hasSession = isStart || isPaused || elapsed > 0;

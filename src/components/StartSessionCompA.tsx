@@ -1,35 +1,20 @@
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { formatTime, formatDistance } from '../utils/format';
-import SaveSessionModal from './SaveSession';
-import { useSharedDriveSession } from '../context/DriveSessionContext';
 import { useState } from 'react';
-import type { CarInfo } from '../types/CarInfo';
 import ConfirmationPopup from './ConfirmationPopup';
 
-export default function StartSessionCompA() {
+type StartSessionCompAProps = {
+    isStart: boolean;
+    elapsed: number;
+    speedKmh: number;
+    distanceMeters: number;
+    handleSession: () => Promise<void> | void;
+    handleEndSession: () => Promise<void> | void;
+    resetSession: () => void;
+};
 
-    const {
-        isStart, locStart, isPaused,
-        elapsed, speedKmh, distanceMeters, route, altitudeMeters,
-        locEnd,
-        titleModalVisible, sessionTitle,
-
-        setTitleModalVisible, setSessionTitle,
-
-        handleSession, handleEndSession, handleSaveSession, resetSession, handleCancelSave,
-
-        startLocationLabel,
-        endLocationLabel,
-        selectedCarId,
-        notes, setNotes,
-
-        setStartLocationLabel,
-        setEndLocationLabel,
-        setSelectedCarId
-    } = useSharedDriveSession();
-
-    const [cars, setCars] = useState<CarInfo[]>([]);
+export default function StartSessionCompA({isStart, elapsed, speedKmh, distanceMeters, handleSession, handleEndSession, resetSession}: StartSessionCompAProps) {
     const [showPopup, setShowPopup] = useState(false);
 
     const handleResetAndClose = () => {
@@ -86,23 +71,6 @@ export default function StartSessionCompA() {
                     handleResetAndClose();
                     setShowPopup(false);
                 }}
-            />
-
-            <SaveSessionModal
-                visible={titleModalVisible}
-                sessionTitle={sessionTitle}
-                setSessionTitle={setSessionTitle}
-                startLocationLabel={startLocationLabel}
-                setStartLocationLabel={setStartLocationLabel}
-                endLocationLabel={endLocationLabel}
-                setEndLocationLabel={setEndLocationLabel}
-                cars={cars}
-                selectedCar={selectedCarId}
-                setSelectedCar={setSelectedCarId}
-                notes={notes}
-                setNotes={setNotes}
-                onClose={handleCancelSave}
-                onSave={handleSaveSession}
             />
             
         </View>
