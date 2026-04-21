@@ -7,7 +7,7 @@ import * as Haptics from 'expo-haptics';
 import { useSharedDriveSession } from '../context/DriveSessionContext';
 import { HomeStyles } from '../styles/HomeStyle';
 
-import StartSessionComp from '../components/StartSessionComp';
+import StartSessionCompA from '../components/StartSessionCompA';
 import DriveSessionList from '../components/DriveSessionList';
 
 import type { RootStackParamList } from '../navigation/AppNavigator';
@@ -21,17 +21,6 @@ export default function HomeScreen() {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     };
 
-    const {
-        isStart,
-        elapsed,
-        speedKmh,
-        distanceMeters,
-        handleSession,
-        handleEndSession,
-        resetSession
-    } = useSharedDriveSession();
-
-
     const onRefresh = async () => {
         setRefreshing(true);
 
@@ -43,15 +32,7 @@ export default function HomeScreen() {
         <ScrollView style={HomeStyles.container}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
-            <StartSessionComp
-                isStart={isStart}
-                elapsed={elapsed}
-                speedKmh={speedKmh}
-                distanceMeters={distanceMeters}
-                handleSession={handleSession}
-                handleEndSession={handleEndSession}
-                resetSession={resetSession}
-            />
+            <StartSessionCompA />
 
             <View style={HomeStyles.recentList}>
                 <View style={HomeStyles.recentHeading}>

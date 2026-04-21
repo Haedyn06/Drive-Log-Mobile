@@ -13,9 +13,6 @@ type CarInfoCardProps = {
 };
 
 export default function CarInfoCard({carYear, carBrand, carModel, carColor, carLicense, onDelete}: CarInfoCardProps) {
-
-
-
     return(
         <View style={styles.carCardContainer}>
             <View>

@@ -1,12 +1,9 @@
-import {
-    View,
-    Text,
-    StyleSheet,
-    Pressable,
-    Modal,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Modal, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker, Polyline } from 'react-native-maps';
+
+
+
 import type { Coord } from '../types/Coord';
 
 type LiveMapModalProps = {
@@ -46,7 +43,6 @@ export default function LiveMapModal({
     const initialLng = route?.[0]?.longitude ?? locStart?.longitude ?? -114.0719;
 
     const mainIcon = isStart ? 'pause' : 'play';
-
     return (
         <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
             <View style={styles.fullScreenContainer}>
@@ -124,6 +120,8 @@ export default function LiveMapModal({
                         <Ionicons name="flag-outline" size={22} color="#111" />
                         <Text style={styles.finishText}>Finish</Text>
                     </Pressable>
+
+
                 </View>
             </View>
         </Modal>
@@ -222,7 +220,7 @@ const styles = StyleSheet.create({
 
     finishBtn: {
         flex: 1,
-        height: 56,
+        height: 60,
         borderRadius: 999,
         backgroundColor: '#fff',
         flexDirection: 'row',

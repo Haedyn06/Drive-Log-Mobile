@@ -13,12 +13,16 @@ import type { DriveSession } from '../types/DriveSession';
 
 import DriveSessionCard from '../components/DriveSessionCard';
 
+import ConfirmationPopup from './ConfirmationPopup';
+
 type Props = {
     limit?: number;
 };
 
 export default function DriveSessionList({ limit }: Props) {
     const [sessions, setSessions] = useState<DriveSession[]>([]);
+    const [showPopup, setShowPopup] = useState(false);
+    const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -54,7 +58,10 @@ export default function DriveSessionList({ limit }: Props) {
         return (
             <Pressable
                 style={styles.deleteAction}
-                onPress={() => handleDeleteSession(item.id)}
+                onPress={() => {
+                    setSelectedSessionId(item.id);
+                    setShowPopup(true);
+                }}
             >
                 <Ionicons name="trash-outline" size={22} color="#fff" />
                 <Text style={styles.deleteText}>Delete</Text>
@@ -86,6 +93,22 @@ export default function DriveSessionList({ limit }: Props) {
                     </Pressable>
                 </ReanimatedSwipeable>
             ))}
+
+            <ConfirmationPopup
+                visible={showPopup}
+                label="delete this session"
+                onCancel={() => {
+                    setShowPopup(false);
+                    setSelectedSessionId(null);
+                }}
+                onConfirm={async () => {
+                    if (!selectedSessionId) return;
+
+                    await handleDeleteSession(selectedSessionId);
+                    setShowPopup(false);
+                    setSelectedSessionId(null);
+                }}
+            />
         </View>
     );
 }

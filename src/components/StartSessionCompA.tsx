@@ -1,26 +1,41 @@
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { formatTime, formatDistance } from '../utils/format';
+import SaveSessionModal from './SaveSession';
+import { useSharedDriveSession } from '../context/DriveSessionContext';
+import { useState } from 'react';
+import type { CarInfo } from '../types/CarInfo';
+import ConfirmationPopup from './ConfirmationPopup';
 
-type StartSessionCompProps = {
-    isStart: boolean;
-    elapsed: number;
-    speedKmh: number;
-    distanceMeters: number;
-    handleSession: () => void;
-    handleEndSession: () => void;
-    resetSession: () => void;
-};
+export default function StartSessionCompA() {
 
-export default function StartSessionComp({
-    isStart,
-    elapsed,
-    speedKmh,
-    distanceMeters,
-    handleSession,
-    handleEndSession,
-    resetSession
-}: StartSessionCompProps) {
+    const {
+        isStart, locStart, isPaused,
+        elapsed, speedKmh, distanceMeters, route, altitudeMeters,
+        locEnd,
+        titleModalVisible, sessionTitle,
+
+        setTitleModalVisible, setSessionTitle,
+
+        handleSession, handleEndSession, handleSaveSession, resetSession, handleCancelSave,
+
+        startLocationLabel,
+        endLocationLabel,
+        selectedCarId,
+        notes, setNotes,
+
+        setStartLocationLabel,
+        setEndLocationLabel,
+        setSelectedCarId
+    } = useSharedDriveSession();
+
+    const [cars, setCars] = useState<CarInfo[]>([]);
+    const [showPopup, setShowPopup] = useState(false);
+
+    const handleResetAndClose = () => {
+        resetSession();
+    };
+
     return (
         <View style={styles.sessionControls}>
             <View style={styles.sessionManage}>
@@ -57,11 +72,39 @@ export default function StartSessionComp({
                         <Text style={[styles.actionBtnText, styles.endBtnText]}>End Session</Text>
                     </Pressable>
 
-                    <Pressable style={[styles.actionBtn, styles.resetBtn]} onPress={resetSession}>
+                    <Pressable style={[styles.actionBtn, styles.resetBtn]} onPress={() => setShowPopup(true)}>
                         <Text style={[styles.actionBtnText, styles.resetBtnText]}>Reset</Text>
                     </Pressable>
                 </View>
             )}
+
+            <ConfirmationPopup
+                visible={showPopup}
+                label="reset session"
+                onCancel={() => setShowPopup(false)}
+                onConfirm={() => {
+                    handleResetAndClose();
+                    setShowPopup(false);
+                }}
+            />
+
+            <SaveSessionModal
+                visible={titleModalVisible}
+                sessionTitle={sessionTitle}
+                setSessionTitle={setSessionTitle}
+                startLocationLabel={startLocationLabel}
+                setStartLocationLabel={setStartLocationLabel}
+                endLocationLabel={endLocationLabel}
+                setEndLocationLabel={setEndLocationLabel}
+                cars={cars}
+                selectedCar={selectedCarId}
+                setSelectedCar={setSelectedCarId}
+                notes={notes}
+                setNotes={setNotes}
+                onClose={handleCancelSave}
+                onSave={handleSaveSession}
+            />
+            
         </View>
     );
 }

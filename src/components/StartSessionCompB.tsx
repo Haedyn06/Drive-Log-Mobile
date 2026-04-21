@@ -4,6 +4,10 @@ import { useState } from 'react';
 import LiveMapModal from './LiveMapSession';
 import type { Coord } from '../types/Coord';
 
+import ConfirmationPopup from './ConfirmationPopup';
+import SaveSessionModal from './SaveSession';
+
+
 type StartSessionCompBProps = {
     isStart: boolean;
     isPaused: boolean;
@@ -38,7 +42,7 @@ export default function StartSessionCompB({
     const hasSession = isStart || isPaused || elapsed > 0;
     const mainIcon = isStart ? 'pause' : 'play';
     const statusLabel = isStart ? 'LIVE' : isPaused ? 'PAUSED' : 'READY';
-
+    const [showPopup, setShowPopup] = useState(false);
     const handleMainPress = async () => {
         if (!isStart && !isPaused && elapsed === 0) {
             await handleSession();
@@ -107,7 +111,7 @@ export default function StartSessionCompB({
 
                     <Pressable
                         style={[styles.actionBtn, styles.resetBtn]}
-                        onPress={handleResetAndClose}
+                        onPress={() => setShowPopup(true)}
                     >
                         <Ionicons name="refresh-outline" size={18} color="#dc2626" />
                         <Text style={styles.resetText}>Reset</Text>
@@ -130,6 +134,16 @@ export default function StartSessionCompB({
                 handleEndSession={handleFinishAndClose}
                 resetSession={handleResetAndClose}
                 altitudeMeters={altitudeMeters}
+            />
+
+            <ConfirmationPopup
+                visible={showPopup}
+                label="reset session"
+                onCancel={() => setShowPopup(false)}
+                onConfirm={() => {
+                    handleResetAndClose();
+                    setShowPopup(false);
+                }}
             />
         </View>
     );

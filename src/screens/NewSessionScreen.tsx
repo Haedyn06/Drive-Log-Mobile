@@ -15,6 +15,7 @@ import DriveSessionMap from '../components/DriveSessionMap';
 import RecentDriveSession from '../components/RecentDriveSession';
 import StartSessionCompB from '../components/StartSessionCompB';
 import LiveMapModal from '../components/LiveMapSession';
+import ConfirmationPopup from '../components/ConfirmationPopup';
 
 import { NewSessionStyles } from '../styles/NewSessionStyle';
 
@@ -42,6 +43,7 @@ export default function NewSessionScreen() {
     const [cars, setCars] = useState<CarInfo[]>([]);
     const [recentSession, setRecentSession] = useState<DriveSession | null>(null);
     const [routeModalVisible, setRouteModalVisible] = useState(false);
+
 
     useFocusEffect(
         useCallback(() => {
