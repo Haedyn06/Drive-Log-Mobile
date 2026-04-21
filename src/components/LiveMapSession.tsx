@@ -43,6 +43,12 @@ export default function LiveMapModal({
     const initialLng = route?.[0]?.longitude ?? locStart?.longitude ?? -114.0719;
 
     const mainIcon = isStart ? 'pause' : 'play';
+
+    const handleFinish = async () => {
+        await handleEndSession();
+        onClose();
+    };
+
     return (
         <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
             <View style={styles.fullScreenContainer}>
@@ -116,7 +122,7 @@ export default function LiveMapModal({
                         <Ionicons name={mainIcon} size={28} color="#fff" />
                     </Pressable>
 
-                    <Pressable style={styles.finishBtn} onPress={handleEndSession}>
+                    <Pressable style={styles.finishBtn} onPress={handleFinish}>
                         <Ionicons name="flag-outline" size={22} color="#111" />
                         <Text style={styles.finishText}>Finish</Text>
                     </Pressable>
