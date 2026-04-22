@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { Text, View, ScrollView, Pressable } from 'react-native';
 
-import { SessionLogsStyles } from '../styles/SessionsLogsStyles';
-import DriveSessionList from '../components/DriveSessionList';
-import type { SessionSortType } from '../services/localStoreService';
+import DriveSessionList from '@/components/sessionLists/DriveSessionList';
+
+import { SessionLogsStyles } from '@/styles/SessionsLogsStyles';
+
+
+import type { SessionSortType } from '@/services/localStoreService';
 
 export default function SessionsLogsScreen() {
     const [sortType, setSortType] = useState<SessionSortType>('newest');

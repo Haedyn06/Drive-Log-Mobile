@@ -1,40 +1,27 @@
 import { useState } from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, Modal, } from "react-native";
+import * as Haptics from 'expo-haptics';
 
-import { useSharedDriveSession } from "../context/DriveSessionContext";
+import { useSharedDriveSession } from "@/context/DriveSessionContext";
 
-type CheckpointType =
-    | "checkpoint"
-    | "stop"
-    | "gas"
-    | "food"
-    | "issue"
-    | "scenery";
+type CheckpointType = | "checkpoint" | "stop" | "gas" | "food" | "issue" | "scenery";
 
 type CheckpointFormModalProps = {
     visible: boolean;
     onClose: () => void;
 };
 
-const checkpointTypes: CheckpointType[] = [
-    "checkpoint",
-    "stop",
-    "gas",
-    "food",
-    "issue",
-    "scenery",
-];
+const checkpointTypes: CheckpointType[] = [ "checkpoint", "stop", "gas", "food", "issue", "scenery" ];
 
-export default function CheckpointFormModal({
-    visible,
-    onClose
-}: CheckpointFormModalProps) {
+export default function CheckpointFormModal({ visible, onClose }: CheckpointFormModalProps) {
     const [note, setNote] = useState("");
     const [selectedType, setSelectedType] = useState<CheckpointType>("checkpoint");
 
     const {newCheckpoint, checkpoints} = useSharedDriveSession();
 
-    function handleSave() {
+    async function handleSave() {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        
         newCheckpoint(note, selectedType);
         setNote("");
         setSelectedType("checkpoint");

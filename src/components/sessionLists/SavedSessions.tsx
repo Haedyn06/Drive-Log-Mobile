@@ -1,26 +1,25 @@
 import { useCallback, useState } from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Ionicons } from '@expo/vector-icons';
 
-import { deleteSession, getSessionById } from '../services/localStoreService';
-import { getSaves } from '../services/savesService';
+import { deleteSession, getSessionById } from '@/services/localStoreService';
+import { getSaves } from '@/services/savesService';
 
-import type { RootStackParamList } from '../navigation/AppNavigator';
-import type { DriveSession } from '../types/DriveSession';
+import DriveSessionCard from '@/components/cards/DriveSessionCard';
+import ConfirmationPopup from '@/components/ConfirmationPopup';
 
-import DriveSessionCard from '../components/DriveSessionCard';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '@/navigation/AppNavigator';
+import type { DriveSession } from '@/types/DriveSession';
 
-import ConfirmationPopup from './ConfirmationPopup';
-
-type Props = {
+type SavedSessionsProps = {
     limit?: number;
 };
 
-export default function SavedSessions({ limit }: Props) {
+export default function SavedSessions({ limit }: SavedSessionsProps) {
     const [sessions, setSessions] = useState<DriveSession[]>([]);
     const [showPopup, setShowPopup] = useState(false);
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);

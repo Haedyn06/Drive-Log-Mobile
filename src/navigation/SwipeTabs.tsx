@@ -1,8 +1,9 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-import HomeScreen from '../screens/HomeScreen';
-import NewSessionScreen from '../screens/NewSessionScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import HomeScreen from '@/screens/HomeScreen';
+import NewSessionScreen from '@/screens/NewSessionScreen';
+import ProfileScreen from '@/screens/ProfileScreen';
+
 const Tab = createMaterialTopTabNavigator();
 
 export default function SwipeTabs() {

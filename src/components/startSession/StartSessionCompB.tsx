@@ -1,11 +1,13 @@
+import { useState } from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
-import LiveMapModal from './LiveMapSession';
+import * as Haptics from 'expo-haptics';
 
-import ConfirmationPopup from './ConfirmationPopup';
-import { Coord } from '../types/Coord';
-import { SessionCheckpoint } from '../types/SessionCheckpoint';
+import ConfirmationPopup from '../ConfirmationPopup';
+import LiveMapModal from '@/components/maps/LiveMapSession';
+
+import type { Coord } from '@/types/Coord';
+import type { SessionCheckpoint } from '@/types/SessionCheckpoint';
 
 export type StartSessionCompBProps = {
     isStart: boolean;
@@ -55,11 +57,13 @@ export default function StartSessionCompB({
     };
 
     const handleFinishAndClose = async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         await handleEndSession();
         setMapVisible(false);
     };
 
-    const handleResetAndClose = () => {
+    const handleResetAndClose = async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         resetSession();
         setMapVisible(false);
     };

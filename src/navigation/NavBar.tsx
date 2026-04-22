@@ -2,9 +2,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
-import HomeScreen from '../screens/HomeScreen';
-import NewSessionScreen from '../screens/NewSessionScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import HomeScreen from '@/screens/HomeScreen';
+import NewSessionScreen from '@/screens/NewSessionScreen';
+import ProfileScreen from '@/screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 

@@ -1,14 +1,15 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { formatDuration, formatDistance, formatDateNum, formatTimeOnly } from "../utils/format";
-import type { DriveSession } from "../types/DriveSession";
 import * as Haptics from "expo-haptics";
-
 import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../navigation/AppNavigator";
 
-import DriveSessionMap from "./DriveSessionMap";
+import { formatDuration, formatDistance, formatDateNum, formatTimeOnly } from "@/utils/format";
+import DriveSessionMap from "@/components/maps/DriveSessionMap";
+
+
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/navigation/AppNavigator";
+import type { DriveSession } from "@/types/DriveSession";
 
 type RecentDriveSessionProps = {
     item: DriveSession | null;

@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { useDriveSession } from '../composables/useDriveSession';
+import { useDriveSession } from '@/composables/useDriveSession';
 
 type DriveSessionType = ReturnType<typeof useDriveSession>;
 

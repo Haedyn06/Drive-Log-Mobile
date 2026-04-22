@@ -1,17 +1,11 @@
 import { useState } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    Pressable,
-    Modal,
-    StyleProp,
-    ViewStyle,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Modal, StyleProp, ViewStyle } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import type { Coord } from '../types/Coord';
-import { formatDistance, formatTimeOnly } from '../utils/format';
-import { SessionCheckpoint } from '../types/SessionCheckpoint';
+
+import { formatDistance, formatTimeOnly } from '@/utils/format';
+
+import type { Coord } from '@/types/Coord';
+import type { SessionCheckpoint } from '@/types/SessionCheckpoint';
 
 type DriveSessionMapProps = {
     title?: string;
@@ -81,7 +75,7 @@ export default function DriveSessionMap({
                     coordinate={i.location}
                     title={i.type ? `${i.type} (${formatDistance(Number(i.distance)) ?? 0})` : "Checkpoint"}
                     description={`${i.note || ""} • ${formatTimeOnly(i.timestamp)}`}
-                    pinColor="orange"
+                    pinColor="blue"
                 />
             ))}
             
@@ -141,7 +135,7 @@ export default function DriveSessionMap({
                                 coordinate={i.location}
                                 title={i.type ? `${i.type} (${formatDistance(Number(i.distance)) ?? 0})` : "Checkpoint"}
                                 description={`${i.note || "No note"} • ${formatTimeOnly(i.timestamp)}`}
-                                pinColor="orange"
+                                pinColor="blue"
                             />
                         ))}
                         

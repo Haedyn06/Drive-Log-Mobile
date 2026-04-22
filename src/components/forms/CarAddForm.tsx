@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
-import {
-    Modal,
-    View,
-    Text,
-    TextInput,
-    Pressable,
-    StyleSheet,
-    ScrollView,
-    KeyboardAvoidingView,
-    Platform,
-} from 'react-native';
-import FieldLabel from './FieldLabel';
-import type { CarInfo } from '../types/CarInfo';
-type CarFormData = Omit<CarInfo, 'id'>;
+import { Modal, View, Text, TextInput, Pressable, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
 
+import { CarInfo } from '@/types/CarInfo';
+
+import FieldLabel from '@/components/FieldLabel';
+
+type CarFormData = Omit<CarInfo, 'id'>;
 
 type CarAddFormProps = {
     visible: boolean;
@@ -28,7 +21,10 @@ export default function CarAddForm({ visible, onClose, onSave }: CarAddFormProps
     const [carColor, setCarColor] = useState('');
     const [carLicense, setCarLicense] = useState('');
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
         onSave({
             year: carYear.trim(),
             model: carModel.trim(),

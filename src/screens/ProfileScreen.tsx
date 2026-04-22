@@ -1,31 +1,30 @@
 import { useEffect, useState } from 'react';
 import { Text, View, ScrollView, Pressable } from 'react-native';
+import * as Haptics from 'expo-haptics';
 
-import {
-    getTotalDistance,
-    getTotalDriveTime,
-    getTotalElevationGain,
-} from '../services/localStoreService';
-import { ProfileStyles } from '../styles/ProfileStyle';
+import { getTotalDistance, getTotalDriveTime, getTotalElevationGain } from '@/services/localStoreService';
+import { getCars } from '@/services/carService';
 
-import CarAddForm from '../components/CarAddForm';
-import CarInfoCard from '../components/CarInfoCard';
+import { useCarInfo } from '@/composables/useCarInfo';
 
-import { CarInfo } from '../types/CarInfo';
+import { formatDriveTime, formatDistance, formatElevation } from '@/utils/format';
+import CarAddForm from '@/components/forms/CarAddForm';
+import CarInfoCard from '@/components/cards/CarInfoCard';
+import SavedSessions from '@/components/sessionLists/SavedSessions';
 
-import { saveCarInfo, getCars } from '../services/carService';
-import { HomeStyles } from '../styles/HomeStyle';
-
-import SavedSessions from '../components/SavedSessions';
+import { HomeStyles } from '@/styles/HomeStyle';
+import { ProfileStyles } from '@/styles/ProfileStyle';
 
 export default function ProfileScreen() {
+    const { 
+        carAddVis, car, cars,
+        setCarAddVis, setCar, setCars, 
+        deleteCar, saveCar 
+    } = useCarInfo();
+
     const [totalDistance, setTotalDistance] = useState(0);
     const [totalDriveTime, setTotalDriveTime] = useState(0);
     const [totalElevation, setTotalElevation] = useState(0);
-
-    const [carAddVis, setCarAddVis] = useState(false);
-    const [car, setCar] = useState<CarInfo | null>(null);
-    const [cars, setCars] = useState<CarInfo[]>([]);
     
     useEffect(() => {
         const loadCars = async () => {
@@ -37,7 +36,6 @@ export default function ProfileScreen() {
     }, []);
 
     
-
     useEffect(() => {
         const loadStats = async () => {
             try {
@@ -60,58 +58,10 @@ export default function ProfileScreen() {
         setCarAddVis(false);
     };
 
-    const onSave = async (carData: Omit<CarInfo, 'id'>) => {
-        try {
-            const existing = await getCars();
-
-            const newCar: CarInfo = {
-                id: Date.now().toString(),
-                ...carData,
-            };
-
-            const updatedCars = [...existing, newCar];
-
-            await saveCarInfo(updatedCars);
-            setCars(updatedCars);
-            setCar(newCar);
-            setCarAddVis(false);
-
-            console.log('Saved car:', newCar);
-        } catch (e) {
-            console.log('Save failed:', e);
-        }
-    };
-
-    const handleDeleteCar = async (id: string) => {
-        try {
-            const existing = await getCars();
-
-            const updated = existing.filter(car => car.id !== id);
-
-            await saveCarInfo(updated);
-            setCars(updated);
-
-            console.log('Deleted car:', id);
-        } catch (e) {
-            console.log('Delete failed:', e);
-        }
-    };
-
-    const formatDistance = (meters: number) => {
-        return `${(meters / 1000).toFixed(2)} km`;
-    };
-
-    const formatDriveTime = (ms: number) => {
-        const totalSeconds = Math.floor(ms / 1000);
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-
-        return `${hours}h ${minutes}m`;
-    };
-
-    const formatElevation = (meters: number) => {
-        return `${meters.toFixed(0)} m`;
-    };
+    const handleAddCar = async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        setCarAddVis(true);
+    }
 
     return (
         <ScrollView
@@ -164,21 +114,21 @@ export default function ProfileScreen() {
                             carModel={car.model}
                             carColor={car.color}
                             carLicense={car.license}
-                            onDelete={() => handleDeleteCar(car.id)}
+                            onDelete={() => deleteCar(car.id)}
                         />
                     ))
                 )}
             </View>
 
 
-
+            {/* New Vehicle */}
             <View>
-                <Pressable style={ProfileStyles.carAddBtn} onPress={() => setCarAddVis(true)}>
+                <Pressable style={ProfileStyles.carAddBtn} onPress={handleAddCar}>
                     <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}}>Add New Vehicle</Text>
                 </Pressable>
             </View>
 
-            <CarAddForm visible={carAddVis} onClose={onClose} onSave={onSave} />
+            <CarAddForm visible={carAddVis} onClose={onClose} onSave={saveCar} />
 
             <View style={HomeStyles.recentList}>
                 <View style={HomeStyles.recentHeading}>

@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import React from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 
+import ConfirmationPopup from '@/components/ConfirmationPopup';
 
 type CarInfoCardProps = {
     carYear: string;
@@ -13,6 +15,8 @@ type CarInfoCardProps = {
 };
 
 export default function CarInfoCard({carYear, carBrand, carModel, carColor, carLicense, onDelete}: CarInfoCardProps) {
+    const [showPopup, setShowPopup] = useState(false);
+
     return(
         <View style={styles.carCardContainer}>
             <View>
@@ -21,9 +25,20 @@ export default function CarInfoCard({carYear, carBrand, carModel, carColor, carL
 
             </View>
             
-            <Pressable style={styles.trashBtn} onPress={onDelete}>
+            <Pressable style={styles.trashBtn} onPress={() => setShowPopup(true)}>
                 <Ionicons name="trash-outline" size={22} color="#eb2525" />
             </Pressable>
+
+            <ConfirmationPopup
+                visible={showPopup}
+                label="delete this car"
+                onCancel={() => setShowPopup(false)}
+                onConfirm={() => {
+                    onDelete();
+                    setShowPopup(false);
+                }}
+            />
+
         </View>
     );
 }

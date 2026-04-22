@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { formatTime, formatDistance } from '../utils/format';
-import { useState } from 'react';
-import ConfirmationPopup from './ConfirmationPopup';
+
+import { formatTime, formatDistance } from '@/utils/format';
+import ConfirmationPopup from '@/components/ConfirmationPopup';
 
 type StartSessionCompAProps = {
     isStart: boolean;

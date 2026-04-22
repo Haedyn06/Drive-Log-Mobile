@@ -2,21 +2,21 @@ import { Text, View, ScrollView, Pressable } from 'react-native';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { getSessions } from '../services/localStoreService';
-import { getCars } from '../services/carService';
+import type { DriveSession } from '@/types/DriveSession';
+import type { CarInfo } from '@/types/CarInfo';
 
-import type { DriveSession } from '../types/DriveSession';
-import type { CarInfo } from '../types/CarInfo';
+import { getSessions } from '@/services/localStoreService';
+import { getCars } from '@/services/carService';
 
-import { useSharedDriveSession } from '../context/DriveSessionContext';
+import { useSharedDriveSession } from '@/context/DriveSessionContext';
 
-import SaveSessionModal from '../components/SaveSession';
-import DriveSessionMap from '../components/DriveSessionMap';
-import RecentDriveSession from '../components/RecentDriveSession';
-import StartSessionCompB from '../components/StartSessionCompB';
-import LiveMapModal from '../components/LiveMapSession';
+import SaveSessionModal from '@/components/forms/SaveSession';
+import DriveSessionMap from '@/components/maps/DriveSessionMap';
+import RecentDriveSession from '@/components/cards/RecentDriveSession';
+import StartSessionCompB from '@/components/startSession/StartSessionCompB';
+import LiveMapModal from '@/components/maps/LiveMapSession';
 
-import { NewSessionStyles } from '../styles/NewSessionStyle';
+import { NewSessionStyles } from '@/styles/NewSessionStyle';
 
 export default function NewSessionScreen() {
     const {

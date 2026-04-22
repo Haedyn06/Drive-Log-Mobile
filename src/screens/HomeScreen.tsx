@@ -4,13 +4,15 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';
 
-import { useSharedDriveSession } from '../context/DriveSessionContext';
-import { HomeStyles } from '../styles/HomeStyle';
+import { useSharedDriveSession } from '@/context/DriveSessionContext';
 
-import StartSessionCompA from '../components/StartSessionCompA';
-import DriveSessionList from '../components/DriveSessionList';
+import StartSessionCompA from '@/components/startSession/StartSessionCompA';
+import DriveSessionList from '@/components/sessionLists/DriveSessionList';
 
-import type { RootStackParamList } from '../navigation/AppNavigator';
+import { HomeStyles } from '@/styles/HomeStyle';
+
+
+import type { RootStackParamList } from '@/navigation/AppNavigator';
 
 export default function HomeScreen() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -55,7 +57,7 @@ export default function HomeScreen() {
                     </Pressable>
                 </View>
 
-                <DriveSessionList limit={5} />
+                <DriveSessionList limit={5} sortType='newest' />
             </View>
         </ScrollView>
     );

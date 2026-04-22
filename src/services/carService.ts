@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CarInfo } from '../types/CarInfo';
+
+import { CarInfo } from '@/types/CarInfo';
 
 const carStorage = 'cars';
 

@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react';
 import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
 
-import { addSession } from '../services/localStoreService';
+import { addSession } from '@/services/localStoreService';
 
-import { requestPermission, compressRouteByDistance } from '../utils/locationAccess';
-import { useLocationTracking } from './useLocationTracking';
+import { requestPermission, compressRouteByDistance } from '@/utils/locationAccess';
+import { useLocationTracking } from '@/composables/useLocationTracking';
 
-import { Coord } from '../types/Coord';
-
-import type { SessionCheckpoint } from '../types/SessionCheckpoint';
+import type { Coord } from '@/types/Coord';
+import type { SessionCheckpoint } from '@/types/SessionCheckpoint';
 
 export function useDriveSession() {
 
@@ -124,8 +123,6 @@ export function useDriveSession() {
     };
 
     const handleEndSession = async () => {
-        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
         if (isStart) {
             setIsStart(false);
             await stopTracking();
@@ -148,19 +145,13 @@ export function useDriveSession() {
 
 
     const handleSaveSession = async () => {
-        console.log('1. save pressed');
-
         try {
             const trimmedTitle = sessionTitle.trim();
-            console.log('2. title ok');
 
             const compressedRoute = compressRouteByDistance(route, 10);
-            console.log('3. route compressed', route.length, compressedRoute.length);
 
             const avgSpeed =
             elapsed > 0 ? (distanceMeters / (elapsed / 1000)) * 3.6 : 0;
-
-            console.log('4. avg speed calculated', avgSpeed);
 
             const newSession = {
                 id: Date.now().toString(),
@@ -184,21 +175,14 @@ export function useDriveSession() {
                 checkpoints: checkpoints
             };
 
-            console.log('5. session object created');
-            console.log('6. session json size', JSON.stringify(newSession).length);
-
             await addSession(newSession);
-            console.log('7. addSession done');
 
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            console.log('8. haptic success done');
 
             setTitleModalVisible(false);
-            console.log('9. modal closed');
             
             resetSession();
 
-            console.log('10. state reset done');
         } catch (e) {
             console.log('SAVE ERROR', e);
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

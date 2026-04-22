@@ -1,3 +1,6 @@
+// Time
+
+
 export const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
     const milliseconds = Math.floor((ms % 1000) / 10);
@@ -36,11 +39,22 @@ export const formatDuration = (ms: number) => {
     return `${hr.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
 };
 
+
+export const formatDriveTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    return `${hours}h ${minutes}m`;
+};
+
+
+// Date Formats
+
 export const formatDateTime = (ts: number | null) => {
     if (ts === null) return '--';
     return new Date(ts).toLocaleString();
 };
-
 
 export const formatDateStr = (ts: number | null) => {
     if (ts === null) return '--';
@@ -70,6 +84,21 @@ export const formatTimeOnly = (ts: number | string | null | undefined) => {
     });
 };
 
+
+
+
+
+
+
+
+
+
+
+// Distance Format
 export const formatDistance = (meters: number) => {
     return meters >= 1000 ? `${(meters / 1000).toFixed(2)} km` : `${meters.toFixed(0)} m`;
+};
+
+export const formatElevation = (meters: number) => {
+    return `${meters.toFixed(0)} m`;
 };

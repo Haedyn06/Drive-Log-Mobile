@@ -1,7 +1,10 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { formatReadableElapsed, formatDistance, formatDateNum } from "../utils/format";
-import type { DriveSession } from "../types/DriveSession";
+
+import { formatReadableElapsed, formatDistance, formatDateNum } from "@/utils/format";
+
+import type { DriveSession } from "@/types/DriveSession";
+
 
 type DriveSessionCardProps = {
     item: DriveSession;

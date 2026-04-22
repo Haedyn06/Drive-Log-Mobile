@@ -1,12 +1,14 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import NavigationBar from './NavBar';
-import SessionDetailsScreen from '../screens/SessionDetailsScreen';
-import SessionsLogsScreen from '../screens/SessionLogsScreen';
-import type { DriveSession } from '../types/DriveSession';
+import { DriveSessionProvider } from '@/context/DriveSessionContext';
 
-import { DriveSessionProvider } from '../context/DriveSessionContext';
+import NavigationBar from '@/navigation/NavBar';
+import SessionsLogsScreen from '@/screens/SessionLogsScreen';
+import SessionDetailsScreen from '@/screens/SessionDetailsScreen';
+
+
+import type { DriveSession } from '@/types/DriveSession';
 
 export type RootStackParamList = {
     Back: undefined;

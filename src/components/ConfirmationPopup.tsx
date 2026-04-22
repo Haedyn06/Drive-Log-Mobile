@@ -1,13 +1,23 @@
 import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
+import * as Haptics from 'expo-haptics';
 
-type Props = {
+type ConfirmationPopupProps = {
     visible: boolean;
     label: string;
     onConfirm: () => void;
     onCancel: () => void;
 };
 
-export default function ConfirmationPopup({ visible, label, onConfirm, onCancel, }: Props) {
+export default function ConfirmationPopup({ visible, label, onConfirm, onCancel, }: ConfirmationPopupProps) {
+    const handleOnCancel = () => {
+        onCancel();
+    }
+    
+    const handleOnConfirm = async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        onConfirm();
+    }
+
     return (
         <Modal
             transparent
@@ -21,11 +31,11 @@ export default function ConfirmationPopup({ visible, label, onConfirm, onCancel,
                     </Text>
 
                     <View style={styles.actions}>
-                        <Pressable style={styles.cancelBtn} onPress={onCancel}>
+                        <Pressable style={styles.cancelBtn} onPress={handleOnCancel}>
                             <Text style={styles.cancelText}>Cancel</Text>
                         </Pressable>
 
-                        <Pressable style={styles.confirmBtn} onPress={onConfirm}>
+                        <Pressable style={styles.confirmBtn} onPress={handleOnConfirm}>
                             <Text style={styles.confirmText}>Confirm</Text>
                         </Pressable>
                     </View>

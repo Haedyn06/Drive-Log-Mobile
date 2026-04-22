@@ -1,21 +1,21 @@
+import { useEffect, useState } from 'react';
 import { Text, View, ScrollView, StyleSheet, Pressable, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-import type { RootStackParamList } from '../navigation/AppNavigator';
-import { formatDateTime, formatDuration, formatDistance, formatDateNum, formatTimeOnly } from '../utils/format';
+import type { CarInfo } from '@/types/CarInfo';
+import type { RootStackParamList } from '@/navigation/AppNavigator';
 
-import { SessionDetailsStyles } from '../styles/SessionDetailsStyle';
+import { isExist, saveSession, unsaveSession } from '@/services/savesService';
+import { editSessionName, editSessionNotes } from '@/services/localStoreService';
+import { getCars } from '@/services/carService';
 
-import DriveSessionMap from '../components/DriveSessionMap';
+import { formatDateTime, formatDuration, formatDistance, formatDateNum, formatTimeOnly } from '@/utils/format';
+import DriveSessionMap from '@/components/maps/DriveSessionMap';
 
-import { useEffect, useState } from 'react';
-import { getCars } from '../services/carService';
-import type { CarInfo } from '../types/CarInfo';
+import { SessionDetailsStyles } from '@/styles/SessionDetailsStyle';
 
-import { isExist, saveSession, unsaveSession } from '../services/savesService';
-import { editSessionName, editSessionNotes } from '../services/localStoreService';
 
 type SessionDetailsRouteProp = RouteProp<RootStackParamList, 'SessionDetails'>;
 

@@ -2,13 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const sessionStorage = 'sessions';
 
-export type SessionSortType =
-    | 'newest'
-    | 'oldest'
-    | 'distance-desc'
-    | 'distance-asc'
-    | 'duration-desc'
-    | 'duration-asc';
+export type SessionSortType = | 'newest' | 'oldest' | 'distance-desc' | 'distance-asc' | 'duration-desc' | 'duration-asc';
 
 export const saveSessions = async (sessions: any[]) => {
     try {

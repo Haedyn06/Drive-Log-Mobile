@@ -1,12 +1,6 @@
 import {View, Text, StyleSheet} from 'react-native';
 
-export default function FieldLabel({
-    title,
-    optional = false,
-}: {
-    title: string;
-    optional?: boolean;
-}) {
+export default function FieldLabel({ title, optional = false }: { title: string; optional?: boolean; }) {
     return (
         <View style={styles.labelRow}>
             <Text style={styles.label}>{title}</Text>
@@ -38,6 +32,4 @@ const styles = StyleSheet.create({
         textTransform: "uppercase",
         letterSpacing: 0.6,
     },
-
-
 });

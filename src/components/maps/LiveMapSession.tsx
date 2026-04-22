@@ -1,13 +1,13 @@
+import { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Modal, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import { useState } from 'react';
 
-import CheckpointFormModal from './CheckpointForm';
+import { formatTimeOnly } from '@/utils/format';
+import CheckpointFormModal from '@/components/forms/CheckpointForm';
 
-import { SessionCheckpoint } from '../types/SessionCheckpoint';
-import { formatTimeOnly } from '../utils/format';
-import type { Coord } from '../types/Coord';
+import type { SessionCheckpoint } from '@/types/SessionCheckpoint';
+import type { Coord } from '@/types/Coord';
 
 type LiveMapModalProps = {
     visible: boolean;
@@ -89,7 +89,7 @@ export default function LiveMapModal({
                             coordinate={i.location}
                             title={i.type ? `${i.type} (${i.distance ?? 0}m)` : "Checkpoint"}
                             description={`${i.note || "No note"} • ${formatTimeOnly(i.timestamp)}`}
-                            pinColor="orange"
+                            pinColor="blue"
                         />
                     ))}
 
@@ -161,7 +161,7 @@ export default function LiveMapModal({
 const styles = StyleSheet.create({
     fullScreenContainer: {
         flex: 1,
-        backgroundColor: '#000', // darker for contrast
+        backgroundColor: '#000',
     },
 
     fullScreenMap: {
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 999,
-        backgroundColor: '#ff3b30', // red accent (record vibe)
+        backgroundColor: '#ff3b30',
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 8,
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 999,
-        backgroundColor: '#3094ff', // red accent (record vibe)
+        backgroundColor: '#3094ff',
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 8,

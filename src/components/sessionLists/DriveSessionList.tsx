@@ -1,20 +1,20 @@
 import { useCallback, useState } from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Ionicons } from '@expo/vector-icons';
 
-import { getSessions, deleteSession } from '../services/localStoreService';
+import { getSessions, deleteSession } from '@/services/localStoreService';
 
-import type { RootStackParamList } from '../navigation/AppNavigator';
-import type { DriveSession } from '../types/DriveSession';
+import DriveSessionCard from '@/components/cards/DriveSessionCard';
+import ConfirmationPopup from '@/components/ConfirmationPopup';
 
-import DriveSessionCard from '../components/DriveSessionCard';
 
-import ConfirmationPopup from './ConfirmationPopup';
-import { SessionSortType } from '../services/localStoreService';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { SessionSortType } from '@/services/localStoreService';
+import type { RootStackParamList } from '@/navigation/AppNavigator';
+import type { DriveSession } from '@/types/DriveSession';
 
 type DriveSessionListProps = {
     limit?: number;

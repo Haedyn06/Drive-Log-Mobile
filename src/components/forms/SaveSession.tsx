@@ -1,17 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import {
-    Modal,
-    View,
-    Text,
-    TextInput,
-    Pressable,
-    StyleSheet,
-    ScrollView,
-    KeyboardAvoidingView,
-    Platform,
-} from 'react-native';
-import FieldLabel from './FieldLabel';
-import type { CarInfo } from '../types/CarInfo';
+import { Modal, View, Text, TextInput, Pressable, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
+
+import FieldLabel from '@/components/FieldLabel';
+
+import type { CarInfo } from '@/types/CarInfo';
 
 type SaveSessionModalProps = {
     visible: boolean;
@@ -62,6 +55,11 @@ export default function SaveSessionModal({
         setSelectedCar(carId);
         setShowCarDropdown(false);
     };
+
+    const handleSave = async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        onSave();
+    } 
 
     return (
         <Modal
@@ -201,7 +199,7 @@ export default function SaveSessionModal({
                                 <Text style={styles.cancelBtnText}>Cancel</Text>
                             </Pressable>
 
-                            <Pressable style={styles.saveBtn} onPress={onSave}>
+                            <Pressable style={styles.saveBtn} onPress={handleSave}>
                                 <Text style={styles.saveBtnText}>Save Session</Text>
                             </Pressable>
                         </View>
