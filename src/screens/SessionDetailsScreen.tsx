@@ -241,17 +241,6 @@ export default function SessionDetailsScreen() {
                         {car ? `${car.year} ${car.brand} ${car.model}` : '--'}
                     </Text>
                 </View>
-
-                <View style={SessionDetailsStyles.detailRow}>
-                    <Text style={SessionDetailsStyles.detailLabel}>Notes</Text>
-
-
-                    <Text style={SessionDetailsStyles.detailValue}>
-                        {session.notes?.trim() ? session.notes : 'No notes'}
-                    </Text>
-                </View>
-
-
             </View>
             
             {/* Location */}
@@ -302,6 +291,9 @@ export default function SessionDetailsScreen() {
                     wrapperStyle={SessionDetailsStyles.mapWrapperOverride}
                     checkpoints={session?.checkpoints}
                     previewOnly={true}
+                    timeStart={session.startTime}
+                    timeEnd={session.endTime}
+                    distance={session.distanceMeters}
                 />
             </View>
             

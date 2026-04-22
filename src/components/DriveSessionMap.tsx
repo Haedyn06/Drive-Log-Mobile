@@ -10,9 +10,8 @@ import {
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import type { Coord } from '../types/Coord';
-
+import { formatDistance, formatTimeOnly } from '../utils/format';
 import { SessionCheckpoint } from '../types/SessionCheckpoint';
-import { formatTimeOnly } from '../utils/format';
 
 type DriveSessionMapProps = {
     title?: string;
@@ -25,6 +24,9 @@ type DriveSessionMapProps = {
     wrapperStyle?: StyleProp<ViewStyle>;
     checkpoints?: SessionCheckpoint[];
     previewOnly?: boolean;
+    timeStart: number | null;
+    timeEnd?: number | null;
+    distance?: number;
 };
 
 export default function DriveSessionMap({
@@ -33,6 +35,9 @@ export default function DriveSessionMap({
     showUserLocation = false,
     locStart,
     locEnd,
+    timeEnd,
+    timeStart,
+    distance,
     route,
     mapStyle,
     wrapperStyle,
@@ -63,19 +68,19 @@ export default function DriveSessionMap({
             }}
         >
             {locStart && (
-                <Marker coordinate={locStart} title="Start" pinColor="green" />
+                <Marker coordinate={locStart} title={`Start (0m)`} description={`${formatTimeOnly(timeStart)}`} pinColor="green" />
             )}
 
             {locEnd && (
-                <Marker coordinate={locEnd} title="End" pinColor="red" />
+                <Marker coordinate={locEnd} title={`End (${formatDistance(distance ?? 0)})`} description={`${formatTimeOnly(timeEnd)}`} pinColor="red" />
             )}
 
             {checkpoints?.map((i) => (
                 <Marker
                     key={i.id}
                     coordinate={i.location}
-                    title={i.type ? `${i.type} (${i.distance ?? 0}m)` : "Checkpoint"}
-                    description={`${i.note || "No note"} • ${formatTimeOnly(i.timestamp)}`}
+                    title={i.type ? `${i.type} (${formatDistance(Number(i.distance)) ?? 0})` : "Checkpoint"}
+                    description={`${i.note || ""} • ${formatTimeOnly(i.timestamp)}`}
                     pinColor="orange"
                 />
             ))}
@@ -123,18 +128,18 @@ export default function DriveSessionMap({
                         }}
                     >
                         {locStart && (
-                            <Marker coordinate={locStart} title="Start" pinColor="green" />
+                            <Marker coordinate={locStart} title={`Start (0m)`} description={`${formatTimeOnly(timeStart)}`} pinColor="green" />
                         )}
 
                         {locEnd && (
-                            <Marker coordinate={locEnd} title="End" pinColor="red" />
+                            <Marker coordinate={locEnd} title={`End (${formatDistance(distance ?? 0)})`} description={`${formatTimeOnly(timeEnd)}`} pinColor="red" />
                         )}
 
                         {checkpoints?.map((i) => (
                             <Marker
                                 key={i.id}
                                 coordinate={i.location}
-                                title={i.type ? `${i.type} (${i.distance ?? 0}m)` : "Checkpoint"}
+                                title={i.type ? `${i.type} (${formatDistance(Number(i.distance)) ?? 0})` : "Checkpoint"}
                                 description={`${i.note || "No note"} • ${formatTimeOnly(i.timestamp)}`}
                                 pinColor="orange"
                             />

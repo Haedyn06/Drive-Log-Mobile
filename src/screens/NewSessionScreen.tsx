@@ -27,6 +27,8 @@ export default function NewSessionScreen() {
 
         setTitleModalVisible, setSessionTitle,
 
+        timeStampStart, timeStampEnd,
+
         handleSession, handleEndSession, handleSaveSession, resetSession, handleCancelSave,
 
         startLocationLabel,
@@ -49,9 +51,8 @@ export default function NewSessionScreen() {
         useCallback(() => {
             async function loadData() {
                 try {
-                    const sessionData = await getSessions();
-                    const sorted = [...sessionData].reverse();
-                    setRecentSession(sorted.length > 0 ? sorted[0] : null);
+                    const sessionData = await getSessions(undefined, 'newest');
+                    setRecentSession(sessionData.length > 0 ? sessionData[0] : null);
 
                     const carData = await getCars();
                     setCars(carData);
@@ -139,6 +140,9 @@ export default function NewSessionScreen() {
                                 wrapperStyle={NewSessionStyles.mapWrapperOverride}
                                 checkpoints={checkpoints}
                                 previewOnly={false}
+                                timeEnd={timeStampEnd}
+                                timeStart={timeStampStart}
+                                distance={distanceMeters}
                             />
                         </Pressable>
                     </View>

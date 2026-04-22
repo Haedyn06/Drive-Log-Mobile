@@ -112,6 +112,9 @@ export default function RecentDriveSession({ item }: RecentDriveSessionProps) {
                     mapStyle={{ height: 220 }}
                     wrapperStyle={styles.mapWrapper}
                     previewOnly={true}
+                    timeEnd={item.endTime}
+                    timeStart={item.startTime}
+                    distance={item.distanceMeters}
                 />
             </View>
         </Pressable>
