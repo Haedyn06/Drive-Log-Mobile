@@ -43,7 +43,6 @@ export default function DriveSessionList({ limit, sortType }: DriveSessionListPr
     );
 
     const handlePressSession = async (item: DriveSession) => {
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('SessionDetails', { session: item });
     };
 

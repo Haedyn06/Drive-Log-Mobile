@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
 
 import { formatDuration, formatDistance, formatDateNum, formatTimeOnly } from "@/utils/format";
@@ -11,16 +10,16 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/AppNavigator";
 import type { DriveSession } from "@/types/DriveSession";
 
-type RecentDriveSessionProps = {
+type FocusDriveSessionCardProps = {
     item: DriveSession | null;
+    heading: string
 };
 
-export default function RecentDriveSession({ item }: RecentDriveSessionProps) {
+export default function FocusDriveSessionCard({ item, heading }: FocusDriveSessionCardProps) {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     const handleSession = async (session: DriveSession) => {
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate("SessionDetails", { session });
     };
 
@@ -29,8 +28,7 @@ export default function RecentDriveSession({ item }: RecentDriveSessionProps) {
             <View style={styles.card}>
                 <View style={styles.headerRow}>
                     <View>
-                        <Text style={styles.eyebrow}>Recent Session</Text>
-                        <Text style={styles.heading}>Your Recent Drive</Text>
+                        <Text style={styles.heading}>{heading}</Text>
                     </View>
 
                     <View style={styles.headerIconWrap}>
@@ -62,8 +60,7 @@ export default function RecentDriveSession({ item }: RecentDriveSessionProps) {
         >
             <View style={styles.headerRow}>
                 <View>
-                    <Text style={styles.eyebrow}>Recent Session</Text>
-                    <Text style={styles.heading}>Your Recent Drive</Text>
+                    <Text style={styles.eyebrow}>{heading}</Text>
                 </View>
 
                 <View style={styles.headerIconWrap}>
@@ -80,11 +77,22 @@ export default function RecentDriveSession({ item }: RecentDriveSessionProps) {
                     <Text style={styles.driveTitle} numberOfLines={1}>
                         {item.title}
                     </Text>
+                    
+                    { formatDateNum(item.startTime) === formatDateNum(item.endTime) &&
+                        <Text style={styles.dateTimeText} numberOfLines={1}>
+                            {formatDateNum(item.startTime)} ({formatTimeOnly(item.startTime)} {"-"}
+                            {formatTimeOnly(item.endTime)})
+                        </Text>
+                    }
 
-                    <Text style={styles.dateTimeText} numberOfLines={2}>
-                        {formatDateNum(item.startTime)} • {formatTimeOnly(item.startTime)} —{" "}
-                        {formatDateNum(item.endTime)} • {formatTimeOnly(item.endTime)}
-                    </Text>
+                    { formatDateNum(item.startTime) !== formatDateNum(item.endTime) &&
+                        <Text style={styles.dateTimeText} numberOfLines={2}>
+                            {formatDateNum(item.startTime)}, {formatTimeOnly(item.startTime)} {"- \n"}
+                            {formatDateNum(item.endTime)}, {formatTimeOnly(item.endTime)}
+                        </Text>
+                    }
+
+
                 </View>
             </View>
 

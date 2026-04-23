@@ -12,7 +12,7 @@ import { useSharedDriveSession } from '@/context/DriveSessionContext';
 
 import SaveSessionModal from '@/components/forms/SaveSession';
 import DriveSessionMap from '@/components/maps/DriveSessionMap';
-import RecentDriveSession from '@/components/cards/RecentDriveSession';
+import FocusDriveSessionCard from '@/components/cards/FocusDriveSessionCard';
 import StartSessionCompB from '@/components/startSession/StartSessionCompB';
 import LiveMapModal from '@/components/maps/LiveMapSession';
 
@@ -88,7 +88,7 @@ export default function NewSessionScreen() {
 
             {isIdle && (
                 <View style={NewSessionStyles.sectionGap}>
-                    <RecentDriveSession item={recentSession} />
+                    <FocusDriveSessionCard item={recentSession} heading='Your Recent Drive' />
                 </View>
             )}
 

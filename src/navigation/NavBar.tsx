@@ -11,7 +11,7 @@ const Tab = createBottomTabNavigator();
 const getTabIcon = (routeName: string, focused: boolean) => {
     const icons: Record<string, { active: any; inactive: any }> = {
         Home: { active: 'home', inactive: 'home-outline' },
-        NewSession: { active: 'car', inactive: 'car-outline' },
+        Drive: { active: 'car', inactive: 'car-outline' },
         Profile: { active: 'person', inactive: 'person-outline' },
     };
 
@@ -22,19 +22,19 @@ const tabs = [
     {
         name: 'Home',
         component: HomeScreen,
-        haptic: Haptics.ImpactFeedbackStyle.Medium,
+        haptic: Haptics.ImpactFeedbackStyle.Light,
         title: 'Home',
     },
     {
-        name: 'NewSession',
+        name: 'Drive',
         component: NewSessionScreen,
-        haptic: Haptics.ImpactFeedbackStyle.Medium,
-        title: 'Start Your Drive',
+        haptic: Haptics.ImpactFeedbackStyle.Light,
+        title: 'Drive',
     },
     {
         name: 'Profile',
         component: ProfileScreen,
-        haptic: Haptics.ImpactFeedbackStyle.Medium,
+        haptic: Haptics.ImpactFeedbackStyle.Light,
         title: 'Profile',
     },
 ];

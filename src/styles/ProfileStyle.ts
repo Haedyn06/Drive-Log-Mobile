@@ -68,5 +68,29 @@ export const ProfileStyles = StyleSheet.create({
         marginTop: 30,
         borderRadius: 16,
         backgroundColor: 'black'
+    },
+
+    optBtnContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        marginTop: 20
+    },
+
+    optBtn: {
+        display: 'flex',
+        justifyContent: 'center',
+        borderWidth: 1,
+        width: 110,
+        height: 110,
+        borderRadius: 12,
+        backgroundColor: "#ffffff",
+        borderColor: "#e5e7eb",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.05,
+        shadowRadius: 12,
+        elevation: 3,
+
     }
 });

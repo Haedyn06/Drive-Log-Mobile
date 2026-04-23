@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { useNavigation } from '@react-navigation/native';
 
 import { formatTime, formatDistance } from '@/utils/format';
 import ConfirmationPopup from '@/components/ConfirmationPopup';
@@ -17,9 +19,16 @@ type StartSessionCompAProps = {
 
 export default function StartSessionCompA({isStart, elapsed, speedKmh, distanceMeters, handleSession, handleEndSession, resetSession}: StartSessionCompAProps) {
     const [showPopup, setShowPopup] = useState(false);
+    const navigation = useNavigation();
 
     const handleResetAndClose = () => {
         resetSession();
+    };
+
+    const handleFinish = async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        navigation.navigate('Drive' as never);
+        handleEndSession();
     };
 
     return (
@@ -54,7 +63,7 @@ export default function StartSessionCompA({isStart, elapsed, speedKmh, distanceM
 
             {(isStart || elapsed > 0) && (
                 <View style={styles.actionRow}>
-                    <Pressable style={[styles.actionBtn, styles.endBtn]} onPress={handleEndSession}>
+                    <Pressable style={[styles.actionBtn, styles.endBtn]} onPress={handleFinish}>
                         <Text style={[styles.actionBtnText, styles.endBtnText]}>End Session</Text>
                     </Pressable>
 

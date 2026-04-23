@@ -1,39 +1,25 @@
 import { useEffect, useState } from 'react';
 import { Text, View, ScrollView, Pressable } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
 import { getTotalDistance, getTotalDriveTime, getTotalElevationGain } from '@/services/localStoreService';
-import { getCars } from '@/services/carService';
-
-import { useCarInfo } from '@/composables/useCarInfo';
 
 import { formatDriveTime, formatDistance, formatElevation } from '@/utils/format';
-import CarAddForm from '@/components/forms/CarAddForm';
-import CarInfoCard from '@/components/cards/CarInfoCard';
-import SavedSessions from '@/components/sessionLists/SavedSessions';
 
-import { HomeStyles } from '@/styles/HomeStyle';
+
 import { ProfileStyles } from '@/styles/ProfileStyle';
 
+import type { RootStackParamList } from '@/navigation/AppNavigator';
+
 export default function ProfileScreen() {
-    const { 
-        carAddVis, car, cars,
-        setCarAddVis, setCar, setCars, 
-        deleteCar, saveCar 
-    } = useCarInfo();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     const [totalDistance, setTotalDistance] = useState(0);
     const [totalDriveTime, setTotalDriveTime] = useState(0);
     const [totalElevation, setTotalElevation] = useState(0);
     
-    useEffect(() => {
-        const loadCars = async () => {
-            const data = await getCars();
-            setCars(data);
-        };
 
-        loadCars();
-    }, []);
 
     
     useEffect(() => {
@@ -54,89 +40,64 @@ export default function ProfileScreen() {
         loadStats();
     }, []);
 
-    const onClose = () => {
-        setCarAddVis(false);
-    };
 
-    const handleAddCar = async () => {
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        setCarAddVis(true);
-    }
+
+    const goToSaves = () => navigation.navigate('SavedSessions');
+    const goToVehicles = () => navigation.navigate('SavedVehicles');
 
     return (
         <ScrollView
             style={ProfileStyles.container}
             contentContainerStyle={ProfileStyles.content}
         >
-            <View style={ProfileStyles.header}>
-                <Text style={{fontSize: 20, fontWeight: 'bold'}}>Driving stats</Text>
-            </View>
-
-            <View style={ProfileStyles.statsContainer}>
-                <View style={ProfileStyles.statsRow1}>
-                    <View style={ProfileStyles.card}>
-                        <Text style={ProfileStyles.cardLabel}>Total Distance Driven</Text>
-                        <Text style={ProfileStyles.cardValue}>
-                            {formatDistance(totalDistance)}
-                        </Text>
-                    </View>
-
-                    <View style={ProfileStyles.card}>
-                        <Text style={ProfileStyles.cardLabel}>Total Time On Road</Text>
-                        <Text style={ProfileStyles.cardValue}>
-                            {formatDriveTime(totalDriveTime)}
-                        </Text>
-                    </View>
-                </View>
-
-                <View style={ProfileStyles.statsRow2}>
-                    <View style={ProfileStyles.card}>
-                        <Text style={ProfileStyles.cardLabel}>Total Elevation Gain</Text>
-                        <Text style={ProfileStyles.cardValue}>
-                            {formatElevation(totalElevation)}
-                        </Text>
-                    </View>
-                </View>
-            </View>
-
-            
-            <View style={{ marginTop: 20 }}>
-                <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 5}}>Vehicles</Text>
-
-                {cars.length === 0 ? (
-                    <Text>No cars saved</Text>
-                ) : (
-                    cars.map((car) => (
-                        <CarInfoCard
-                            key={car.id}
-                            carYear={car.year}
-                            carBrand={car.brand}
-                            carModel={car.model}
-                            carColor={car.color}
-                            carLicense={car.license}
-                            onDelete={() => deleteCar(car.id)}
-                        />
-                    ))
-                )}
-            </View>
-
-
-            {/* New Vehicle */}
             <View>
-                <Pressable style={ProfileStyles.carAddBtn} onPress={handleAddCar}>
-                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}}>Add New Vehicle</Text>
+                <View style={ProfileStyles.header}>
+                    <Text style={{fontSize: 20, fontWeight: 'bold'}}>Driving stats</Text>
+                </View>
+
+                <View style={ProfileStyles.statsContainer}>
+                    <View style={ProfileStyles.statsRow1}>
+                        <View style={ProfileStyles.card}>
+                            <Text style={ProfileStyles.cardLabel}>Total Distance Driven</Text>
+                            <Text style={ProfileStyles.cardValue}>
+                                {formatDistance(totalDistance)}
+                            </Text>
+                        </View>
+
+                        <View style={ProfileStyles.card}>
+                            <Text style={ProfileStyles.cardLabel}>Total Time On Road</Text>
+                            <Text style={ProfileStyles.cardValue}>
+                                {formatDriveTime(totalDriveTime)}
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={ProfileStyles.statsRow2}>
+                        <View style={ProfileStyles.card}>
+                            <Text style={ProfileStyles.cardLabel}>Total Elevation Gain</Text>
+                            <Text style={ProfileStyles.cardValue}>
+                                {formatElevation(totalElevation)}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
+
+
+
+
+            <View style={ProfileStyles.optBtnContainer}>
+                <Pressable style={ProfileStyles.optBtn} onPress={goToSaves}>
+                    <Text style={{fontSize: 20, textAlign: 'center', alignSelf: 'center', fontWeight: 'bold'}}>Saves</Text>
+                </Pressable>
+                <Pressable style={ProfileStyles.optBtn} onPress={goToVehicles}>
+                    <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold'}}>Vehicles</Text>
+                </Pressable>
+                <Pressable style={ProfileStyles.optBtn}>
+                    <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold'}}>S</Text>
                 </Pressable>
             </View>
 
-            <CarAddForm visible={carAddVis} onClose={onClose} onSave={saveCar} />
-
-            <View style={HomeStyles.recentList}>
-                <View style={HomeStyles.recentHeading}>
-                    <Text style={HomeStyles.recentTitle}>Saved</Text>
-                </View>
-
-                <SavedSessions limit={5} />
-            </View>
             
         </ScrollView>
     );

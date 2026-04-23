@@ -23,7 +23,7 @@ export default function CarAddForm({ visible, onClose, onSave }: CarAddFormProps
 
     const handleSave = async () => {
         
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
         onSave({
             year: carYear.trim(),
