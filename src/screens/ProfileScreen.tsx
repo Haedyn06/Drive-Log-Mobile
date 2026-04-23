@@ -3,7 +3,7 @@ import { Text, View, ScrollView, Pressable } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 
-import { getTotalDistance, getTotalDriveTime, getTotalElevationGain } from '@/services/localStoreService';
+import { getTotalDistance, getTotalDriveTime, getTotalElevationGain, exportSessions } from '@/services/localStoreService';
 
 import { formatDriveTime, formatDistance, formatElevation } from '@/utils/format';
 
@@ -18,9 +18,6 @@ export default function ProfileScreen() {
     const [totalDistance, setTotalDistance] = useState(0);
     const [totalDriveTime, setTotalDriveTime] = useState(0);
     const [totalElevation, setTotalElevation] = useState(0);
-    
-
-
     
     useEffect(() => {
         const loadStats = async () => {
@@ -41,6 +38,10 @@ export default function ProfileScreen() {
     }, []);
 
 
+
+    const handleExportSessions = async () => {
+        await exportSessions();
+    }
 
     const goToSaves = () => navigation.navigate('SavedSessions');
     const goToVehicles = () => navigation.navigate('SavedVehicles');
@@ -83,9 +84,6 @@ export default function ProfileScreen() {
                 </View>
             </View>
 
-
-
-
             <View style={ProfileStyles.optBtnContainer}>
                 <Pressable style={ProfileStyles.optBtn} onPress={goToSaves}>
                     <Text style={{fontSize: 20, textAlign: 'center', alignSelf: 'center', fontWeight: 'bold'}}>Saves</Text>
@@ -98,7 +96,18 @@ export default function ProfileScreen() {
                 </Pressable>
             </View>
 
-            
+
+            <View>
+                <Pressable style={ProfileStyles.carAddBtn}>
+                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} onPress={handleExportSessions}>Export Session Data</Text>
+                </Pressable>
+
+                <Pressable style={ProfileStyles.carAddBtn}>
+                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}}>Export Car Data</Text>
+                </Pressable>
+            </View>
+
+
         </ScrollView>
     );
 }

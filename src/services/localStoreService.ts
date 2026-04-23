@@ -1,4 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { File, Paths } from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 const sessionStorage = 'sessions';
 
@@ -11,6 +13,29 @@ export const saveSessions = async (sessions: any[]) => {
         console.log('Error saving sessions', e);
     }
 };
+
+
+export const exportSessions = async () => {
+    const data = await AsyncStorage.getItem(sessionStorage);
+
+    if (!data) {
+        return;
+    }
+
+    const file = new File(
+        Paths.document,
+        "sessions.json"
+    );
+
+    await file.write(
+        data
+    );
+
+    await Sharing.shareAsync(
+        file.uri
+    );
+};
+
 
 export const getSessions = async (
     limit?: number,
