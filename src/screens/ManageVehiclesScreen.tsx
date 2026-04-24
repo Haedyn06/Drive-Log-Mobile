@@ -60,11 +60,7 @@ export default function ManageVehiclesScreen() {
                         <Text>No cars saved</Text>
                     ) : (
                         cars.map((car) => (
-                        <CarInfoCard
-                            key={car.id}
-                            vehicle={car}
-                            onDelete={() => deleteCar(car.id)}
-                        />
+                            <CarInfoCard key={car.id} vehicle={car} onDelete={() => deleteCar(car.id)} />
                         ))
                     )}
                 </View>

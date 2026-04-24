@@ -2,7 +2,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import sampleData from '@/data/SampleData.json';
+import { DriveSessionObj } from "@/types/sessionObj/DriveSessionType";
 const sessionStorage = 'drives';
+
 
 export type SessionSortType = | 'newest' | 'oldest' | 'distance-desc' | 'distance-asc' | 'duration-desc' | 'duration-asc';
 
@@ -61,28 +63,28 @@ export const getSessions = async (
         const data = await AsyncStorage.getItem(sessionStorage);
         const sessions = data ? JSON.parse(data) : [];
 
-        const sorted = [...sessions].sort((a: any, b: any) => {
+        const sorted = [...sessions].sort((a: DriveSessionObj, b: DriveSessionObj) => {
             switch (sortBy) {
                 case 'oldest':
-                    return (a.startTime || 0) - (b.startTime || 0);
+                    return (a.timestamps.timestampStart || 0) - (b.timestamps.timestampStart || 0);
 
                 case 'newest':
-                    return (b.startTime || 0) - (a.startTime || 0);
+                    return (b.timestamps.timestampStart || 0) - (a.timestamps.timestampStart || 0);
 
                 case 'distance-desc':
-                    return (b.distanceMeters || 0) - (a.distanceMeters || 0);
+                    return (b.metrics.distance || 0) - (a.metrics.distance || 0);
 
                 case 'distance-asc':
-                    return (a.distanceMeters || 0) - (b.distanceMeters || 0);
+                    return (a.metrics.distance || 0) - (b.metrics.distance || 0);
 
                 case 'duration-desc':
-                    return (b.durationMs || 0) - (a.durationMs || 0);
+                    return (b.timestamps.elapsedTime || 0) - (a.timestamps.elapsedTime || 0);
 
                 case 'duration-asc':
-                    return (a.durationMs || 0) - (b.durationMs || 0);
+                    return (a.timestamps.elapsedTime || 0) - (b.timestamps.elapsedTime || 0);
 
                 default:
-                    return (b.startTime || 0) - (a.startTime || 0);
+                    return (b.timestamps.timestampStart || 0) - (a.timestamps.timestampStart || 0);
             }
         });
 
@@ -128,13 +130,13 @@ export const clearSessions = async () => {
 
 export const getTotalDistance = async () => {
     try {
-        const sessions = await getSessions();
+        const sessions: DriveSessionObj[] = await getSessions();
 
-        const totalMeters = sessions.reduce((sum: number, session: any) => {
-            return sum + (session.distanceMeters || 0);
+        const totalMeters = sessions.reduce((sum: number, session: DriveSessionObj) => {
+            return sum + (session.metrics.distance || 0);
         }, 0);
 
-        return totalMeters; // keep meters
+        return totalMeters;
     } catch (e) {
         console.log("Error getting total distance", e);
         return 0;
@@ -144,10 +146,10 @@ export const getTotalDistance = async () => {
 
 export const getTotalDriveTime = async () => {
     try {
-        const sessions = await getSessions();
+        const sessions: DriveSessionObj[] = await getSessions();
 
-        const totalMs = sessions.reduce((sum: number, session: any) => {
-            return sum + (session.durationMs || 0);
+        const totalMs = sessions.reduce((sum: number, session: DriveSessionObj) => {
+            return sum + (session.timestamps.elapsedTime || 0);
         }, 0);
 
         return totalMs;
@@ -159,10 +161,10 @@ export const getTotalDriveTime = async () => {
 
 export const getTotalElevationGain = async () => {
     try {
-        const sessions = await getSessions();
+        const sessions: DriveSessionObj[] = await getSessions();
 
-        const totalGain = sessions.reduce((sum: number, session: any) => {
-            return sum + (session.altitudeGainMeters || 0);
+        const totalGain = sessions.reduce((sum: number, session: DriveSessionObj) => {
+            return sum + (session.metrics.altitude.altitudeGained || 0);
         }, 0);
 
         return totalGain; // meters
@@ -178,17 +180,16 @@ export const getTotalElevationGain = async () => {
 
 export const getMaxSpeedSession = async () => {
     try {
-        const sessions = await getSessions();
+        const sessions: DriveSessionObj[] = await getSessions();
 
         if (!sessions.length) return null;
 
-        const bestSession = sessions.reduce((best: any, current: any) => {
-            if (!best) return current;
+        const bestSession = sessions.reduce((best: DriveSessionObj, currentSession: DriveSessionObj) => {
+            if (!best) return currentSession;
 
-            return (current.maxSpeedKmh || 0) > (best.maxSpeedKmh || 0)
-                ? current
-                : best;
-        }, null);
+            return (currentSession.metrics.speed.topSpeed?.speed || 0) > (best.metrics.speed.topSpeed?.speed || 0)
+                ? currentSession : best;
+        });
 
         return bestSession;
     } catch (e) {
@@ -200,17 +201,17 @@ export const getMaxSpeedSession = async () => {
 
 export const getLongestDistanceSession = async () => {
     try {
-        const sessions = await getSessions();
+        const sessions: DriveSessionObj[] = await getSessions();
 
         if (!sessions.length) return null;
 
-        const longest = sessions.reduce((best: any, current: any) => {
-            if (!best) return current;
+        const longest = sessions.reduce((best: DriveSessionObj, currentSession: DriveSessionObj) => {
+            if (!best) return currentSession;
 
-            return (current.distanceMeters || 0) > (best.distanceMeters || 0)
-                ? current
+            return (currentSession.metrics.distance || 0) > (best.metrics.distance || 0)
+                ? currentSession
                 : best;
-        }, null);
+        });
 
         return longest;
     } catch (e) {
@@ -224,9 +225,9 @@ export const getLongestDistanceSession = async () => {
 
 
 const updateSession = async (id: string, updates: any) => {
-    const sessions = await getSessions();
+    const sessions: DriveSessionObj[] = await getSessions();
 
-    const updated = sessions.map((session: any) =>
+    const updated = sessions.map((session: DriveSessionObj) =>
         session.id === id ? { ...session, ...updates } : session
     );
 
