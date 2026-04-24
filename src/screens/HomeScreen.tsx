@@ -27,9 +27,9 @@ export default function HomeScreen() {
     };
 
     const {
-        isStart,
-        elapsed, speedKmh, distanceMeters,
-        handleSession, handleEndSession, resetSession
+        liveStatusSession,
+        elapsedSession, speedSession, distanceSession,
+        handleLiveSession, handleEndSession, handleResetSession
     } = useSharedDriveSession();
 
     return (
@@ -37,13 +37,13 @@ export default function HomeScreen() {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
             <StartSessionCompA
-                isStart={isStart}
-                elapsed={elapsed}
-                speedKmh={speedKmh}
-                distanceMeters={distanceMeters} 
-                handleSession={handleSession}
-                handleEndSession={handleEndSession}
-                resetSession={resetSession}
+                liveStatus={liveStatusSession}
+                elapsed={elapsedSession}
+                speed={speedSession}
+                distance={distanceSession} 
+                handleLive={handleLiveSession}
+                handleEnd={handleEndSession}
+                handleReset={handleResetSession}
             />
 
             <View style={HomeStyles.recentList}>

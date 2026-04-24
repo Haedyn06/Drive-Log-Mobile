@@ -8,60 +8,63 @@ import { formatTime, formatDistance } from '@/utils/format';
 import ConfirmationPopup from '@/components/ConfirmationPopup';
 
 type StartSessionCompAProps = {
-    isStart: boolean;
+    liveStatus: string;
     elapsed: number;
-    speedKmh: number;
-    distanceMeters: number;
-    handleSession: () => Promise<void> | void;
-    handleEndSession: () => Promise<void> | void;
-    resetSession: () => void;
+    speed: number;
+    distance: number;
+    handleLive: () => Promise<void> | void;
+    handleEnd: () => Promise<void> | void;
+    handleReset: () => void;
 };
 
-export default function StartSessionCompA({isStart, elapsed, speedKmh, distanceMeters, handleSession, handleEndSession, resetSession}: StartSessionCompAProps) {
+export default function StartSessionCompA({liveStatus, elapsed, speed, distance, handleLive, handleEnd, handleReset}: StartSessionCompAProps) {
     const [showPopup, setShowPopup] = useState(false);
     const navigation = useNavigation();
+    const isNotStart = 'notstart';
+    const isPlaying = 'playing';
+    const isPaused =  'paused';
 
     const handleResetAndClose = () => {
-        resetSession();
+        handleReset();
     };
 
     const handleFinish = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('Drive' as never);
-        handleEndSession();
+        handleEnd();
     };
 
     return (
         <View style={styles.sessionControls}>
             <View style={styles.sessionManage}>
-                <Pressable style={styles.sessionBtn} onPress={handleSession}>
+                <Pressable style={styles.sessionBtn} onPress={handleLive}>
                     <Ionicons
-                        name={isStart ? 'stop-circle' : 'play-circle'}
+                        name={liveStatus !== 'playing' ? 'play-circle' : 'stop-circle'}
+                        color={liveStatus !== 'playing' ?  '#4f8ef7' : '#d9534f'}
                         size={90}
-                        color={isStart ? '#d9534f' : '#4f8ef7'}
                     />
                 </Pressable>
 
                 <View style={styles.infoSection}>
                     <Text style={styles.timerText}>{formatTime(elapsed)}</Text>
 
-                    {(isStart || elapsed > 0) && (
+                    {(liveStatus !== 'notstart' || elapsed > 0) && (
                         <View style={styles.liveStats}>
                             <View style={styles.statChip}>
                                 <Ionicons name="speedometer-outline" size={16} color="#555" />
-                                <Text style={styles.statText}>{speedKmh.toFixed(1)} km/h</Text>
+                                <Text style={styles.statText}>{speed.toFixed(1)} km/h</Text>
                             </View>
 
                             <View style={styles.statChip}>
                                 <Ionicons name="navigate-outline" size={16} color="#555" />
-                                <Text style={styles.statText}>{formatDistance(distanceMeters)}</Text>
+                                <Text style={styles.statText}>{formatDistance(distance)}</Text>
                             </View>
                         </View>
                     )}
                 </View>
             </View>
 
-            {(isStart || elapsed > 0) && (
+            {(liveStatus !== 'notstart' || elapsed > 0) && (
                 <View style={styles.actionRow}>
                     <Pressable style={[styles.actionBtn, styles.endBtn]} onPress={handleFinish}>
                         <Text style={[styles.actionBtnText, styles.endBtnText]}>End Session</Text>

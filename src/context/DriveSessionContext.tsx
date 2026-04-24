@@ -1,12 +1,12 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { useDriveSession } from '@/composables/useDriveSession';
+import { useLiveDrive } from '@/composables/useLiveDrive';
 
-type DriveSessionType = ReturnType<typeof useDriveSession>;
+type DriveSessionType = ReturnType<typeof useLiveDrive>;
 
 const DriveSessionContext = createContext<DriveSessionType | null>(null);
 
 export function DriveSessionProvider({ children }: { children: ReactNode }) {
-    const driveSession = useDriveSession();
+    const driveSession = useLiveDrive();
 
     return (
         <DriveSessionContext.Provider value={driveSession}>

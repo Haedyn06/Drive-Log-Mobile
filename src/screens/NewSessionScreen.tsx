@@ -3,7 +3,6 @@ import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
 import type { DriveSession } from '@/types/DriveSession';
-import type { CarInfo } from '@/types/CarInfo';
 
 import { getSessions } from '@/services/localStoreService';
 import { getCars } from '@/services/carService';
@@ -20,29 +19,17 @@ import { NewSessionStyles } from '@/styles/NewSessionStyle';
 
 export default function NewSessionScreen() {
     const {
-        isStart, locStart, isPaused,
-        elapsed, speedKmh, distanceMeters, route, altitudeMeters,
-        locEnd,
-        titleModalVisible, sessionTitle,
+        liveStatusSession, mapRoute, elapsedSession, 
+        distanceSession, altitudeSession, altitudeGainSession,
+        speedSession, checkpointSession, topAltitudeSession,
+        topSpeedSession, locationStart, timeStampStart,
+        locationEnd, timeStampEnd, onSessionForm, 
 
-        setTitleModalVisible, setSessionTitle,
-
-        timeStampStart, timeStampEnd,
-
-        handleSession, handleEndSession, handleSaveSession, resetSession, handleCancelSave,
-
-        startLocationLabel,
-        endLocationLabel,
-        selectedCarId,
-        notes, setNotes,
-
-        setStartLocationLabel,
-        setEndLocationLabel,
-        setSelectedCarId,
-        checkpoints
+        handleStartSession, handleLiveSession, handleEndSession,
+        handleSaveSession, handleCancelSave,handleResetSession,
+        handleCheckpointSession
     } = useSharedDriveSession();
     
-    const [cars, setCars] = useState<CarInfo[]>([]);
     const [recentSession, setRecentSession] = useState<DriveSession | null>(null);
     const [routeModalVisible, setRouteModalVisible] = useState(false);
 
@@ -53,9 +40,6 @@ export default function NewSessionScreen() {
                 try {
                     const sessionData = await getSessions(undefined, 'newest');
                     setRecentSession(sessionData.length > 0 ? sessionData[0] : null);
-
-                    const carData = await getCars();
-                    setCars(carData);
                 } catch (e) {
                     console.log('Failed loading data', e);
                 }
@@ -65,25 +49,28 @@ export default function NewSessionScreen() {
         }, [])
     );
 
-    const isIdle = !isStart && elapsed === 0;
-    const isLiveOrEnded = isStart || elapsed > 0;
+    const isNotStart = 'notstart';
+    const isPlaying = 'playing';
+    const isPaused =  'paused';
+
+    const isIdle = liveStatusSession === isNotStart && elapsedSession === 0;
+    const isLiveOrEnded = liveStatusSession !== isNotStart || elapsedSession > 0;
 
     return (
         <ScrollView style={NewSessionStyles.screen} contentContainerStyle={NewSessionStyles.content}>
             <StartSessionCompB
-                isPaused={isPaused}
-                isStart={isStart}
-                elapsed={elapsed}
-                speedKmh={speedKmh}
-                distanceMeters={distanceMeters}
-                altitudeMeters={altitudeMeters}
-                handleSession={handleSession}
-                handleEndSession={handleEndSession}
-                resetSession={resetSession}
-                locStart={locStart}
-                locEnd={locEnd}
-                route={route}
-                checkpoints={checkpoints}
+                liveStatus={liveStatusSession}
+                elapsed={elapsedSession}
+                speed={speedSession}
+                distance={distanceSession}
+                altitude={altitudeSession}
+                handleLive={handleLiveSession}
+                handleEnd={handleEndSession}
+                handleReset={handleResetSession}
+                locStart={locationStart}
+                locEnd={locationEnd}
+                route={mapRoute}
+                checkpoints={checkpointSession}
             />
 
             {isIdle && (
@@ -97,10 +84,10 @@ export default function NewSessionScreen() {
                     <View style={NewSessionStyles.timeCard}>
                         <Text style={NewSessionStyles.cardLabel}>Elapsed Time</Text>
                         <Text style={NewSessionStyles.timeValue}>
-                            {Math.floor(elapsed / 3600000).toString().padStart(2, '0')}:
-                            {Math.floor((elapsed % 3600000) / 60000).toString().padStart(2, '0')}:
-                            {Math.floor((elapsed % 60000) / 1000).toString().padStart(2, '0')}.
-                            {Math.floor((elapsed % 1000) / 10).toString().padStart(2, '0')}
+                            {Math.floor(elapsedSession / 3600000).toString().padStart(2, '0')}:
+                            {Math.floor((elapsedSession % 3600000) / 60000).toString().padStart(2, '0')}:
+                            {Math.floor((elapsedSession % 60000) / 1000).toString().padStart(2, '0')}.
+                            {Math.floor((elapsedSession % 1000) / 10).toString().padStart(2, '0')}
                         </Text>
                     </View>
 
@@ -108,21 +95,21 @@ export default function NewSessionScreen() {
                         <View style={NewSessionStyles.statCard}>
                             <Text style={NewSessionStyles.statLabel}>Distance</Text>
                             <Text style={NewSessionStyles.statValue}>
-                                {distanceMeters >= 1000
-                                    ? `${(distanceMeters / 1000).toFixed(1)}KM`
-                                    : `${distanceMeters.toFixed(0)}M`}
+                                {distanceSession >= 1000
+                                    ? `${(distanceSession / 1000).toFixed(1)}KM`
+                                    : `${distanceSession.toFixed(0)}M`}
                             </Text>
                         </View>
 
                         <View style={NewSessionStyles.statCard}>
                             <Text style={NewSessionStyles.statLabel}>Speed</Text>
-                            <Text style={NewSessionStyles.statValue}>{speedKmh.toFixed(0)}km/h</Text>
+                            <Text style={NewSessionStyles.statValue}>{speedSession.toFixed(0)}km/h</Text>
                         </View>
 
                         <View style={NewSessionStyles.statCard}>
                             <Text style={NewSessionStyles.statLabel}>Altitude</Text>
                             <Text style={NewSessionStyles.statValue}>
-                                {altitudeMeters.toFixed(0)}m
+                                {altitudeSession.toFixed(0)}m
                             </Text>
                         </View>
                     </View>
@@ -131,18 +118,18 @@ export default function NewSessionScreen() {
                         <Pressable onPress={() => setRouteModalVisible(true)}>
                             <DriveSessionMap
                                 title=""
-                                isStart={isStart}
+                                liveStatus={liveStatusSession}
                                 showUserLocation
-                                locStart={locStart}
-                                locEnd={locEnd}
-                                route={route}
+                                locStart={locationStart}
+                                locEnd={locationEnd}
+                                route={mapRoute}
                                 mapStyle={{ height: 230 }}
                                 wrapperStyle={NewSessionStyles.mapWrapperOverride}
-                                checkpoints={checkpoints}
+                                checkpoints={checkpointSession}
                                 previewOnly={false}
                                 timeEnd={timeStampEnd}
                                 timeStart={timeStampStart}
-                                distance={distanceMeters}
+                                distance={distanceSession}
                             />
                         </Pressable>
                     </View>
@@ -151,39 +138,23 @@ export default function NewSessionScreen() {
                     <LiveMapModal
                         visible={routeModalVisible}
                         onClose={() => setRouteModalVisible(false)}
-                        isStart={isStart}
-                        isPaused={isPaused}
-                        elapsed={elapsed}
-                        speedKmh={speedKmh}
-                        distanceMeters={distanceMeters}
-                        locStart={locStart}
-                        locEnd={locEnd}
-                        route={route}
-                        handleSession={handleSession}
-                        handleEndSession={handleEndSession}
-                        resetSession={resetSession}
-                        altitudeMeters={altitudeMeters}
-                        checkpoints={checkpoints}
+                        liveStatus={liveStatusSession}
+                        elapsed={elapsedSession}
+                        speed={speedSession}
+                        distance={distanceSession}
+                        locStart={locationStart}
+                        locEnd={locationEnd}
+                        route={mapRoute}
+                        handleLive={handleLiveSession}
+                        handleEnd={handleEndSession}
+                        handleReset={handleResetSession}
+                        altitude={altitudeSession}
+                        checkpoints={checkpointSession}
                     />
                 </>
             )}
 
-        <SaveSessionModal
-            visible={titleModalVisible}
-            sessionTitle={sessionTitle}
-            setSessionTitle={setSessionTitle}
-            startLocationLabel={startLocationLabel}
-            setStartLocationLabel={setStartLocationLabel}
-            endLocationLabel={endLocationLabel}
-            setEndLocationLabel={setEndLocationLabel}
-            cars={cars}
-            selectedCar={selectedCarId}
-            setSelectedCar={setSelectedCarId}
-            notes={notes}
-            setNotes={setNotes}
-            onClose={handleCancelSave}
-            onSave={handleSaveSession}
-        />
+        <SaveSessionModal visible={onSessionForm} onClose={handleCancelSave} />
         </ScrollView>
     );
 }

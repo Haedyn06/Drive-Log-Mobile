@@ -4,16 +4,16 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 
 import { formatDistance, formatTimeOnly } from '@/utils/format';
 
-import type { Coord } from '@/types/Coord';
-import type { SessionCheckpoint } from '@/types/SessionCheckpoint';
+import type { Coords } from '@/types/sessionObj/LocationType';
+import { SessionCheckpoint } from '@/types/sessionObj/CheckpointType';
 
 type DriveSessionMapProps = {
     title?: string;
-    isStart?: boolean;
+    liveStatus: string;
     showUserLocation?: boolean;
-    locStart: Coord | null;
-    locEnd: Coord | null;
-    route: Coord[];
+    locStart: Coords | null;
+    locEnd: Coords | null;
+    route: Coords[];
     mapStyle?: StyleProp<ViewStyle>;
     wrapperStyle?: StyleProp<ViewStyle>;
     checkpoints?: SessionCheckpoint[];
@@ -25,7 +25,7 @@ type DriveSessionMapProps = {
 
 export default function DriveSessionMap({
     title = 'Route',
-    isStart = false,
+    liveStatus = 'notstart',
     showUserLocation = false,
     locStart,
     locEnd,
@@ -48,7 +48,7 @@ export default function DriveSessionMap({
             key={route.length === 0 ? 'empty-map' : 'active-map'}
             style={[styles.map, mapStyle]}
             showsUserLocation={showUserLocation}
-            followsUserLocation={isStart}
+            followsUserLocation={liveStatus !== 'notstart'}
             scrollEnabled={!previewOnly}
             zoomEnabled={!previewOnly}
             rotateEnabled={!previewOnly}
@@ -74,7 +74,7 @@ export default function DriveSessionMap({
                     key={i.id}
                     coordinate={i.location}
                     title={i.type ? `${i.type} (${formatDistance(Number(i.distance)) ?? 0})` : "Checkpoint"}
-                    description={`${i.note || ""} • ${formatTimeOnly(i.timestamp)}`}
+                    description={`${i.notes || ""} • ${formatTimeOnly(i.timestamp)}`}
                     pinColor="blue"
                 />
             ))}
@@ -108,7 +108,7 @@ export default function DriveSessionMap({
                     <MapView
                         style={styles.fullScreenMap}
                         showsUserLocation={showUserLocation}
-                        followsUserLocation={isStart}
+                        followsUserLocation={liveStatus !== 'notstart'}
                         scrollEnabled
                         zoomEnabled
                         rotateEnabled
@@ -134,7 +134,7 @@ export default function DriveSessionMap({
                                 key={i.id}
                                 coordinate={i.location}
                                 title={i.type ? `${i.type} (${formatDistance(Number(i.distance)) ?? 0})` : "Checkpoint"}
-                                description={`${i.note || "No note"} • ${formatTimeOnly(i.timestamp)}`}
+                                description={`${i.notes || "No note"} • ${formatTimeOnly(i.timestamp)}`}
                                 pinColor="blue"
                             />
                         ))}

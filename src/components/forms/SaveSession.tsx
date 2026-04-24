@@ -1,64 +1,66 @@
-import React, { useMemo, useState } from 'react';
+import React, { use, useMemo, useState, useCallback, } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Modal, View, Text, TextInput, Pressable, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
+import { getCars } from '@/services/carService';
+
+import { useSharedDriveSession } from '@/context/DriveSessionContext';
+
 import FieldLabel from '@/components/FieldLabel';
 
-import type { CarInfo } from '@/types/CarInfo';
+import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
 
 type SaveSessionModalProps = {
     visible: boolean;
-    sessionTitle: string;
-    setSessionTitle: React.Dispatch<React.SetStateAction<string>>;
-
-    startLocationLabel: string;
-    setStartLocationLabel: React.Dispatch<React.SetStateAction<string>>;
-
-    endLocationLabel: string;
-    setEndLocationLabel: React.Dispatch<React.SetStateAction<string>>;
-
-    cars: CarInfo[];
-    selectedCar: string;
-    setSelectedCar: React.Dispatch<React.SetStateAction<string>>;
-
-    notes: string;
-    setNotes: React.Dispatch<React.SetStateAction<string>>;
-
     onClose: () => void;
-    onSave: () => void;
 };
 
-export default function SaveSessionModal({
-    visible,
-    sessionTitle,
-    setSessionTitle,
-    startLocationLabel,
-    setStartLocationLabel,
-    endLocationLabel,
-    setEndLocationLabel,
-    cars,
-    selectedCar,
-    setSelectedCar,
-    notes,
-    setNotes,
-    onClose,
-    onSave,
-}: SaveSessionModalProps) {
+export default function SaveSessionModal({ visible, onClose }: SaveSessionModalProps) {
+    const { handleSaveSession } = useSharedDriveSession();
+
     const [showCarDropdown, setShowCarDropdown] = useState(false);
+    const [sessionTitle, setSessionTitle] = useState('');
+    const [startLocationName, setStartLocationName] = useState('');
+    const [endLocationName, setEndLocationName] = useState('');
+    const [sessionNotes, setSessionNotes] = useState('');
+    const [vehicles, setVehicles] = useState<VehicleObj[]>([]);
+    const [vehicle, setVehicle] = useState<VehicleObj | null>(null);
+
+    useFocusEffect(
+        useCallback(() => {
+            async function loadData() {
+                try {
+                    const carData = await getCars();
+                    setVehicles(carData);
+                } catch (e) {
+                    console.log('Failed loading data', e);
+                }
+            }
+
+            loadData();
+        }, [])
+    );
 
     const selectedCarLabel = useMemo(() => {
-        const car = cars.find((c) => c.id === selectedCar);
+        const car = vehicles.find((c) => c.id === vehicle?.id);
         return car ? `${car.year} ${car.brand} ${car.model}` : 'None';
-    }, [cars, selectedCar]);
+    }, [vehicles, vehicle]);
+
+
+
+
 
     const handleSelectCar = (carId: string) => {
-        setSelectedCar(carId);
+        const selected = vehicles.find((c) => c.id === carId) || null;
+
+        setVehicle(selected);
         setShowCarDropdown(false);
     };
 
     const handleSave = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        onSave();
+        await handleSaveSession(sessionTitle, startLocationName, endLocationName, sessionNotes, vehicle ?? undefined);
     } 
 
     return (
@@ -107,8 +109,8 @@ export default function SaveSessionModal({
 
                             <FieldLabel title="Start Location" optional />
                             <TextInput
-                                value={startLocationLabel}
-                                onChangeText={setStartLocationLabel}
+                                value={startLocationName}
+                                onChangeText={setStartLocationName}
                                 placeholder="Downtown Calgary"
                                 placeholderTextColor="#9ca3af"
                                 style={styles.modalInput}
@@ -116,8 +118,8 @@ export default function SaveSessionModal({
 
                             <FieldLabel title="End Location" optional />
                             <TextInput
-                                value={endLocationLabel}
-                                onChangeText={setEndLocationLabel}
+                                value={endLocationName}
+                                onChangeText={setEndLocationName}
                                 placeholder="Banff Ave"
                                 placeholderTextColor="#9ca3af"
                                 style={styles.modalInput}
@@ -132,7 +134,7 @@ export default function SaveSessionModal({
                                     <Text
                                         style={[
                                             styles.dropdownTriggerText,
-                                            !selectedCar && styles.dropdownPlaceholderText,
+                                            !vehicle && styles.dropdownPlaceholderText,
                                         ]}
                                         numberOfLines={1}
                                     >
@@ -157,19 +159,14 @@ export default function SaveSessionModal({
                                                 <Text style={styles.dropdownItemText}>None</Text>
                                             </Pressable>
 
-                                            {cars.map((car) => (
-                                                <Pressable
-                                                    key={car.id}
-                                                    style={[
-                                                        styles.dropdownItem,
-                                                        selectedCar === car.id &&
-                                                            styles.dropdownItemSelected,
-                                                    ]}
-                                                    onPress={() => handleSelectCar(car.id)}
-                                                >
+                                            {vehicles.map((car) => (
+                                                <Pressable key={car.id} style={[ styles.dropdownItem, 
+                                                    vehicle?.id === car.id && styles.dropdownItemSelected ]}
+                                                    onPress={() => handleSelectCar(car.id)} >
                                                     <Text style={styles.dropdownItemText}>
                                                         {car.year} {car.brand} {car.model}
                                                     </Text>
+
                                                     {!!car.license && (
                                                         <Text style={styles.dropdownItemSubtext}>
                                                             {car.license}
@@ -184,8 +181,8 @@ export default function SaveSessionModal({
 
                             <FieldLabel title="Notes" optional />
                             <TextInput
-                                value={notes}
-                                onChangeText={setNotes}
+                                value={sessionNotes}
+                                onChangeText={setSessionNotes}
                                 placeholder="Road was icy, stopped for gas, nice sunset..."
                                 placeholderTextColor="#9ca3af"
                                 style={[styles.modalInput, styles.notesInput]}

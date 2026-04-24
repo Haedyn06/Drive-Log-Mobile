@@ -6,44 +6,45 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import { formatTimeOnly } from '@/utils/format';
 import CheckpointFormModal from '@/components/forms/CheckpointForm';
 
-import type { SessionCheckpoint } from '@/types/SessionCheckpoint';
-import type { Coord } from '@/types/Coord';
+import { SessionCheckpoint } from '@/types/sessionObj/CheckpointType';
+import type { Coords } from '@/types/sessionObj/LocationType';
 
 type LiveMapModalProps = {
     visible: boolean;
     onClose: () => void;
-    isStart: boolean;
-    isPaused: boolean;
+    liveStatus: string;
     elapsed: number;
-    speedKmh: number;
-    distanceMeters: number;
-    altitudeMeters: number;
-    locStart: Coord | null;
-    locEnd: Coord | null;
-    route: Coord[];
+    speed: number;
+    distance: number;
+    altitude: number;
+    locStart: Coords | null;
+    locEnd: Coords | null;
+    route: Coords[];
     checkpoints: SessionCheckpoint[];
-    handleSession: () => void;
-    handleEndSession: () => void;
-    resetSession: () => void;
+    handleLive: () => void;
+    handleEnd: () => void;
+    handleReset: () => void;
 };
 
 export default function LiveMapModal({ 
-        visible, onClose, isStart, isPaused, 
-        elapsed, speedKmh, distanceMeters, altitudeMeters, 
+        visible, onClose, liveStatus,
+        elapsed, speed, distance, altitude, 
         locStart, locEnd, route = [], 
-        handleSession, handleEndSession, resetSession, checkpoints
+        handleLive, handleEnd, handleReset, checkpoints
 
-    }: LiveMapModalProps)
-{
+    }: LiveMapModalProps) {
+
+    const isNotStart = 'notstart';
+
     const [checkpointModalVisible, setCheckpointModalVisible] = useState(false);
     
     const initialLat = route?.[0]?.latitude ?? locStart?.latitude ?? 51.0447;
     const initialLng = route?.[0]?.longitude ?? locStart?.longitude ?? -114.0719;
 
-    const mainIcon = isStart ? 'pause' : 'play';
+    const mainIcon = liveStatus !== isNotStart ? 'pause' : 'play';
 
     const handleFinish = async () => {
-        await handleEndSession();
+        await handleEnd();
         onClose();
     };
 
@@ -62,7 +63,7 @@ export default function LiveMapModal({
                 <MapView
                     style={styles.fullScreenMap}
                     showsUserLocation
-                    followsUserLocation={isStart}
+                    followsUserLocation={liveStatus !== isNotStart}
                     scrollEnabled
                     zoomEnabled
                     rotateEnabled
@@ -88,7 +89,7 @@ export default function LiveMapModal({
                             key={i.id}
                             coordinate={i.location}
                             title={i.type ? `${i.type} (${i.distance ?? 0}m)` : "Checkpoint"}
-                            description={`${i.note || "No note"} • ${formatTimeOnly(i.timestamp)}`}
+                            description={`${i.notes || "No note"} • ${formatTimeOnly(i.timestamp)}`}
                             pinColor="blue"
                         />
                     ))}
@@ -109,22 +110,22 @@ export default function LiveMapModal({
                     <View style={styles.statsRow}>
                         <View style={styles.statPill}>
                             <Text style={styles.statLabel}>Speed</Text>
-                            <Text style={styles.statValue}>{speedKmh.toFixed(0)} km/h</Text>
+                            <Text style={styles.statValue}>{speed.toFixed(0)} km/h</Text>
                         </View>
 
                         <View style={styles.statPill}>
                             <Text style={styles.statLabel}>Distance</Text>
                             <Text style={styles.statValue}>
-                                {distanceMeters >= 1000
-                                    ? `${(distanceMeters / 1000).toFixed(1)} km`
-                                    : `${distanceMeters.toFixed(0)} m`}
+                                {distance >= 1000
+                                    ? `${(distance / 1000).toFixed(1)} km`
+                                    : `${distance.toFixed(0)} m`}
                             </Text>
                         </View>
 
                         <View style={styles.statPill}>
                             <Text style={styles.statLabel}>Altitude</Text>
                             <Text style={styles.statValue}>
-                                {altitudeMeters.toFixed(0)} m
+                                {altitude.toFixed(0)} m
                             </Text>
                         </View>
                     </View>
@@ -135,7 +136,7 @@ export default function LiveMapModal({
                         <Ionicons name="chevron-down" size={24} color="#111" />
                     </Pressable>
 
-                    <Pressable style={styles.controlBtn} onPress={handleSession}>
+                    <Pressable style={styles.controlBtn} onPress={handleLive}>
                         <Ionicons name={mainIcon} size={28} color="#fff" />
                     </Pressable>
 

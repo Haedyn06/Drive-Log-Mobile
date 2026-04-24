@@ -15,12 +15,12 @@ export type TopSpeed = {
 // Metrics
 export type AltitudeMetrics = {
     altitudeGained: number;
-    topAltitude: TopAltitude;
+    topAltitude?: TopAltitude;
 }
 
 export type SpeedMetrics = {
     avgSpeed: number;
-    topSpeed: TopSpeed;
+    topSpeed?: TopSpeed;
 }
 
 

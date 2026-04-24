@@ -6,65 +6,61 @@ import * as Haptics from 'expo-haptics';
 import ConfirmationPopup from '../ConfirmationPopup';
 import LiveMapModal from '@/components/maps/LiveMapSession';
 
-import type { Coord } from '@/types/Coord';
-import type { SessionCheckpoint } from '@/types/SessionCheckpoint';
+import type { Coords } from '@/types/sessionObj/LocationType';
+import type { SessionCheckpoint } from '@/types/sessionObj/CheckpointType';
 
 export type StartSessionCompBProps = {
-    isStart: boolean;
-    isPaused: boolean;
+    liveStatus: string;
     elapsed: number;
-    speedKmh: number;
-    distanceMeters: number;
-    altitudeMeters: number;
-    locStart: Coord | null;
-    locEnd: Coord | null;
-    route: Coord[];
+    speed: number;
+    distance: number;
+    altitude: number;
+    locStart: Coords | null;
+    locEnd: Coords | null;
+    route: Coords[];
     checkpoints: SessionCheckpoint[];
-    handleSession: () => Promise<void> | void;
-    handleEndSession: () => Promise<void> | void;
-    resetSession: () => void;
+    handleLive: () => Promise<void> | void;
+    handleEnd: () => Promise<void> | void;
+    handleReset: () => void;
 };
 
 export default function StartSessionCompB({
-    isStart,
-    isPaused,
-    elapsed,
-    speedKmh,
-    distanceMeters,
-    altitudeMeters,
-    locStart,
-    locEnd,
-    route,
-    handleSession,
-    handleEndSession,
-    resetSession,
+    liveStatus, elapsed,
+    speed, distance, altitude,
+    locStart, locEnd, route,
+    handleLive, handleEnd, handleReset,
     checkpoints
 }: StartSessionCompBProps) {
     const [mapVisible, setMapVisible] = useState(false);
 
-    const hasSession = isStart || isPaused || elapsed > 0;
-    const mainIcon = isStart ? 'pause' : 'play';
-    const statusLabel = isStart ? 'LIVE' : isPaused ? 'PAUSED' : 'READY';
+    const isNotStart = 'notstart';
+    const isPlaying = 'playing';
+    const isPaused =  'paused';
+
+    const hasSession = liveStatus !== isNotStart || elapsed > 0;
+    const mainIcon = liveStatus === isPlaying ? 'pause' : 'play';
+    const statusLabel = liveStatus === isPlaying ? 'LIVE' : liveStatus === isPaused ? 'PAUSED' : 'READY';    
     const [showPopup, setShowPopup] = useState(false);
+    
     const handleMainPress = async () => {
-        if (!isStart && !isPaused && elapsed === 0) {
-            await handleSession();
+        if (liveStatus === isNotStart && elapsed === 0) {
+            await handleLive();
             setMapVisible(true);
             return;
         }
 
-        await handleSession();
+        await handleLive();
     };
 
     const handleFinishAndClose = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        await handleEndSession();
+        await handleEnd();
         setMapVisible(false);
     };
 
     const handleResetAndClose = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        resetSession();
+        handleReset();
         setMapVisible(false);
     };
 
@@ -75,16 +71,10 @@ export default function StartSessionCompB({
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
                         <View style={styles.liveWrap}>
                             <View
-                                style={[
-                                    styles.liveDot,
-                                    isStart
-                                        ? styles.liveDotLive
-                                        : isPaused
-                                            ? styles.liveDotPaused
-                                            : styles.liveDotReady,
-                                ]}
-                            />
-                            <Text style={styles.liveText}>{statusLabel}</Text>
+                                style={[ styles.liveDot,
+                                    liveStatus === isPlaying ? styles.liveDotLive : liveStatus === isPaused
+                                        ? styles.liveDotPaused : styles.liveDotReady ]} />
+                                <Text style={styles.liveText}>{statusLabel}</Text>
                         </View>
 
                         <Pressable
@@ -127,18 +117,17 @@ export default function StartSessionCompB({
             <LiveMapModal
                 visible={mapVisible}
                 onClose={() => setMapVisible(false)}
-                isStart={isStart}
-                isPaused={isPaused}
+                liveStatus={liveStatus}
                 elapsed={elapsed}
-                speedKmh={speedKmh}
-                distanceMeters={distanceMeters}
+                speed={speed}
+                distance={distance}
                 locStart={locStart}
                 locEnd={locEnd}
                 route={route}
-                handleSession={handleSession}
-                handleEndSession={handleFinishAndClose}
-                resetSession={handleResetAndClose}
-                altitudeMeters={altitudeMeters}
+                handleLive={handleLive}
+                handleEnd={handleFinishAndClose}
+                handleReset={handleResetAndClose}
+                altitude={altitude}
                 checkpoints={checkpoints}
             />
 

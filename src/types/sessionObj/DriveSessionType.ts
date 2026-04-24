@@ -8,9 +8,10 @@ import type { SessionCheckpoint } from "@/types/sessionObj/CheckpointType";
 export type DriveSessionObj = {
     id: string;
     title: string;
+    date: string;
     images?: string[];
     notes?: string;
-    mapRoute?: Coords[];
+    mappedRoute?: Coords[];
 
     timestamps: SessionTimes;
     locations: SessionLocations;

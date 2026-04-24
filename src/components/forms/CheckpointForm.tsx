@@ -17,12 +17,12 @@ export default function CheckpointFormModal({ visible, onClose }: CheckpointForm
     const [note, setNote] = useState("");
     const [selectedType, setSelectedType] = useState<CheckpointType>("checkpoint");
 
-    const {newCheckpoint, checkpoints} = useSharedDriveSession();
+    const {handleCheckpointSession, checkpointSession} = useSharedDriveSession();
 
     async function handleSave() {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         
-        newCheckpoint(note, selectedType);
+        handleCheckpointSession(note, selectedType);
         setNote("");
         setSelectedType("checkpoint");
         onClose();

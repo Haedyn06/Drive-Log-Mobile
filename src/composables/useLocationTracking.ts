@@ -4,21 +4,24 @@ import { getDistance } from 'geolib';
 
 import { requestPermission } from '@/utils/locationAccess';
 
-import type { Coord } from '@/types/Coord';
+import type { Coords } from '@/types/sessionObj/LocationType';
+import type { TopSpeed, TopAltitude } from '@/types/sessionObj/MetricsType';
 
 type UseLocationTrackingProps = {
-    setSpeedKmh: React.Dispatch<React.SetStateAction<number>>;
-    setMaxSpeedKmh: React.Dispatch<React.SetStateAction<number>>;
-    setRoute: React.Dispatch<React.SetStateAction<Coord[]>>;
-    setDistanceMeters: React.Dispatch<React.SetStateAction<number>>;
-    setAltitudeMeters: React.Dispatch<React.SetStateAction<number>>;
-    setMaxAltitudeMeters: React.Dispatch<React.SetStateAction<number>>;
-    setAltitudeGainMeters: React.Dispatch<React.SetStateAction<number>>;
+    setSpeedSession: React.Dispatch<React.SetStateAction<number>>;
+    setTopSpeedSession: React.Dispatch<React.SetStateAction<TopSpeed | null>>;
+    setAltitudeSession: React.Dispatch<React.SetStateAction<number>>;
+    setTopAltitudeSession: React.Dispatch<React.SetStateAction<TopAltitude | null>>;
+    setAltitudeGainSession: React.Dispatch<React.SetStateAction<number>>;
+    setDistanceSession: React.Dispatch<React.SetStateAction<number>>;
+    setMapRoute: React.Dispatch<React.SetStateAction<Coords[]>>;
+    
 };
 
 export function useLocationTracking({
-    setSpeedKmh, setMaxSpeedKmh, setRoute, setDistanceMeters, 
-    setAltitudeMeters, setMaxAltitudeMeters, setAltitudeGainMeters
+    setSpeedSession, setTopSpeedSession, 
+    setAltitudeSession, setTopAltitudeSession, setAltitudeGainSession,
+    setDistanceSession, setMapRoute
 }: UseLocationTrackingProps) {
     const [watchSubscription, setWatchSubscription] =
         useState<Location.LocationSubscription | null>(null);
@@ -42,38 +45,51 @@ export function useLocationTracking({
                 distanceInterval: 1
             },
             (location) => {
+                // Altitude
                 const altitude = location.coords.altitude ?? 0;
 
+                // Routing
                 const newPoint = {
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
                     altitude
                 };
 
+                // Speed
                 const rawSpeed = location.coords.speed ?? 0;
                 const safeSpeed = rawSpeed < 0 ? 0 : rawSpeed * 3.6;
 
-                setSpeedKmh(safeSpeed);
-                setMaxSpeedKmh((prev) => Math.max(prev, safeSpeed));
+                setSpeedSession(safeSpeed);
+                setTopSpeedSession((prev) => {
+                    if (!prev || safeSpeed > prev.speed) 
+                        return { speed: safeSpeed, location: newPoint };
+                    return prev;
+                });
 
-                setAltitudeMeters(altitude);
-                setMaxAltitudeMeters((prev) => Math.max(prev, altitude));
 
-                setRoute((prevRoute) => {
+                // Altitude
+                setAltitudeSession(altitude);
+                setTopAltitudeSession((prev) => {
+                    if (!prev || altitude > prev.altitude) 
+                        return { altitude, location: newPoint };
+                    return prev;
+                });
+
+
+                // Mapped Routes
+                setMapRoute((prevRoute) => {
                     if (prevRoute.length === 0) return [newPoint];
 
                     const lastPoint = prevRoute[prevRoute.length - 1];
                     const segmentDistance = getDistance(lastPoint, newPoint);
 
                     if (segmentDistance >= 5) {
-                        setDistanceMeters((prev) => prev + segmentDistance);
+                        setDistanceSession((prev) => prev + segmentDistance);
 
                         const lastAltitude = lastPoint.altitude ?? 0;
                         const altitudeDiff = altitude - lastAltitude;
 
-                        if (altitudeDiff > 0) {
-                            setAltitudeGainMeters((prev) => prev + altitudeDiff);
-                        }
+                        if (altitudeDiff > 0) setAltitudeGainSession((prev) => prev + altitudeDiff);
 
                         return [...prevRoute, newPoint];
                     }
@@ -85,6 +101,10 @@ export function useLocationTracking({
 
         setWatchSubscription(subscription);
     };
+
+
+
+
 
     const stopTracking = async () => {
         if (watchSubscription) {
@@ -98,7 +118,7 @@ export function useLocationTracking({
             return;
         }
 
-        setSpeedKmh(0);
+        setSpeedSession(0);
     };
 
     return { startTracking, stopTracking };
