@@ -4,9 +4,9 @@ import * as Haptics from 'expo-haptics';
 
 import { getCars } from '@/services/carService';
 
-import { useCarInfo } from '@/composables/useCarInfo';
+import { useVehicleObj } from '@/composables/useVehicleObj';
 
-import CarInfoCard from '@/components/cards/CarInfoCard';
+import CarInfoCard from '@/components/cards/VehicleCard';
 import CarAddForm from '@/components/forms/CarAddForm';
 
 import { SessionLogsStyles } from '@/styles/SessionsLogsStyles';
@@ -17,7 +17,7 @@ export default function ManageVehiclesScreen() {
         carAddVis, car, cars,
         setCarAddVis, setCar, setCars, 
         deleteCar, saveCar 
-    } = useCarInfo();
+    } = useVehicleObj();
 
     useEffect(() => {
         const loadCars = async () => {
@@ -60,15 +60,11 @@ export default function ManageVehiclesScreen() {
                         <Text>No cars saved</Text>
                     ) : (
                         cars.map((car) => (
-                            <CarInfoCard
-                                key={car.id}
-                                carYear={car.year}
-                                carBrand={car.brand}
-                                carModel={car.model}
-                                carColor={car.color}
-                                carLicense={car.license}
-                                onDelete={() => deleteCar(car.id)}
-                            />
+                        <CarInfoCard
+                            key={car.id}
+                            vehicle={car}
+                            onDelete={() => deleteCar(car.id)}
+                        />
                         ))
                     )}
                 </View>

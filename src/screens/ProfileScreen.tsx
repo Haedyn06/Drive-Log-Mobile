@@ -3,7 +3,7 @@ import { Text, View, ScrollView, Pressable } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 
-import { getTotalDistance, getTotalDriveTime, getTotalElevationGain, exportSessions } from '@/services/localStoreService';
+import { getTotalDistance, getTotalDriveTime, getTotalElevationGain, exportSessions, importSessions } from '@/services/driveSessionService';
 
 import { formatDriveTime, formatDistance, formatElevation } from '@/utils/format';
 
@@ -42,6 +42,8 @@ export default function ProfileScreen() {
     const handleExportSessions = async () => {
         await exportSessions();
     }
+
+    const handleImportSessions = async () => await importSessions();
 
     const goToSaves = () => navigation.navigate('SavedSessions');
     const goToVehicles = () => navigation.navigate('SavedVehicles');
@@ -98,12 +100,12 @@ export default function ProfileScreen() {
 
 
             <View>
-                <Pressable style={ProfileStyles.carAddBtn}>
-                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} onPress={handleExportSessions}>Export Session Data</Text>
+                <Pressable style={ProfileStyles.carAddBtn} onPress={handleExportSessions}>
+                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} >Export Session Data</Text>
                 </Pressable>
 
-                <Pressable style={ProfileStyles.carAddBtn}>
-                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}}>Export Car Data</Text>
+                <Pressable style={ProfileStyles.carAddBtn} onPress={handleImportSessions}>
+                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}}>Import Session Data</Text>
                 </Pressable>
             </View>
 

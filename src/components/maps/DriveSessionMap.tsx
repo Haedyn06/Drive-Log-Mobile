@@ -9,7 +9,7 @@ import { SessionCheckpoint } from '@/types/sessionObj/CheckpointType';
 
 type DriveSessionMapProps = {
     title?: string;
-    liveStatus: string;
+    liveStatus?: string;
     showUserLocation?: boolean;
     locStart: Coords | null;
     locEnd: Coords | null;

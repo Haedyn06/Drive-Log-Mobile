@@ -8,18 +8,49 @@ import DriveSessionMap from "@/components/maps/DriveSessionMap";
 
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/AppNavigator";
-import type { DriveSession } from "@/types/DriveSession";
+import type { DriveSessionObj } from "@/types/sessionObj/DriveSessionType";
 
 type FocusDriveSessionCardProps = {
-    item: DriveSession | null;
+    item: DriveSessionObj | null;
     heading: string
 };
 
 export default function FocusDriveSessionCard({ item, heading }: FocusDriveSessionCardProps) {
+    const session = {
+        // Info
+        id: item?.id,
+        title: item?.title,
+        date: item?.date,
+        images: item?.images,
+        notes: item?.notes,
+        routes: item?.mappedRoute,
+        
+        // Times
+        duration: item?.timestamps.elapsedTime,
+        startTime: item?.timestamps.timestampStart,
+        endTime: item?.timestamps.timestampEnd,
+
+        // Locations
+        startLocation: item?.locations.startLocation,
+        endLocation: item?.locations.endLocation,
+
+        // Metrics
+        speed: item?.metrics.speed,
+        altitude: item?.metrics.altitude,
+        distance: item?.metrics.distance,
+
+        // Checkpoints
+        checkpoints: item?.checkpoints,
+
+        // Vehicle
+        vehicle: item?.vehicle
+    };
+
+
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-    const handleSession = async (session: DriveSession) => {
+    const handleSession = async (session: DriveSessionObj) => {
         navigation.navigate("SessionDetails", { session });
     };
 
@@ -78,17 +109,17 @@ export default function FocusDriveSessionCard({ item, heading }: FocusDriveSessi
                         {item.title}
                     </Text>
                     
-                    { formatDateNum(item.startTime) === formatDateNum(item.endTime) &&
+                    { formatDateNum(item.timestamps.timestampStart) === formatDateNum(item.timestamps.timestampEnd) &&
                         <Text style={styles.dateTimeText} numberOfLines={1}>
-                            {formatDateNum(item.startTime)} ({formatTimeOnly(item.startTime)} {"-"}
-                            {formatTimeOnly(item.endTime)})
+                            {formatDateNum(session.startTime || 0)} ({formatTimeOnly(session.startTime || 0)} {"-"}
+                            {formatTimeOnly(session.endTime || 0)})
                         </Text>
                     }
 
-                    { formatDateNum(item.startTime) !== formatDateNum(item.endTime) &&
+                    { formatDateNum(session.startTime || 0) !== formatDateNum(session.endTime || 0) &&
                         <Text style={styles.dateTimeText} numberOfLines={2}>
-                            {formatDateNum(item.startTime)}, {formatTimeOnly(item.startTime)} {"- \n"}
-                            {formatDateNum(item.endTime)}, {formatTimeOnly(item.endTime)}
+                            {formatDateNum(session.startTime || 0)}, {formatTimeOnly(session.startTime || 0)} {"- \n"}
+                            {formatDateNum(session.endTime || 0)}, {formatTimeOnly(session.endTime || 0)}
                         </Text>
                     }
 
@@ -99,31 +130,31 @@ export default function FocusDriveSessionCard({ item, heading }: FocusDriveSessi
             <View style={styles.statsRow}>
                 <View style={styles.statCard}>
                     <Text style={styles.statLabel}>Duration</Text>
-                    <Text style={styles.statValue}>{formatDuration(item.durationMs)}</Text>
+                    <Text style={styles.statValue}>{formatDuration(session.duration || 0)}</Text>
                 </View>
 
                 <View style={styles.statCard}>
                     <Text style={styles.statLabel}>Distance</Text>
-                    <Text style={styles.statValue}>{formatDistance(item.distanceMeters)}</Text>
+                    <Text style={styles.statValue}>{formatDistance(session.distance || 0)}</Text>
                 </View>
 
                 <View style={styles.statCard}>
                     <Text style={styles.statLabel}>Avg Speed</Text>
-                    <Text style={styles.statValue}>{item.averageSpeedKmh.toFixed(0)} km/h</Text>
+                    <Text style={styles.statValue}>{session.speed?.avgSpeed.toFixed(0)} km/h</Text>
                 </View>
             </View>
 
             <View style={styles.mapSection}>
                 <DriveSessionMap
-                    locStart={item.startLocation}
-                    locEnd={item.endLocation}
-                    route={item.route}
+                    locStart={item.locations.startLocation.coords || null}
+                    locEnd={item.locations.endLocation.coords || null}
+                    route={session.routes || []}
                     mapStyle={{ height: 220 }}
                     wrapperStyle={styles.mapWrapper}
                     previewOnly={true}
-                    timeEnd={item.endTime}
-                    timeStart={item.startTime}
-                    distance={item.distanceMeters}
+                    timeEnd={item.timestamps.timestampEnd}
+                    timeStart={item.timestamps.timestampStart}
+                    distance={item.metrics.distance}
                 />
             </View>
         </Pressable>

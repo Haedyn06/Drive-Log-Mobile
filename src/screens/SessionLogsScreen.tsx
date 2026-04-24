@@ -6,7 +6,7 @@ import DriveSessionList from '@/components/sessionLists/DriveSessionList';
 import { SessionLogsStyles } from '@/styles/SessionsLogsStyles';
 
 
-import type { SessionSortType } from '@/services/localStoreService';
+import type { SessionSortType } from '@/services/driveSessionService';
 
 export default function SessionsLogsScreen() {
     const [sortType, setSortType] = useState<SessionSortType>('newest');

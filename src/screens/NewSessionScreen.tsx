@@ -2,10 +2,7 @@ import { Text, View, ScrollView, Pressable } from 'react-native';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
-import type { DriveSession } from '@/types/DriveSession';
-
-import { getSessions } from '@/services/localStoreService';
-import { getCars } from '@/services/carService';
+import { getSessions } from '@/services/driveSessionService';
 
 import { useSharedDriveSession } from '@/context/DriveSessionContext';
 
@@ -16,6 +13,8 @@ import StartSessionCompB from '@/components/startSession/StartSessionCompB';
 import LiveMapModal from '@/components/maps/LiveMapSession';
 
 import { NewSessionStyles } from '@/styles/NewSessionStyle';
+
+import type { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
 
 export default function NewSessionScreen() {
     const {
@@ -30,7 +29,7 @@ export default function NewSessionScreen() {
         handleCheckpointSession
     } = useSharedDriveSession();
     
-    const [recentSession, setRecentSession] = useState<DriveSession | null>(null);
+    const [recentSession, setRecentSession] = useState<DriveSessionObj | null>(null);
     const [routeModalVisible, setRouteModalVisible] = useState(false);
 
 

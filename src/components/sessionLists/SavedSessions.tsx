@@ -5,7 +5,7 @@ import * as Haptics from 'expo-haptics';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Ionicons } from '@expo/vector-icons';
 
-import { deleteSession, getSessionById } from '@/services/localStoreService';
+import { deleteSession, getSessionById } from '@/services/driveSessionService';
 import { getSaves } from '@/services/savesService';
 
 import DriveSessionCard from '@/components/cards/DriveSessionCard';
@@ -13,14 +13,13 @@ import ConfirmationPopup from '@/components/ConfirmationPopup';
 
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/AppNavigator';
-import type { DriveSession } from '@/types/DriveSession';
-
+import type { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
 type SavedSessionsProps = {
     limit?: number;
 };
 
 export default function SavedSessions({ limit }: SavedSessionsProps) {
-    const [sessions, setSessions] = useState<DriveSession[]>([]);
+    const [sessions, setSessions] = useState<DriveSessionObj[]>([]);
     const [showPopup, setShowPopup] = useState(false);
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
     const navigation =
@@ -35,7 +34,7 @@ export default function SavedSessions({ limit }: SavedSessionsProps) {
             );
 
             const validSessions = fullSessions.filter(
-                (session): session is DriveSession => session !== null
+                (session): session is DriveSessionObj => session !== null
             );
 
             const sorted = [...validSessions].reverse();
@@ -53,7 +52,7 @@ export default function SavedSessions({ limit }: SavedSessionsProps) {
         }, [loadSessions])
     );
 
-    const handlePressSession = async (item: DriveSession) => {
+    const handlePressSession = async (item: DriveSessionObj) => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('SessionDetails', { session: item });
     };
@@ -66,7 +65,7 @@ export default function SavedSessions({ limit }: SavedSessionsProps) {
 
 
 
-    const renderRightActions = (item: DriveSession) => {
+    const renderRightActions = (item: DriveSessionObj) => {
         return (
             <Pressable
                 style={styles.deleteAction}

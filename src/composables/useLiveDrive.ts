@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
 
-import { addSession } from '@/services/localStoreService';
+import { addSession } from '@/services/driveSessionService';
 
 import { requestPermission, compressRouteByDistance } from '@/utils/locationAccess';
 import { avgSpeedCalc } from '@/utils/metricsCalc';

@@ -1,0 +1,87 @@
+[
+  {
+    "id": "",
+    "title": "",
+    "date": "",
+    "images": [],
+    "notes": "",
+    "mappedRoute": [
+      {
+        "latitude": 0,
+        "longitude": 0,
+        "altitude": 0
+      }
+    ],
+    "timestamps": {
+      "elapsedTime": 0,
+      "timestampStart": 0,
+      "timestampEnd": 0
+    },
+    "locations": {
+      "startLocation": {
+        "name": "",
+        "coords": {
+          "latitude": 0,
+          "longitude": 0,
+          "altitude": 0
+        }
+      },
+      "endLocation": {
+        "name": "",
+        "coords": {
+          "latitude": 0,
+          "longitude": 0,
+          "altitude": 0
+        }
+      }
+    },
+    "metrics": {
+      "altitude": {
+        "altitudeGained": 0,
+        "topAltitude": {
+          "altitude": 0,
+          "location": {
+            "latitude": 0,
+            "longitude": 0,
+            "altitude": 0
+          }
+        }
+      },
+      "speed": {
+        "avgSpeed": 0,
+        "topSpeed": {
+          "speed": 0,
+          "location": {
+            "latitude": 0,
+            "longitude": 0,
+            "altitude": 0
+          }
+        }
+      },
+      "distance": 0
+    },
+    "checkpoints": [
+      {
+        "id": "",
+        "type": "",
+        "location": {
+          "latitude": 0,
+          "longitude": 0,
+          "altitude": 0
+        },
+        "distance": 0,
+        "timestamp": 0,
+        "images": [],
+        "notes": ""
+      }
+    ],
+    "vehicle": {
+      "id": "",
+      "year": "",
+      "model": "",
+      "brand": "",
+      "color": "",
+      "license": ""
+    }
+  }
+]

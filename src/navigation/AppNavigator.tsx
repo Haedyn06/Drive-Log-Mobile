@@ -9,11 +9,11 @@ import SessionDetailsScreen from '@/screens/SessionDetailsScreen';
 import SavedSessionsScreen from '@/screens/SavedSessionsScreen';
 import ManageVehiclesScreen from '@/screens/ManageVehiclesScreen';
 
-import type { DriveSession } from '@/types/DriveSession';
+import type { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
 
 export type RootStackParamList = {
     Back: undefined;
-    SessionDetails: { session: DriveSession };
+    SessionDetails: { session: DriveSessionObj };
     SessionLogs: undefined;
     SavedSessions: undefined;
     SavedVehicles: undefined;

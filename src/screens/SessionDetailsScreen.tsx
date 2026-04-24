@@ -4,11 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-import type { CarInfo } from '@/types/CarInfo';
-import type { RootStackParamList } from '@/navigation/AppNavigator';
 
 import { isExist, saveSession, unsaveSession } from '@/services/savesService';
-import { editSessionName, editSessionNotes } from '@/services/localStoreService';
+import { editSessionName, editSessionNotes } from '@/services/driveSessionService';
 import { getCars } from '@/services/carService';
 
 import { formatDateTime, formatDuration, formatDistance, formatDateNum, formatTimeOnly } from '@/utils/format';
@@ -16,6 +14,8 @@ import DriveSessionMap from '@/components/maps/DriveSessionMap';
 
 import { SessionDetailsStyles } from '@/styles/SessionDetailsStyle';
 
+import { VehicleObj } from '@/types/vehicleObj/VehicleType';
+import type { RootStackParamList } from '@/navigation/AppNavigator';
 
 type SessionDetailsRouteProp = RouteProp<RootStackParamList, 'SessionDetails'>;
 
@@ -23,7 +23,7 @@ export default function SessionDetailsScreen() {
     const route = useRoute<SessionDetailsRouteProp>();
     const { session } = route.params;
 
-    const [car, setCar] = useState<CarInfo | null>(null);
+    const [car, setCar] = useState<VehicleObj | null>(session.vehicle || null);
     const [isSaved, setIsSaved] = useState(false);
 
     const [title, setTitle] = useState(session.title);
@@ -34,20 +34,15 @@ export default function SessionDetailsScreen() {
     const [isEditingNotes, setIsEditingNotes] = useState(false);
     const [editedNotes, setEditedNotes] = useState(session.notes ?? '');
 
+
     useEffect(() => {
-        const loadCar = async () => {
-            try {
-                const cars = await getCars();
-                const foundCar = cars.find((c) => c.id === session.carId) ?? null;
-                setCar(foundCar);
-                setIsSaved(await isExist(session.id));
-            } catch (e) {
-                console.log('Failed to load car', e);
-            }
+        const check = async () => {
+            const result = await isExist(session.id);
+            setIsSaved(result);
         };
 
-        loadCar();
-    }, [session.carId]);
+        check();
+    }, [session]);
 
     const handleSave = async () => {
         await saveSession(session.id);
@@ -140,7 +135,7 @@ export default function SessionDetailsScreen() {
 
                     <View style={SessionDetailsStyles.headerMetaChip}>
                         <Ionicons name="time-outline" size={16} color="#555" />
-                        <Text style={SessionDetailsStyles.headerMetaText}>{formatDuration(session.durationMs)}</Text>
+                        <Text style={SessionDetailsStyles.headerMetaText}>{formatDuration(session.timestamps.elapsedTime)}</Text>
                     </View>
                 </View>
             </View>
@@ -148,17 +143,17 @@ export default function SessionDetailsScreen() {
             <View style={SessionDetailsStyles.statsRow}>
                 <View style={SessionDetailsStyles.statCard}>
                     <Text style={SessionDetailsStyles.statLabel}>Distance</Text>
-                    <Text style={SessionDetailsStyles.statValue}>{formatDistance(session.distanceMeters)}</Text>
+                    <Text style={SessionDetailsStyles.statValue}>{formatDistance(session.metrics.distance)}</Text>
                 </View>
 
                 <View style={SessionDetailsStyles.statCard}>
                     <Text style={SessionDetailsStyles.statLabel}>Avg Speed</Text>
-                    <Text style={SessionDetailsStyles.statValue}>{session.averageSpeedKmh.toFixed(1)} km/h</Text>
+                    <Text style={SessionDetailsStyles.statValue}>{session.metrics.speed.avgSpeed.toFixed(1)} km/h</Text>
                 </View>
 
                 <View style={SessionDetailsStyles.statCard}>
                     <Text style={SessionDetailsStyles.statLabel}>Altitude Gained</Text>
-                    <Text style={SessionDetailsStyles.statValue}>{(session.altitudeGainMeters ?? 0).toFixed(1)} m</Text>
+                    <Text style={SessionDetailsStyles.statValue}>{(session.metrics.altitude.altitudeGained ?? 0).toFixed(1)} m</Text>
                 </View>
             </View>
 
@@ -175,63 +170,63 @@ export default function SessionDetailsScreen() {
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Start Time</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
-                        {formatDateNum(session.startTime)} • {formatTimeOnly(session.startTime)}
+                        {formatDateNum(session.timestamps.timestampStart)} • {formatTimeOnly(session.timestamps.timestampStart)}
                     </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>End Time</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
-                        {formatDateNum(session.endTime)} • {formatTimeOnly(session.endTime)}
+                        {formatDateNum(session.timestamps.timestampEnd)} • {formatTimeOnly(session.timestamps.timestampEnd)}
                     </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Duration</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
-                        {formatDuration(session.durationMs)}
+                        {formatDuration(session.timestamps.elapsedTime)}
                     </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Distance</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
-                        {session.distanceMeters.toFixed(0)} m ({(session.distanceMeters / 1000).toFixed(2)} km)
+                        {formatDistance(session.metrics.distance)}
                     </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Average Speed</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
-                        {session.averageSpeedKmh.toFixed(1)} km/h
+                        {session.metrics.speed.avgSpeed.toFixed(1)} km/h
                     </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Max Speed</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
-                        {(session.maxSpeedKmh ?? 0).toFixed(1)} km/h
+                        {(session.metrics.speed.topSpeed?.speed ?? 0).toFixed(1)} km/h
                     </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Route Points</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
-                        {session.route.length}
-                    </Text>
+                        {session.mappedRoute?.length}
+                    </Text> 
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Altitude Gained</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
-                        {(session.altitudeGainMeters ?? 0).toFixed(1)} m
+                        {(session.metrics.altitude.altitudeGained ?? 0).toFixed(1)} m
                     </Text>
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Max Altitude</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
-                        {(session.maxAltitudeMeters ?? 0).toFixed(1)} m
+                        {(session.metrics.altitude.topAltitude?.altitude ?? 0).toFixed(1)} m
                     </Text>
                 </View>
 
@@ -254,11 +249,9 @@ export default function SessionDetailsScreen() {
                     </View>
 
                     <Text style={SessionDetailsStyles.locationText}>
-                        {session.startLocationLabel?.trim()
-                            ? session.startLocationLabel
-                            : session.startLocation
-                                ? `${session.startLocation.latitude.toFixed(6)}, ${session.startLocation.longitude.toFixed(6)}`
-                                : '--'}
+                        {session.locations.startLocation.name?.trim() ? session.locations.startLocation.name : session.locations.startLocation.coords 
+                            ? `${session.locations.startLocation.coords.latitude.toFixed(6)}, ${session.locations.startLocation.coords.longitude.toFixed(6)}`
+                            : '--'}
                     </Text>
                 </View>
 
@@ -269,11 +262,9 @@ export default function SessionDetailsScreen() {
                     </View>
 
                     <Text style={SessionDetailsStyles.locationText}>
-                        {session.endLocationLabel?.trim()
-                            ? session.endLocationLabel
-                            : session.endLocation
-                                ? `${session.endLocation.latitude.toFixed(6)}, ${session.endLocation.longitude.toFixed(6)}`
-                                : '--'}
+                        {session.locations.endLocation.name?.trim() ? session.locations.endLocation.name : session.locations.endLocation.coords
+                            ? `${session.locations.endLocation.coords.latitude.toFixed(6)}, ${session.locations.endLocation.coords.longitude.toFixed(6)}`
+                            : '--'}
                     </Text>
                 </View>
             </View>
@@ -284,16 +275,16 @@ export default function SessionDetailsScreen() {
 
                 <DriveSessionMap
                     title=""
-                    locStart={session.startLocation}
-                    locEnd={session.endLocation}
-                    route={session.route}
+                    locStart={session.locations.startLocation.coords || null}
+                    locEnd={session.locations.endLocation.coords || null}
+                    route={session.mappedRoute || []}
                     mapStyle={{ height: 260 }}
                     wrapperStyle={SessionDetailsStyles.mapWrapperOverride}
                     checkpoints={session?.checkpoints}
                     previewOnly={true}
-                    timeStart={session.startTime}
-                    timeEnd={session.endTime}
-                    distance={session.distanceMeters}
+                    timeStart={session.timestamps.timestampStart}
+                    timeEnd={session.timestamps.timestampEnd}
+                    distance={session.metrics.distance}
                 />
             </View>
             

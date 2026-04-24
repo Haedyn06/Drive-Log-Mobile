@@ -5,23 +5,21 @@ import { Ionicons } from "@expo/vector-icons";
 
 import ConfirmationPopup from '@/components/ConfirmationPopup';
 
-type CarInfoCardProps = {
-    carYear: string;
-    carBrand: string;
-    carModel: string;
-    carColor: string;
-    carLicense: string;
+import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
+
+type VehicleCardProps = {
+    vehicle: VehicleObj;
     onDelete: () => void;
 };
 
-export default function CarInfoCard({carYear, carBrand, carModel, carColor, carLicense, onDelete}: CarInfoCardProps) {
+export default function VehiclCard({vehicle, onDelete}: VehicleCardProps) {
     const [showPopup, setShowPopup] = useState(false);
 
     return(
         <View style={styles.carCardContainer}>
             <View>
-                <Text style={styles.carInfoTitle}>{carYear} {carBrand} {carModel}</Text>
-                <Text style={styles.carInfoDesc}>{carColor}{carLicense ? `, ${carLicense}` : ''}</Text>  
+                <Text style={styles.carInfoTitle}>{vehicle.year} {vehicle.brand} {vehicle.model}</Text>
+                <Text style={styles.carInfoDesc}>{vehicle.color}{vehicle.license ? `, ${vehicle.license}` : ''}</Text>  
 
             </View>
             

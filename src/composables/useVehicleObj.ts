@@ -2,19 +2,19 @@ import { useEffect, useState } from 'react';
 
 import { saveCarInfo, getCars } from '@/services/carService';
 
-import type { CarInfo } from '@/types/CarInfo';
+import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
 
-export function useCarInfo() {
+export function useVehicleObj() {
 
     const [carAddVis, setCarAddVis] = useState(false);
-    const [car, setCar] = useState<CarInfo | null>(null);
-    const [cars, setCars] = useState<CarInfo[]>([]);
+    const [car, setCar] = useState<VehicleObj | null>(null);
+    const [cars, setCars] = useState<VehicleObj[]>([]);
 
-    const saveCar = async (carData: Omit<CarInfo, 'id'>) => {
+    const saveCar = async (carData: Omit<VehicleObj, 'id'>) => {
         try {
             const existing = await getCars();
 
-            const newCar: CarInfo = {
+            const newCar: VehicleObj = {
                 id: Date.now().toString(),
                 ...carData,
             };

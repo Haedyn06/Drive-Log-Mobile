@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { CarInfo } from '@/types/CarInfo';
+import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
 
 const carStorage = 'cars';
 
-export const saveCarInfo = async (cars: CarInfo[]) => {
+export const saveCarInfo = async (cars: VehicleObj[]) => {
     try {
         await AsyncStorage.setItem(carStorage, JSON.stringify(cars));
     } catch (e) {
@@ -12,10 +12,10 @@ export const saveCarInfo = async (cars: CarInfo[]) => {
     }
 };
 
-export const getCars = async (limit?: number): Promise<CarInfo[]> => {
+export const getCars = async (limit?: number): Promise<VehicleObj[]> => {
     try {
         const data = await AsyncStorage.getItem(carStorage);
-        const cars: CarInfo[] = data ? JSON.parse(data) : [];
+        const cars: VehicleObj[] = data ? JSON.parse(data) : [];
 
         return limit ? cars.slice(0, limit) : cars;
     } catch (e) {

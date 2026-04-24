@@ -1,17 +1,17 @@
 import { getDistance } from "geolib";
 import * as Location from 'expo-location';
 
-import type { Coord } from "@/types/Coord";
+import type { Coords } from "@/types/sessionObj/LocationType";
 
 export const requestPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     return status === 'granted';
 };
 
-export const compressRouteByDistance = (points: Coord[], minDistance = 15) => {
+export const compressRouteByDistance = (points: Coords[], minDistance = 15) => {
     if (points.length === 0) return [];
 
-    const compressed: Coord[] = [points[0]];
+    const compressed: Coords[] = [points[0]];
     let lastSaved = points[0];
 
     for (let i = 1; i < points.length; i++) {

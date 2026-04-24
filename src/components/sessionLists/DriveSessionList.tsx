@@ -5,16 +5,15 @@ import * as Haptics from 'expo-haptics';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Ionicons } from '@expo/vector-icons';
 
-import { getSessions, deleteSession } from '@/services/localStoreService';
+import { getSessions, deleteSession, SessionSortType } from '@/services/driveSessionService';
 
 import DriveSessionCard from '@/components/cards/DriveSessionCard';
 import ConfirmationPopup from '@/components/ConfirmationPopup';
 
 
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { SessionSortType } from '@/services/localStoreService';
 import type { RootStackParamList } from '@/navigation/AppNavigator';
-import type { DriveSession } from '@/types/DriveSession';
+import type { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
 
 type DriveSessionListProps = {
     limit?: number;
@@ -22,7 +21,7 @@ type DriveSessionListProps = {
 };
 
 export default function DriveSessionList({ limit, sortType }: DriveSessionListProps) {
-    const [sessions, setSessions] = useState<DriveSession[]>([]);
+    const [sessions, setSessions] = useState<DriveSessionObj[]>([]);
     const [showPopup, setShowPopup] = useState(false);
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -42,7 +41,7 @@ export default function DriveSessionList({ limit, sortType }: DriveSessionListPr
         }, [loadSessions])
     );
 
-    const handlePressSession = async (item: DriveSession) => {
+    const handlePressSession = async (item: DriveSessionObj) => {
         navigation.navigate('SessionDetails', { session: item });
     };
 
@@ -52,7 +51,7 @@ export default function DriveSessionList({ limit, sortType }: DriveSessionListPr
         await loadSessions();
     };
 
-    const renderRightActions = (item: DriveSession) => {
+    const renderRightActions = (item: DriveSessionObj) => {
         return (
             <Pressable
                 style={styles.deleteAction}

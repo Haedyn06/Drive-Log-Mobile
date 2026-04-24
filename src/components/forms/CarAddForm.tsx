@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Modal, View, Text, TextInput, Pressable, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
-import { CarInfo } from '@/types/CarInfo';
+import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
 
 import FieldLabel from '@/components/FieldLabel';
 
-type CarFormData = Omit<CarInfo, 'id'>;
+type CarFormData = Omit<VehicleObj, 'id'>;
 
 type CarAddFormProps = {
     visible: boolean;
