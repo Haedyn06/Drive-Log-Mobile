@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Text, View, ScrollView, StyleSheet, Pressable, TextInput } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Pressable, TextInput, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,8 +9,9 @@ import { isExist, saveSession, unsaveSession } from '@/services/savesService';
 import { editSessionName, editSessionNotes } from '@/services/driveSessionService';
 import { getCars } from '@/services/carService';
 
-import { formatDateTime, formatDuration, formatDistance, formatDateNum, formatTimeOnly } from '@/utils/format';
+import { formatDateTime, formatDuration, formatDistance, formatDateNum, formatTimeOnly, formatSpeed, formatReadableElapsed } from '@/utils/format';
 import DriveSessionMap from '@/components/maps/DriveSessionMap';
+import ImagePreviewComp from '@/components/ImagePreviewComp';
 
 import { SessionDetailsStyles } from '@/styles/SessionDetailsStyle';
 
@@ -33,7 +34,8 @@ export default function SessionDetailsScreen() {
     const [notes, setNotes] = useState(session.notes ?? '');
     const [isEditingNotes, setIsEditingNotes] = useState(false);
     const [editedNotes, setEditedNotes] = useState(session.notes ?? '');
-
+    const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+    const [previewImages, setPreviewImages] = useState<string[]>([]);
 
     useEffect(() => {
         const check = async () => {
@@ -81,6 +83,11 @@ export default function SessionDetailsScreen() {
         setEditedNotes(notes);
         setIsEditingNotes(false);
     };
+
+    const handlePreviewImage = (index: number, checkpoint: any) => {
+        setPreviewImages(checkpoint.images ?? []);
+        setPreviewIndex(index);
+    }
 
     return (
         <ScrollView contentContainerStyle={SessionDetailsStyles.content}>
@@ -148,7 +155,7 @@ export default function SessionDetailsScreen() {
 
                 <View style={SessionDetailsStyles.statCard}>
                     <Text style={SessionDetailsStyles.statLabel}>Avg Speed</Text>
-                    <Text style={SessionDetailsStyles.statValue}>{session.metrics.speed.avgSpeed.toFixed(1)} km/h</Text>
+                    <Text style={SessionDetailsStyles.statValue}>{formatSpeed(session.metrics.speed.avgSpeed)}</Text>
                 </View>
 
                 <View style={SessionDetailsStyles.statCard}>
@@ -231,6 +238,11 @@ export default function SessionDetailsScreen() {
                 </View>
 
                 <View style={SessionDetailsStyles.detailRow}>
+                    <Text style={SessionDetailsStyles.detailLabel}>Stops#</Text>
+                    <Text style={SessionDetailsStyles.detailValue}>{(session.stops?.length ?? 0)}</Text>
+                </View>
+
+                <View style={SessionDetailsStyles.detailRow}>
                     <Text style={SessionDetailsStyles.detailLabel}>Car</Text>
                     <Text style={SessionDetailsStyles.detailValue}>
                         {car ? `${car.year} ${car.brand} ${car.model}` : '--'}
@@ -285,9 +297,56 @@ export default function SessionDetailsScreen() {
                     timeStart={session.timestamps.timestampStart}
                     timeEnd={session.timestamps.timestampEnd}
                     distance={session.metrics.distance}
+                    topSpeed={session.metrics.speed.topSpeed}
+                    topAltitude={session.metrics.altitude.topAltitude}
+                    stops={session.stops}
                 />
             </View>
-            
+
+
+            {/* Checkpoints */}
+            <View style={SessionDetailsStyles.detailsCard}>
+                <Text style={SessionDetailsStyles.sectionTitle}>Checkpoints</Text>
+
+                {session.checkpoints.length === 0 ? (
+                    <Text style={SessionDetailsStyles.mutedText}>No checkpoints saved.</Text>
+                ) : (
+                    session.checkpoints.map((checkpoint) => (
+                        <View key={checkpoint.id} style={SessionDetailsStyles.checkpointCard}>
+                            <Text style={SessionDetailsStyles.checkpointType}>
+                                {checkpoint.type ?? "checkpoint"}
+                            </Text>
+
+                            <Text style={SessionDetailsStyles.checkpointText}>
+                                {formatDistance(checkpoint.distance)} • {formatTimeOnly(checkpoint.timestamp)} {" "} 
+                                ({checkpoint.location.latitude.toFixed(3)}, {checkpoint.location.longitude.toFixed(3)})
+                            </Text>
+
+                            {/* Images */}
+                            <Text style={{marginTop:10, fontSize: 14, fontWeight: 'bold'}}>Images</Text>
+                            {!!checkpoint.images?.length && (
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 10 }}>
+                                    {checkpoint.images.map((uri, index) => (
+                                        <Pressable key={`${checkpoint.id}-${index}`} onPress={() => handlePreviewImage(index, checkpoint)}>
+                                            <Image source={{ uri }} style={SessionDetailsStyles.checkpointImage} />
+                                        </Pressable>
+                                    ))}
+                                </ScrollView>
+                            )}
+
+                            {/* Notes */}
+                            {checkpoint.notes && (
+                                <View style={{marginTop: 12}}>
+                                    <Text style={{marginTop:10, fontSize: 14, fontWeight: 'bold'}}>Notes</Text>
+                                    <Text style={SessionDetailsStyles.checkpointNotes}>{checkpoint.notes}</Text>
+                                </View>
+                            )}
+                        </View>
+                    ))
+                )}
+            </View>
+
+
             {/* Notes */}
             <View style={SessionDetailsStyles.detailsCard}>
                 <Text style={SessionDetailsStyles.sectionTitle}>Notes</Text>
@@ -310,14 +369,17 @@ export default function SessionDetailsScreen() {
                         </View>
                     ) : (
                         <Pressable onPress={() => setIsEditingNotes(true)}>
-                            <Text style={SessionDetailsStyles.detailLabel}>
-                                {notes?.trim() ? notes : 'No notes'}
-                            </Text>
+                            <Text style={SessionDetailsStyles.detailLabel}>{notes?.trim() ? notes : 'No notes'}</Text>
                         </Pressable>
                     )}
                 </View>
             </View>
-
+            
+            <ImagePreviewComp
+                images={previewImages}
+                previewIndex={previewIndex}
+                setPreviewIndex={setPreviewIndex}
+            />
         </ScrollView>
     );
 }

@@ -155,6 +155,8 @@ export default function FocusDriveSessionCard({ item, heading }: FocusDriveSessi
                     timeEnd={item.timestamps.timestampEnd}
                     timeStart={item.timestamps.timestampStart}
                     distance={item.metrics.distance}
+                    topSpeed={session.speed?.topSpeed}
+                    topAltitude={session.altitude?.topAltitude}
                 />
             </View>
         </Pressable>

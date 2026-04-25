@@ -4,6 +4,7 @@ import type { SessionLocations } from "@/types/sessionObj/LocationType";
 import type { SessionMetrics } from "@/types/sessionObj/MetricsType";
 import type { VehicleObj } from "@/types/vehicleObj/VehicleType";
 import type { SessionCheckpoint } from "@/types/sessionObj/CheckpointType";
+import { SessionStopPoint } from "./StopPointType";
 
 export type DriveSessionObj = {
     id: string;
@@ -18,5 +19,6 @@ export type DriveSessionObj = {
     metrics: SessionMetrics;
 
     checkpoints: SessionCheckpoint[];
+    stops?: SessionStopPoint[];
     vehicle?: VehicleObj;
 }

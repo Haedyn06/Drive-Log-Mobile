@@ -2,7 +2,7 @@ import type { Coords } from "@/types/sessionObj/LocationType";
 
 export type SessionCheckpoint = {
     id: string;
-    type?: 'checkpoint' | 'stop' | 'gas' | 'food' | 'issue' | 'scenery';
+    type?: 'checkpoint' | 'break' | 'gas' | 'food' | 'issue' | 'scenery';
     location: Coords;
     distance: number;
     timestamp: number;

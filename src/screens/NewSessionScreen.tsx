@@ -22,7 +22,7 @@ export default function NewSessionScreen() {
         distanceSession, altitudeSession, altitudeGainSession,
         speedSession, checkpointSession, topAltitudeSession,
         topSpeedSession, locationStart, timeStampStart,
-        locationEnd, timeStampEnd, onSessionForm, 
+        locationEnd, timeStampEnd, onSessionForm, stopSession,
 
         handleStartSession, handleLiveSession, handleEndSession,
         handleSaveSession, handleCancelSave,handleResetSession,
@@ -129,6 +129,9 @@ export default function NewSessionScreen() {
                                 timeEnd={timeStampEnd}
                                 timeStart={timeStampStart}
                                 distance={distanceSession}
+                                topSpeed={topSpeedSession}
+                                topAltitude={topAltitudeSession}
+                                stops={stopSession}
                             />
                         </Pressable>
                     </View>

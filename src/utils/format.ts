@@ -91,8 +91,18 @@ export const formatTimeOnly = (ts: number | string | null | undefined) => {
 
 
 
+/* 
+Imperial = American
+Metric = Rest
+*/
 
+// Speed Format
+export const formatSpeed = (speed: number, unit: string = 'metric') => {
+    if (unit == 'imperial') return `${(speed * 0.621371).toFixed(1)} mph`
 
+    // if (speed < 1) return `${(speed*1000).toFixed(0)} m/h`
+    return `${speed.toFixed(1)} km/h`
+}
 
 // Distance Format
 export const formatDistance = (meters: number) => {

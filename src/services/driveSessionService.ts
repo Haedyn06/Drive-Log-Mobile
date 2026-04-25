@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import sampleData from '@/data/SampleData.json';
+import testData from '@/data/TestData.json';
 import { DriveSessionObj } from "@/types/sessionObj/DriveSessionType";
 const sessionStorage = 'drives';
 
@@ -22,12 +23,13 @@ export const importSessions = async () => {
 
         const existingSessions = existing ? JSON.parse(existing) : [];
 
-        const merged = [...existingSessions, ...sampleData];
+        const merged = [...existingSessions, ...testData];
 
         await AsyncStorage.setItem(
             sessionStorage,
             JSON.stringify(merged)
         );
+        console.log('imported!');
     } catch (e) {
         console.log('Error importing sessions', e);
     }
@@ -116,6 +118,7 @@ export const deleteSession = async (id: string) => {
         const sessions = await getSessions();
         const updatedSessions = sessions.filter((session: any) => session.id !== id);
         await saveSessions(updatedSessions);
+        console.log('Deleted ' + id);
     } catch (e) {
         console.log("Error deleting session", e);
     }

@@ -34,6 +34,7 @@ export default function LiveMapModal({
 
     }: LiveMapModalProps) {
 
+    const isPaused = 'paused';
     const isNotStart = 'notstart';
 
     const [checkpointModalVisible, setCheckpointModalVisible] = useState(false);
@@ -41,7 +42,7 @@ export default function LiveMapModal({
     const initialLat = route?.[0]?.latitude ?? locStart?.latitude ?? 51.0447;
     const initialLng = route?.[0]?.longitude ?? locStart?.longitude ?? -114.0719;
 
-    const mainIcon = liveStatus !== isNotStart ? 'pause' : 'play';
+    const mainIcon = liveStatus !== isPaused ? 'pause' : 'play';
 
     const handleFinish = async () => {
         await handleEnd();

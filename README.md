@@ -13,10 +13,11 @@ Checks Route For Driving And Stats
 5. Scan QR Code
 
 
-### TO DO:
+
+### Versions (Alpha V1.x)
 
 #### V1.0 ✔
-1. Implement Local Storage ✔
+1. Implement Local Storage ✔ 
 2. Add Navigation (Home, Profile, Drive) ✔
 3. Implement Data Tracking and Logic ✔
 4. Add Location Tracking and Map Routing ✔
@@ -29,11 +30,12 @@ Checks Route For Driving And Stats
 
 #### V1.1
 1. Reorganize and structure and clean code. ✔
-2. Add Max Speed Location On The Map, Make it Optional
-3. Open camera, take photo and add into checkpoint obj
-4. Whenever u press the checkpoint marker, modal pops up with details
-5. Automatic stop detection (Counts and records where u stopped and how many time u have stopped)
-6. UI/UX refinement and improvements
+2. Add Max Speed Location On The Map, Make it Optional ✔
+3. Open camera, take photo and add into checkpoint obj ✔
+4. Whenever u press the checkpoint marker, modal pops up with details (Edit, Manage, Filter Checkpoints) ✔
+5. Automatic stop detection (Counts and records where u stopped and how many time u have stopped) ✔
+6. Add Checkpoint filters on the map ('checkpoint' | 'stop' | 'gas' | 'food' | 'issue' | 'scenery') ✔
+7. UI/UX refinement and improvements
 
 #### V1.2
 1. Migrate Async Data To SQLite
@@ -42,6 +44,10 @@ Checks Route For Driving And Stats
 4. Add Imperial/Metric Options
 
 #### V1.3
+1. Add a favorite locations section
+
+
+#### V1.4
 1. Design and add smooth clean animations and UI.
 2. Polish, Clean and Identify Edge cases
 3. Deploy To Public

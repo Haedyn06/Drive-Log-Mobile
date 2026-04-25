@@ -249,4 +249,49 @@ export const SessionDetailsStyles = StyleSheet.create({
     },
 
 
+    checkpointCard: {
+        marginTop: 12,
+        padding: 12,
+        borderRadius: 12,
+        backgroundColor: "#f8fafc",
+    },
+
+    checkpointType: {
+        fontSize: 16,
+        fontWeight: "700",
+        textTransform: "capitalize",
+        marginBottom: 6,
+    },
+
+    checkpointText: {
+        fontSize: 13,
+        color: "#444",
+        marginBottom: 3,
+    },
+
+    checkpointNotes: {
+        fontSize: 13,
+        color: "#222",
+        marginTop: 6,
+        marginLeft: 3,
+        padding: 10, 
+        borderWidth: 1,
+        borderRadius: 6,
+        backgroundColor: '#fff',
+        borderColor: '#d9d9d9',
+    },
+
+    checkpointImage: {
+        width: 90,
+        height: 90,
+        borderRadius: 10,
+        marginRight: 8,
+    },
+
+    mutedText: {
+        color: "#777",
+        marginTop: 8,
+    },
+
+
 });

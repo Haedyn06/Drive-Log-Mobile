@@ -1,6 +1,6 @@
 [
     {
-    "id": "1776825239730",
+    "id": "1777072595868",
     "title": "Going Home",
     "date": "2026-04-22T02:33:59.730Z",
     "images": [],
@@ -416,101 +416,105 @@
         ],
 
         "timestamps": {
-        "elapsedTime": 962842,
-        "timestampStart": 1776821435056,
-        "timestampEnd": 1776822397961
+            "elapsedTime": 962842,
+            "timestampStart": 1776821435056,
+            "timestampEnd": 1776822397961
         },
+
+
 
         "locations": {
-        "startLocation": {
-            "name": "Home",
-            "coords": {
-            "latitude": 51.08461638279944,
-            "longitude": -114.26863275225698
+            "startLocation": {
+                "name": "Home",
+                "coords": {
+                    "latitude": 51.08461638279944,
+                    "longitude": -114.26863275225698,
+                    "altitude":1182.686448616259
+                }
+            },
+            "endLocation": {
+                "name": "Old Home",
+                "coords": {
+                    "latitude": 51.06661052193736,
+                    "longitude": -114.20868554211773,
+                    "altitude":1185.4856588980183
+                }
             }
         },
-        "endLocation": {
-            "name": "Old Home",
-            "coords": {
-            "latitude": 51.06661052193736,
-            "longitude": -114.20868554211773
-            }
-        }
-        },
+
 
         "metrics": {
-        "altitude": {
-            "altitudeGained": 1329.9511283622328,
-            "topAltitude": {
-            "altitude": 1279.9282502178103,
-            "location": {
-                "latitude": 0,
-                "longitude": 0
-            }
-            }
-        },
-        "speed": {
-            "avgSpeed": 37.097675423382036,
-            "topSpeed": {
-            "speed": 83.53173721992938,
-            "location": {
-                "latitude": 0,
-                "longitude": 0
-            }
-            }
-        },
-        "distance": 9922
+            "altitude": {
+                "altitudeGained": 1329.9511283622328,
+                "topAltitude": {
+                    "altitude": 1279.9282502178103,
+                    "location": { "latitude": 0, "longitude": 0 }
+                }
+            },
+
+            "speed": {
+                "avgSpeed": 37.097675423382036,
+                "topSpeed": {
+                    "speed": 83.53173721992938,
+                    "location": { "latitude": 0, "longitude": 0 }
+                }
+            },
+            
+            "distance": 9922
         },
 
+
         "checkpoints": [
-        {
-            "id": "1776821569154",
-            "type": "checkpoint",
-            "location": {
-            "latitude": 51.08478362712837,
-            "longitude": -114.27649103692575,
-            "altitude": 1184.9986313255504
+            {
+                "id": "1776821569154",
+                "type": "checkpoint",
+                "location": {
+                    "latitude": 51.08478362712837,
+                    "longitude": -114.27649103692575,
+                    "altitude": 1184.9986313255504
+                },
+                "distance": 729,
+                "timestamp": 1776821569154,
+                "images": [],
+                "notes": "Cresmont exit"
             },
-            "distance": 729,
-            "timestamp": 1776821569154,
-            "images": [],
-            "notes": "Cresmont exit"
-        },
-        {
-            "id": "1776821615443",
-            "type": "scenery",
-            "location": {
-            "latitude": 51.082976626061914,
-            "longitude": -114.28612338084756,
-            "altitude": 1211.89412127994
+
+            {
+                "id": "1776821615443",
+                "type": "scenery",
+                "location": {
+                    "latitude": 51.082976626061914,
+                    "longitude": -114.28612338084756,
+                    "altitude": 1211.89412127994
+                },
+                "distance": 1454,
+                "timestamp": 1776821615443,
+                "images": [],
+                "notes": "Beautiful view"
             },
-            "distance": 1454,
-            "timestamp": 1776821615443,
-            "images": [],
-            "notes": "Beautiful view"
-        },
-        {
-            "id": "1776822208058",
-            "type": "checkpoint",
-            "location": {
-            "latitude": 51.06798220455247,
-            "longitude": -114.21418926450218,
-            "altitude": 1243.517702641897
-            },
-            "distance": 9042,
-            "timestamp": 1776822208058,
-            "images": [],
-            "notes": "Cougar Ridge how old house"
-        }
+
+            {
+                "id": "1776822208058",
+                "type": "checkpoint",
+                "location": {
+                    "latitude": 51.06798220455247,
+                    "longitude": -114.21418926450218,
+                    "altitude": 1243.517702641897
+                },
+                "distance": 9042,
+                "timestamp": 1776822208058,
+                "images": [],
+                "notes": "Cougar Ridge how old house"
+            }
         ],
 
         "vehicle": {
-        "id": "1776814854693",
-        "year": "",
-        "brand": "",
-        "model": "",
-        "color": "",
-        "license": ""
+            "id": "1776814854693",
+            "year": "",
+            "brand": "",
+            "model": "",
+            "color": "",
+            "license": ""
         }
     },
 

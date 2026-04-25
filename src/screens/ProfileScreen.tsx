@@ -3,7 +3,7 @@ import { Text, View, ScrollView, Pressable } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 
-import { getTotalDistance, getTotalDriveTime, getTotalElevationGain, exportSessions, importSessions } from '@/services/driveSessionService';
+import { getTotalDistance, getTotalDriveTime, getTotalElevationGain, exportSessions, importSessions, deleteSession } from '@/services/driveSessionService';
 
 import { formatDriveTime, formatDistance, formatElevation } from '@/utils/format';
 
@@ -44,6 +44,8 @@ export default function ProfileScreen() {
     }
 
     const handleImportSessions = async () => await importSessions();
+
+    const handleDelete = async () => await deleteSession('1776822446249');
 
     const goToSaves = () => navigation.navigate('SavedSessions');
     const goToVehicles = () => navigation.navigate('SavedVehicles');
@@ -99,7 +101,7 @@ export default function ProfileScreen() {
             </View>
 
 
-            {/* <View>
+            <View>
                 <Pressable style={ProfileStyles.carAddBtn} onPress={handleExportSessions}>
                     <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} >Export Session Data</Text>
                 </Pressable>
@@ -107,7 +109,11 @@ export default function ProfileScreen() {
                 <Pressable style={ProfileStyles.carAddBtn} onPress={handleImportSessions}>
                     <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}}>Import Session Data</Text>
                 </Pressable>
-            </View> */}
+
+                <Pressable style={ProfileStyles.carAddBtn} onPress={handleDelete}>
+                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}}>Delete</Text>
+                </Pressable>
+            </View>
 
 
         </ScrollView>

@@ -15,6 +15,7 @@ import type { Coords, SessionLocation } from '@/types/sessionObj/LocationType';
 import type { TopAltitude, TopSpeed, AltitudeMetrics, SpeedMetrics } from '@/types/sessionObj/MetricsType';
 
 import type { SessionCheckpoint } from '@/types/sessionObj/CheckpointType';
+import type { SessionStopPoint } from '@/types/sessionObj/StopPointType';
 
 import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
 import { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
@@ -30,6 +31,7 @@ export function useLiveDrive() {
     const [altitudeGainSession, setAltitudeGainSession] = useState(0);
     const [speedSession, setSpeedSession] = useState(0);
     const [checkpointSession, setCheckpointSession] = useState<SessionCheckpoint[]>([]);
+    const [stopSession, setStopSession] = useState<SessionStopPoint[]>([]);
     
     // Top
     const [topAltitudeSession, setTopAltitudeSession] = useState<TopAltitude | null>(null);
@@ -48,7 +50,7 @@ export function useLiveDrive() {
     const { startTracking, stopTracking } = useLocationTracking({
         setSpeedSession, setTopSpeedSession,
         setAltitudeSession, setTopAltitudeSession, setAltitudeGainSession,
-        setDistanceSession, setMapRoute
+        setDistanceSession, setMapRoute, setStopSession
     });
 
     // Use Effects
@@ -94,14 +96,12 @@ export function useLiveDrive() {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
         if (liveStatusSession === 'playing') {
-            console.log('pause');
             await stopTracking();
             setLiveStatusSession('paused');
             return;
         }
 
         if (liveStatusSession === 'paused') {
-            console.log('play');
             await startTracking();
             setLiveStatusSession('playing');
             return;
@@ -178,7 +178,7 @@ export function useLiveDrive() {
                 date: new Date().toISOString(),
                 images: [],
                 notes: noteSession.trim(),
-                mappedRoute: compressRouteByDistance(mapRoute, 10),
+                mappedRoute: compressRouteByDistance(mapRoute, 25),
 
                 timestamps: {
                     elapsedTime: elapsedSession,
@@ -198,6 +198,7 @@ export function useLiveDrive() {
                 },
 
                 checkpoints: checkpointSession,
+                stops: stopSession ?? [],
                 vehicle: vehicleSession ?? undefined
             };
 
@@ -227,6 +228,8 @@ export function useLiveDrive() {
         setSpeedSession(0);
 
         setCheckpointSession([]);
+        setStopSession([]);
+
         setTopAltitudeSession(null);
         setTopSpeedSession(null);
         
@@ -242,7 +245,7 @@ export function useLiveDrive() {
     }
 
 
-    async function handleCheckpointSession(note: string, types: SessionCheckpoint['type']) {
+    async function handleCheckpointSession(note: string, types: SessionCheckpoint['type'], photos: string[] = []) {
         const location = await Location.getCurrentPositionAsync({});
 
         const checkpoint: SessionCheckpoint = {
@@ -256,7 +259,7 @@ export function useLiveDrive() {
             },
             distance: distanceSession,
             timestamp: Date.now(),
-            images: [],
+            images: photos,
             notes: note || '',
         };
 
@@ -268,7 +271,8 @@ export function useLiveDrive() {
         distanceSession, altitudeSession, altitudeGainSession,
         speedSession, checkpointSession, topAltitudeSession,
         topSpeedSession, locationStart, timeStampStart,
-        locationEnd, timeStampEnd, onSessionForm, 
+        locationEnd, timeStampEnd, onSessionForm,
+        stopSession,
 
         handleStartSession, handleLiveSession, handleEndSession,
         handleSaveSession, handleCancelSave,handleResetSession,

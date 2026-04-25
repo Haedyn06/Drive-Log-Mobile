@@ -47,10 +47,6 @@ export default function SaveSessionModal({ visible, onClose }: SaveSessionModalP
         return car ? `${car.year} ${car.brand} ${car.model}` : 'None';
     }, [vehicles, vehicle]);
 
-
-
-
-
     const handleSelectCar = (carId: string) => {
         const selected = vehicles.find((c) => c.id === carId) || null;
 
@@ -61,7 +57,18 @@ export default function SaveSessionModal({ visible, onClose }: SaveSessionModalP
     const handleSave = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         await handleSaveSession(sessionTitle, startLocationName, endLocationName, sessionNotes, vehicle ?? undefined);
+        resetFields();
     } 
+
+
+    const resetFields = () => {
+        setShowCarDropdown(false);
+        setSessionTitle('');
+        setStartLocationName('');
+        setEndLocationName('');
+        setSessionNotes('');
+        setVehicle(null);
+    }
 
     return (
         <Modal
