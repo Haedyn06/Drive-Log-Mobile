@@ -191,14 +191,14 @@ export default function DriveSessionMap({
                         )}
 
                         {showTopAll && topSpeed?.location && (
-                            <Marker key="top-speed-marker" coordinate={topSpeed.location} pinColor="red"
+                            <Marker key="top-speed-marker" coordinate={topSpeed.location} pinColor="#ffa256"
                                 title={`Top Speed (${formatSpeed(topSpeed.speed ?? 0)})`} 
                                 description={`${formatTimeOnly(topSpeed.timestamp ?? 0)}`}
                             />
                         )}
 
                         {showTopAll && topAltitude?.location && (
-                            <Marker key="top-altitude-marker" coordinate={topAltitude.location} pinColor="blue"
+                            <Marker key="top-altitude-marker" coordinate={topAltitude.location} pinColor="#44ff00"
                                 title={`Highest Altitude (${formatSpeed(topAltitude.altitude ?? 0)})`} 
                                 description={`${formatTimeOnly(topAltitude.timestamp ?? 0)}`}
                             />
@@ -207,7 +207,10 @@ export default function DriveSessionMap({
                         {showStops && stops?.map((i, index) => (
                             <Marker key={`stop-marker-${index}`} coordinate={i.location} pinColor="orange" title="Stop" 
                                 description={`${formatReadableElapsed(i.duration) || ""} • ${formatTimeOnly(i.timestamp)}`}
-                            />
+                            >
+                                <Ionicons name="stop-circle-outline" size={40} color="red" />
+                            </Marker>
+                        
                         ))}
 
                         {showCheckpoints && checkpoints?.map((i, index) => (

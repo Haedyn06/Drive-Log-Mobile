@@ -101,7 +101,7 @@ export default function ProfileScreen() {
             </View>
 
 
-            <View>
+            {/* <View>
                 <Pressable style={ProfileStyles.carAddBtn} onPress={handleExportSessions}>
                     <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} >Export Session Data</Text>
                 </Pressable>
@@ -113,7 +113,7 @@ export default function ProfileScreen() {
                 <Pressable style={ProfileStyles.carAddBtn} onPress={handleDelete}>
                     <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}}>Delete</Text>
                 </Pressable>
-            </View>
+            </View> */}
 
 
         </ScrollView>
