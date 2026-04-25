@@ -96,8 +96,13 @@ export default function ProfileScreen() {
                     <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold'}}>Vehicles</Text>
                 </Pressable>
                 <Pressable style={ProfileStyles.optBtn}>
-                    <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold'}}>S</Text>
+                    <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold'}}>Locations</Text>
                 </Pressable>
+            </View>
+
+            <View style={{marginTop: 20}}>
+                <Text style={{textAlign: 'center', fontSize: 20, fontWeight: 'bold'}}>Roam Your Map</Text>
+                <Text style={{textAlign: 'center', fontSize: 12}}>Insert Map Here</Text>
             </View>
 
 
