@@ -146,6 +146,7 @@ export default function FocusDriveSessionCard({ item, heading }: FocusDriveSessi
 
             <View style={styles.mapSection}>
                 <DriveSessionMap
+                    sessionId={item.id}
                     locStart={item.locations.startLocation.coords || null}
                     locEnd={item.locations.endLocation.coords || null}
                     route={session.routes || []}

@@ -119,6 +119,7 @@ export default function NewSessionScreen() {
                                 title=""
                                 liveStatus={liveStatusSession}
                                 showUserLocation
+                                sessionId=''
                                 locStart={locationStart}
                                 locEnd={locationEnd}
                                 route={mapRoute}

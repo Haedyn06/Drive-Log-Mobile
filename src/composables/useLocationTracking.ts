@@ -68,13 +68,15 @@ export function useLocationTracking({
 
 
     const handleRoute = (newPoint: Coords, altitude: number) => {
+        const routeDraw = 25;
+
         setMapRoute((prevRoute) => {
             if (prevRoute.length === 0) return [newPoint];
 
             const lastPoint = prevRoute[prevRoute.length - 1];
             const segmentDistance = getDistance(lastPoint, newPoint);
 
-            if (segmentDistance >= 15) {
+            if (segmentDistance >= routeDraw) {
                 setDistanceSession((prev) => prev + segmentDistance);
 
                 const lastAltitude = lastPoint.altitude ?? 0;

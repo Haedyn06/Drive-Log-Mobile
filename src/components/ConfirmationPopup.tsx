@@ -8,7 +8,7 @@ type ConfirmationPopupProps = {
     onCancel: () => void;
 };
 
-export default function ConfirmationPopup({ visible, label, onConfirm, onCancel, }: ConfirmationPopupProps) {
+export default function ConfirmationPopup({ visible, label, onConfirm, onCancel }: ConfirmationPopupProps) {
     const handleOnCancel = () => {
         onCancel();
     }

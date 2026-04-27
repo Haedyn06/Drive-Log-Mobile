@@ -287,6 +287,7 @@ export default function SessionDetailsScreen() {
 
                 <DriveSessionMap
                     title=""
+                    sessionId={session.id}
                     locStart={session.locations.startLocation.coords || null}
                     locEnd={session.locations.endLocation.coords || null}
                     route={session.mappedRoute || []}

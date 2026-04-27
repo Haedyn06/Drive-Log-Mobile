@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Modal, StyleProp, ViewStyle } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 
+import { removeCheckpointFromSession } from '@/services/driveSessionService';
 import { formatDistance, formatSpeed, formatTimeOnly, formatReadableElapsed } from '@/utils/format';
 
 import CheckpointDetailsModal from '../CheckpointDetailsModal';
@@ -18,6 +19,7 @@ type DriveSessionMapProps = {
     title?: string;
     liveStatus?: string;
     showUserLocation?: boolean;
+    sessionId: string;
     locStart: Coords | null;
     locEnd: Coords | null;
     route: Coords[];
@@ -37,6 +39,7 @@ export default function DriveSessionMap({
     title = 'Route',
     liveStatus = 'notstart',
     showUserLocation = false,
+    sessionId,
     locStart,
     locEnd,
     timeEnd,
@@ -64,6 +67,7 @@ export default function DriveSessionMap({
     const [fullScreen, setFullScreen] = useState(false);
     const [markerFilter, setMarkerFilter] = useState<MarkerFilter>("all");
     const [selectedCheckpointIndex, setSelectedCheckpointIndex] = useState<number | null>(null);
+    const [localCheckpoints, setLocalCheckpoints] = useState(checkpoints ?? []);
 
     const mapRef = useRef<MapView | null>(null);
 
@@ -82,9 +86,13 @@ export default function DriveSessionMap({
         { label: "Checkpoints", value: "checkpoints" },
     ];
 
+    useEffect(() => {
+        setLocalCheckpoints(checkpoints ?? []);
+    }, [checkpoints]);
+
 
     const focusCheckpoint = (index: number) => {
-        const checkpoint = checkpoints?.[index];
+        const checkpoint = localCheckpoints[index];
         if (!checkpoint) return;
 
         mapRef.current?.animateToRegion(
@@ -97,6 +105,33 @@ export default function DriveSessionMap({
             500
         );
     };
+
+    
+    const handleRemoveCheckpoint = async () => {
+        if (selectedCheckpointIndex === null) return;
+
+        await removeCheckpointFromSession(sessionId, selectedCheckpointIndex);
+
+        const updated = localCheckpoints.filter(
+            (_, index) => index !== selectedCheckpointIndex
+        );
+
+        setLocalCheckpoints(updated);
+
+        if (updated.length === 0) {
+            setSelectedCheckpointIndex(null);
+            return;
+        }
+
+        const nextIndex =
+            selectedCheckpointIndex >= updated.length
+                ? updated.length - 1
+                : selectedCheckpointIndex;
+
+        setSelectedCheckpointIndex(nextIndex);
+        focusCheckpoint(nextIndex);
+    };
+
 
     const mapContent = (
         <MapView
@@ -213,7 +248,7 @@ export default function DriveSessionMap({
                         
                         ))}
 
-                        {showCheckpoints && checkpoints?.map((i, index) => (
+                        {showCheckpoints && localCheckpoints.map((i, index) => (
                             <Marker key={`checkpoint-marker-${i.id ?? index}`} coordinate={i.location} pinColor="#00b3ff"
                                 title={i.type ? `${i.type} (${formatDistance(Number(i.distance)) ?? 0})` : "Checkpoint"}
                                 description={`${i.notes || ""} • ${formatTimeOnly(i.timestamp)}`}
@@ -261,14 +296,14 @@ export default function DriveSessionMap({
 
                     {/* Bottom Overlay */}
                     <View style={styles.bottomOverlay}>
-                        
-                    </View>
                         <CheckpointDetailsModal
-                            checkpoints={checkpoints ?? []}
+                            checkpoints={localCheckpoints}
                             selectedIndex={selectedCheckpointIndex}
                             setSelectedIndex={setSelectedCheckpointIndex}
                             onFocusCheckpoint={focusCheckpoint}
+                            onDelete={handleRemoveCheckpoint}
                         />
+                    </View>
                 </View>
                 
             </Modal>

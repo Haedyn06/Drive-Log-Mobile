@@ -6,18 +6,21 @@ import type { SessionCheckpoint } from "@/types/sessionObj/CheckpointType";
 
 import { formatDistance, formatTimeOnly } from "@/utils/format";
 import ImagePreviewComp from "./ImagePreviewComp";
+import ConfirmationPopup from "./ConfirmationPopup";
 
-type Props = {
+type CheckpointDetailsModalProps = {
     checkpoints: SessionCheckpoint[];
     selectedIndex: number | null;
     setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
     onFocusCheckpoint: (index: number) => void;
+    onDelete: () => void;
 };
 
-export default function CheckpointDetailsModal({ checkpoints, selectedIndex, setSelectedIndex, onFocusCheckpoint }: Props) {
+export default function CheckpointDetailsModal({ checkpoints, selectedIndex, setSelectedIndex, onFocusCheckpoint, onDelete }: CheckpointDetailsModalProps) {
     const [previewIndex, setPreviewIndex] = useState<number | null>(null);
     const translateY = useRef(new Animated.Value(20)).current;
     const opacity = useRef(new Animated.Value(0)).current;
+    const [showPopup, setShowPopup] = useState(false);
 
     useEffect(() => {
         const hasImages = !!checkpoint?.images?.length;
@@ -94,7 +97,12 @@ export default function CheckpointDetailsModal({ checkpoints, selectedIndex, set
                         </Pressable>
 
                         <View style={styles.detailsContainer}>
-                            <Text style={styles.checkpointModalTitle}>{checkpoint?.type ?? "Checkpoint"}</Text>
+                            <View style={styles.headingDetails}>
+                                <Text style={styles.checkpointModalTitle}>{checkpoint?.type ?? "Checkpoint"}</Text>
+                                <Pressable onPress={() => setShowPopup(true)}>
+                                    <Ionicons name="trash" size={16} />
+                                </Pressable>
+                            </View>
 
                             <Text style={styles.checkpointModalText}>
                                 {formatDistance(checkpoint?.distance ?? 0)} • {" "}
@@ -114,20 +122,27 @@ export default function CheckpointDetailsModal({ checkpoints, selectedIndex, set
                         </Pressable>
                     </View>
 
-
-
-
                     <View style={styles.checkpointNavRow}>
                         <Text style={styles.countText}>
                             {selectedIndex + 1} / {checkpoints.length}
                         </Text>
                     </View>
-
+                    
 
                 </Pressable>
             </Pressable>
 
             <ImagePreviewComp images={checkpoint?.images ?? []} previewIndex={previewIndex} setPreviewIndex={setPreviewIndex} />
+            <ConfirmationPopup 
+                visible={showPopup}
+                label="delete this checkpoint"
+                onCancel={() => setShowPopup(false)}
+                onConfirm={() => {
+                    onDelete();
+                    setShowPopup(false);
+                }}
+            
+            />
         </Modal>
     );
 }
@@ -200,6 +215,12 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         shadowOffset: { width: 0, height: 3 },
         elevation: 3,
+    },
+
+    headingDetails: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent:'space-between'
     },
     
     imageContainerHidden: {

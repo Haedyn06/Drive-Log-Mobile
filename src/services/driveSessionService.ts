@@ -4,6 +4,7 @@ import * as Sharing from "expo-sharing";
 import sampleData from '@/data/SampleData.json';
 import testData from '@/data/TestData.json';
 import { DriveSessionObj } from "@/types/sessionObj/DriveSessionType";
+import { SessionCheckpoint } from "@/types/sessionObj/CheckpointType";
 const sessionStorage = 'drives';
 
 
@@ -241,3 +242,22 @@ const updateSession = async (id: string, updates: any) => {
 export const editSessionName = (id: string, name: string) => updateSession(id, { title: name });
 
 export const editSessionNotes = (id: string, notes: string) => updateSession(id, { notes });
+
+export const removeCheckpointFromSession = async ( sessionId: string, index: number ) => {
+    const sessions = await getSessions();
+
+    const updatedSessions = sessions.map(session => {
+        if (session.id !== sessionId) return session;
+
+        const updatedCheckpoints = session.checkpoints.filter(
+            (_: SessionCheckpoint, i: number) => i !== index
+        );
+
+        return {
+            ...session,
+            checkpoints: updatedCheckpoints,
+        };
+    });
+
+    await saveSessions(updatedSessions);
+};

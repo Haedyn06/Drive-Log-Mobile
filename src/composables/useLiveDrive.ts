@@ -178,8 +178,8 @@ export function useLiveDrive() {
                 date: new Date().toISOString(),
                 images: [],
                 notes: noteSession.trim(),
-                mappedRoute: compressRouteByDistance(mapRoute, 25),
-
+                mappedRoute: compressRouteByDistance(distanceSession, mapRoute),
+                
                 timestamps: {
                     elapsedTime: elapsedSession,
                     timestampStart: timeStampStart,
