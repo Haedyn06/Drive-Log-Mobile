@@ -47,7 +47,7 @@ export function useLiveDrive() {
     const [onSessionForm, setOnSessionForm] = useState(false);
 
     
-    const { startTracking, stopTracking } = useLocationTracking({
+    const { startTracking, stopTracking, getLocationName } = useLocationTracking({
         setSpeedSession, setTopSpeedSession,
         setAltitudeSession, setTopAltitudeSession, setAltitudeGainSession,
         setDistanceSession, setMapRoute, setStopSession
@@ -151,12 +151,12 @@ export function useLiveDrive() {
         try {
 
             const startLoc: SessionLocation = {
-                name: startLocName || '', 
+                name: startLocName || await getLocationName(locationStart ?? undefined), 
                 coords: locationStart ?? undefined 
             };
             
             const endLoc: SessionLocation = {
-                name: endLocName || '', 
+                name: endLocName || await getLocationName(locationEnd ?? undefined), 
                 coords: locationEnd ?? undefined 
             };
 

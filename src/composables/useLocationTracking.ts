@@ -163,5 +163,33 @@ export function useLocationTracking({
         setSpeedSession(0);
     };
 
-    return { startTracking, stopTracking };
+
+    const getLocationName = async (coords?: Coords) => {
+        if (!coords) return "";
+
+        try {
+            const result = await Location.reverseGeocodeAsync({
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+            });
+
+            const addr = result[0];
+            if (!addr) return "";
+
+            return [
+                addr.name,
+                addr.street,
+                addr.city,
+                addr.region,
+                addr.country,
+            ]
+                .filter(Boolean)
+                .join(", ");
+        } catch (e) {
+            console.log("Reverse geocode error:", e);
+            return "";
+        }
+    };
+
+    return { startTracking, stopTracking, getLocationName };
 }

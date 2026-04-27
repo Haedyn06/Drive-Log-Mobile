@@ -105,34 +105,40 @@ export default function SaveSessionModal({ visible, onClose }: SaveSessionModalP
                             contentContainerStyle={styles.formContent}
                             keyboardShouldPersistTaps="handled"
                         >
-                            <FieldLabel title="Session Title" />
+                            <FieldLabel title="Drive Title" />
                             <TextInput
                                 value={sessionTitle}
                                 onChangeText={setSessionTitle}
-                                placeholder="Night Drive"
+                                placeholder="eg. Night Drive"
                                 placeholderTextColor="#9ca3af"
                                 style={styles.modalInput}
                             />
+                            <View style={styles.locationContainer}>
+                                <View style={{width:'50%'}}>
+                                    <FieldLabel title="From" />
+                                    <TextInput
+                                        value={startLocationName}
+                                        onChangeText={setStartLocationName}
+                                        placeholder="eg. Home"
+                                        placeholderTextColor="#9ca3af"
+                                        style={styles.modalInput}
+                                    />
+                                </View>
 
-                            <FieldLabel title="Start Location" optional />
-                            <TextInput
-                                value={startLocationName}
-                                onChangeText={setStartLocationName}
-                                placeholder="Downtown Calgary"
-                                placeholderTextColor="#9ca3af"
-                                style={styles.modalInput}
-                            />
+                                <View style={{width:'50%'}}>
+                                    <FieldLabel title="To" />
+                                    <TextInput
+                                        value={endLocationName}
+                                        onChangeText={setEndLocationName}
+                                        placeholder="eg. Work"
+                                        placeholderTextColor="#9ca3af"
+                                        style={styles.modalInput}
+                                    />
+                                </View>
+                            </View>
 
-                            <FieldLabel title="End Location" optional />
-                            <TextInput
-                                value={endLocationName}
-                                onChangeText={setEndLocationName}
-                                placeholder="Banff Ave"
-                                placeholderTextColor="#9ca3af"
-                                style={styles.modalInput}
-                            />
 
-                            <FieldLabel title="Car Driven" optional />
+                            <FieldLabel title="Car Driven" />
                             <View style={styles.dropdownSection}>
                                 <Pressable
                                     style={styles.dropdownTrigger}
@@ -186,11 +192,11 @@ export default function SaveSessionModal({ visible, onClose }: SaveSessionModalP
                                 )}
                             </View>
 
-                            <FieldLabel title="Notes" optional />
+                            <FieldLabel title="Notes" />
                             <TextInput
                                 value={sessionNotes}
                                 onChangeText={setSessionNotes}
-                                placeholder="Road was icy, stopped for gas, nice sunset..."
+                                placeholder="notes"
                                 placeholderTextColor="#9ca3af"
                                 style={[styles.modalInput, styles.notesInput]}
                                 multiline
@@ -363,7 +369,7 @@ const styles = StyleSheet.create({
     notesInput: {
         minHeight: 96,
         maxHeight: 140,
-        paddingTop: 13,
+        paddingTop: 8,
     },
 
     modalButtons: {
@@ -373,7 +379,6 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         borderTopWidth: 1,
         borderTopColor: '#eef2f7',
-        backgroundColor: '#ffffff',
     },
 
     cancelBtn: {
@@ -407,4 +412,11 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '800',
     },
+
+    locationContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 10
+    }
 });
