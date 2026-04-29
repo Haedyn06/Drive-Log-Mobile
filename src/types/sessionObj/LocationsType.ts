@@ -1,8 +1,4 @@
-export type Coords = {
-    latitude: number;
-    longitude: number;
-    altitude?: number;
-}
+import { Coords } from "@/types/CoordinateType";
 
 export type SessionLocation = {
     name?: string;

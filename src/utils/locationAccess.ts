@@ -1,7 +1,7 @@
 import { getDistance } from "geolib";
 import * as Location from 'expo-location';
 
-import type { Coords } from "@/types/sessionObj/LocationType";
+import type { Coords } from "@/types/CoordinateType";
 
 export const requestPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();

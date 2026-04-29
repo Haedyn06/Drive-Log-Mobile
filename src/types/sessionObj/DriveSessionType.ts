@@ -1,24 +1,26 @@
-import type { Coords } from "@/types/sessionObj/LocationType";
-import type { SessionTimes } from "@/types/sessionObj/TimeType";
-import type { SessionLocations } from "@/types/sessionObj/LocationType";
-import type { SessionMetrics } from "@/types/sessionObj/MetricsType";
-import type { VehicleObj } from "@/types/vehicleObj/VehicleType";
-import type { SessionCheckpoint } from "@/types/sessionObj/CheckpointType";
-import { SessionStopPoint } from "./StopPointType";
+import { SessionCheckpoint } from "@/types/dbObj/checkPointType";
+import { SessionStopPoint } from "@/types/dbObj/stopPointType";
+import { SessionRoutePoint } from "@/types/dbObj/routePointType";
+
+import { SessionTimestamps } from "./TimestampsType";
+import { SessionLocations } from "./LocationsType";
+import { SessionMetrics } from "./MetricsType";
+import { VehicleObj } from "../vehicleObj/VehicleType";
 
 export type DriveSessionObj = {
     id: string;
     title: string;
-    date: string;
+    date: number;
     images?: string[];
     notes?: string;
-    mappedRoute?: Coords[];
 
-    timestamps: SessionTimes;
+    mappedRoute?: SessionRoutePoint[];
+    checkpoints: SessionCheckpoint[];
+    stops?: SessionStopPoint[];
+
+    timestamps: SessionTimestamps;
     locations: SessionLocations;
     metrics: SessionMetrics;
 
-    checkpoints: SessionCheckpoint[];
-    stops?: SessionStopPoint[];
     vehicle?: VehicleObj;
 }

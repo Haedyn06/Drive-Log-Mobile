@@ -4,28 +4,26 @@ import { getDistance } from 'geolib';
 
 import { requestPermission } from '@/utils/locationAccess';
 
-import type { Coords } from '@/types/sessionObj/LocationType';
-import type { TopSpeed, TopAltitude } from '@/types/sessionObj/MetricsType';
-import type { SessionStopPoint } from '@/types/sessionObj/StopPointType';
-
-
-
+import { Coords } from '@/types/CoordinateType';
+import type { SessionRoutePoint } from '@/types/dbObj/routePointType';
+import type { SessionTopSpeed, SessionTopAltitude } from "@/types/dbObj/topMetrics";
+import type { SessionStopPoint } from '@/types/dbObj/stopPointType';
 
 type UseLocationTrackingProps = {
     setSpeedSession: React.Dispatch<React.SetStateAction<number>>;
-    setTopSpeedSession: React.Dispatch<React.SetStateAction<TopSpeed | null>>;
+    setTopSpeedSession: React.Dispatch<React.SetStateAction<SessionTopSpeed | null>>;
     setAltitudeSession: React.Dispatch<React.SetStateAction<number>>;
-    setTopAltitudeSession: React.Dispatch<React.SetStateAction<TopAltitude | null>>;
+    setTopAltitudeSession: React.Dispatch<React.SetStateAction<SessionTopAltitude | null>>;
     setAltitudeGainSession: React.Dispatch<React.SetStateAction<number>>;
     setDistanceSession: React.Dispatch<React.SetStateAction<number>>;
-    setMapRoute: React.Dispatch<React.SetStateAction<Coords[]>>;
-    setStopSession: React.Dispatch<React.SetStateAction<SessionStopPoint[]>>;
+    setSessionRoutePoints: React.Dispatch<React.SetStateAction<SessionRoutePoint[]>>;
+    setSessionStopPoints: React.Dispatch<React.SetStateAction<SessionStopPoint[]>>;
 };
 
 export function useLocationTracking({
     setSpeedSession, setTopSpeedSession, 
     setAltitudeSession, setTopAltitudeSession, setAltitudeGainSession,
-    setDistanceSession, setMapRoute, setStopSession
+    setDistanceSession, setSessionRoutePoints, setSessionStopPoints
 }: UseLocationTrackingProps) {
 
     const [watchSubscription, setWatchSubscription] = useState<Location.LocationSubscription | null>(null);
@@ -67,22 +65,29 @@ export function useLocationTracking({
     };
 
 
-    const handleRoute = (newPoint: Coords, altitude: number) => {
+    const handleRoute = (newCoords: Coords, altitude: number) => {
         const routeDraw = 25;
 
-        setMapRoute((prevRoute) => {
+        const newPoint: SessionRoutePoint = {
+            location: { ...newCoords, altitude },
+            timestamp: Date.now(),
+        };
+
+        setSessionRoutePoints((prevRoute) => {
             if (prevRoute.length === 0) return [newPoint];
 
             const lastPoint = prevRoute[prevRoute.length - 1];
-            const segmentDistance = getDistance(lastPoint, newPoint);
+
+            const segmentDistance = getDistance(lastPoint.location, newPoint.location);
 
             if (segmentDistance >= routeDraw) {
                 setDistanceSession((prev) => prev + segmentDistance);
 
-                const lastAltitude = lastPoint.altitude ?? 0;
+                const lastAltitude = lastPoint.location.altitude ?? 0;
                 const altitudeDiff = altitude - lastAltitude;
 
                 if (altitudeDiff > 0) setAltitudeGainSession((prev) => prev + altitudeDiff);
+
                 return [...prevRoute, newPoint];
             }
 
@@ -104,7 +109,7 @@ export function useLocationTracking({
             if ( duration >= stopTrigSec && !isStopped.current && possibleStopLocation.current) {
                 isStopped.current = true;
                 console.log('currently stopped');
-                setStopSession((prev) => [...prev, {
+                setSessionStopPoints((prev) => [...prev, {
                         location: possibleStopLocation.current!,
                         timestamp: possibleStopStart.current!,
                         duration

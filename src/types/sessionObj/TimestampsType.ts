@@ -1,4 +1,4 @@
-export type SessionTimes = {
+export type SessionTimestamps = {
     elapsedTime: number;
     timestampStart: number;
     timestampEnd: number;

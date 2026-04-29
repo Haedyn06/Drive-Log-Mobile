@@ -5,9 +5,8 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 
-import { isExist, saveSession, unsaveSession } from '@/services/savesService';
-import { editSessionName, editSessionNotes } from '@/services/driveSessionService';
-import { getCars } from '@/services/carService';
+// import { isExist, saveSession, unsaveSession } from '@/services/savesService';
+import { editSessionTitle, editSessionNotes } from '@/database/methods';
 
 import { formatDateTime, formatDuration, formatDistance, formatDateNum, formatTimeOnly, formatSpeed, formatReadableElapsed } from '@/utils/format';
 import DriveSessionMap from '@/components/maps/DriveSessionMap';
@@ -39,20 +38,20 @@ export default function SessionDetailsScreen() {
 
     useEffect(() => {
         const check = async () => {
-            const result = await isExist(session.id);
-            setIsSaved(result);
+            // const result = await isExist(session.id);
+            // setIsSaved(result);
         };
 
         check();
     }, [session]);
 
     const handleSave = async () => {
-        await saveSession(session.id);
+        // await saveSession(session.id);
         setIsSaved(true);
     };
 
     const handleUnsave = async () => {
-        await unsaveSession(session.id);
+        // await unsaveSession(session.id);
         setIsSaved(false);
     };
 
@@ -61,7 +60,7 @@ export default function SessionDetailsScreen() {
 
         if (!trimmed) return;
 
-        await editSessionName(session.id, trimmed);
+        await editSessionTitle(session.id, trimmed);
         setTitle(trimmed);
         setEditedTitle(trimmed);
         setIsEditingTitle(false);

@@ -6,8 +6,9 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import { formatTimeOnly } from '@/utils/format';
 import CheckpointFormModal from '@/components/forms/CheckpointForm';
 
-import { SessionCheckpoint } from '@/types/sessionObj/CheckpointType';
-import type { Coords } from '@/types/sessionObj/LocationType';
+import type { Coords } from '@/types/CoordinateType';
+import type { SessionRoutePoint } from '@/types/dbObj/routePointType';
+import type { SessionCheckpoint } from '@/types/dbObj/checkPointType';
 
 type LiveMapModalProps = {
     visible: boolean;
@@ -19,7 +20,7 @@ type LiveMapModalProps = {
     altitude: number;
     locStart: Coords | null;
     locEnd: Coords | null;
-    route: Coords[];
+    route: SessionRoutePoint[];
     checkpoints: SessionCheckpoint[];
     handleLive: () => void;
     handleEnd: () => void;
@@ -39,8 +40,8 @@ export default function LiveMapModal({
 
     const [checkpointModalVisible, setCheckpointModalVisible] = useState(false);
     
-    const initialLat = route?.[0]?.latitude ?? locStart?.latitude ?? 51.0447;
-    const initialLng = route?.[0]?.longitude ?? locStart?.longitude ?? -114.0719;
+    const initialLat = route?.[0]?.location.latitude ?? locStart?.latitude ?? 51.0447;
+    const initialLng = route?.[0]?.location.longitude ?? locStart?.longitude ?? -114.0719;
 
     const mainIcon = liveStatus !== isPaused ? 'pause' : 'play';
 
@@ -96,7 +97,7 @@ export default function LiveMapModal({
                     ))}
 
                     {route.length > 1 && (
-                        <Polyline coordinates={route} strokeColor="#00a2ff" strokeWidth={6} />
+                        <Polyline coordinates={route.map(p => p.location)} strokeColor="#00a2ff" strokeWidth={6} />
                     )}
                 </MapView>
 

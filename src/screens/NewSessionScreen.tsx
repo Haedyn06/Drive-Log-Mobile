@@ -2,8 +2,6 @@ import { Text, View, ScrollView, Pressable } from 'react-native';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { getSessions } from '@/services/driveSessionService';
-
 import { useSharedDriveSession } from '@/context/DriveSessionContext';
 
 import SaveSessionModal from '@/components/forms/SaveSession';
@@ -11,6 +9,7 @@ import DriveSessionMap from '@/components/maps/DriveSessionMap';
 import FocusDriveSessionCard from '@/components/cards/FocusDriveSessionCard';
 import StartSessionCompB from '@/components/startSession/StartSessionCompB';
 import LiveMapModal from '@/components/maps/LiveMapSession';
+import { getFullSession, getLatestSessionId } from '@/database/methods';
 
 import { NewSessionStyles } from '@/styles/NewSessionStyle';
 
@@ -18,12 +17,16 @@ import type { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
 
 export default function NewSessionScreen() {
     const {
-        liveStatusSession, mapRoute, elapsedSession, 
-        distanceSession, altitudeSession, altitudeGainSession,
-        speedSession, checkpointSession, topAltitudeSession,
-        topSpeedSession, locationStart, timeStampStart,
-        locationEnd, timeStampEnd, onSessionForm, stopSession,
+        locationStart, timeStampStart,
 
+        liveStatusSession, elapsedSession, 
+        distanceSession, altitudeSession, speedSession, altitudeGainSession,
+        topAltitudeSession, topSpeedSession, 
+        
+        sessionRoutePoints, sessionCheckPoints, sessionStopPoints,
+        
+        locationEnd, timeStampEnd, onSessionForm,
+        
         handleStartSession, handleLiveSession, handleEndSession,
         handleSaveSession, handleCancelSave,handleResetSession,
         handleCheckpointSession
@@ -37,8 +40,8 @@ export default function NewSessionScreen() {
         useCallback(() => {
             async function loadData() {
                 try {
-                    const sessionData = await getSessions(undefined, 'newest');
-                    setRecentSession(sessionData.length > 0 ? sessionData[0] : null);
+                    const sessionid =  await getLatestSessionId();
+                    if (sessionid) setRecentSession(await getFullSession(sessionid));
                 } catch (e) {
                     console.log('Failed loading data', e);
                 }
@@ -68,8 +71,8 @@ export default function NewSessionScreen() {
                 handleReset={handleResetSession}
                 locStart={locationStart}
                 locEnd={locationEnd}
-                route={mapRoute}
-                checkpoints={checkpointSession}
+                route={sessionRoutePoints}
+                checkpoints={sessionCheckPoints}
             />
 
             {isIdle && (
@@ -122,17 +125,17 @@ export default function NewSessionScreen() {
                                 sessionId=''
                                 locStart={locationStart}
                                 locEnd={locationEnd}
-                                route={mapRoute}
+                                route={sessionRoutePoints}
                                 mapStyle={{ height: 230 }}
                                 wrapperStyle={NewSessionStyles.mapWrapperOverride}
-                                checkpoints={checkpointSession}
+                                checkpoints={sessionCheckPoints}
                                 previewOnly={false}
                                 timeEnd={timeStampEnd}
                                 timeStart={timeStampStart}
                                 distance={distanceSession}
                                 topSpeed={topSpeedSession}
                                 topAltitude={topAltitudeSession}
-                                stops={stopSession}
+                                stops={sessionStopPoints}
                             />
                         </Pressable>
                     </View>
@@ -147,12 +150,12 @@ export default function NewSessionScreen() {
                         distance={distanceSession}
                         locStart={locationStart}
                         locEnd={locationEnd}
-                        route={mapRoute}
+                        route={sessionRoutePoints}
                         handleLive={handleLiveSession}
                         handleEnd={handleEndSession}
                         handleReset={handleResetSession}
                         altitude={altitudeSession}
-                        checkpoints={checkpointSession}
+                        checkpoints={sessionCheckPoints}
                     />
                 </>
             )}

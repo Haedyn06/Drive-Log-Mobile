@@ -21,7 +21,7 @@ export default function CheckpointFormModal({ visible, onClose }: CheckpointForm
     const [photos, setPhotos] = useState<string[]>([]);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     
-    const {handleCheckpointSession, checkpointSession} = useSharedDriveSession();
+    const {handleCheckpointSession, sessionCheckPoints} = useSharedDriveSession();
 
     async function handleSave() {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

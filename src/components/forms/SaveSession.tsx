@@ -3,7 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Modal, View, Text, TextInput, Pressable, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
-import { getCars } from '@/services/carService';
+import { getVehicles } from '@/database/methods';
 
 import { useSharedDriveSession } from '@/context/DriveSessionContext';
 
@@ -31,10 +31,10 @@ export default function SaveSessionModal({ visible, onClose }: SaveSessionModalP
         useCallback(() => {
             async function loadData() {
                 try {
-                    const carData = await getCars();
-                    setVehicles(carData);
+                    const vehicleData = await getVehicles();
+                    setVehicles(vehicleData);
                 } catch (e) {
-                    console.log('Failed loading data', e);
+                    console.log('Failed loading vehicles', e);
                 }
             }
 
@@ -56,7 +56,7 @@ export default function SaveSessionModal({ visible, onClose }: SaveSessionModalP
 
     const handleSave = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        await handleSaveSession(sessionTitle, startLocationName, endLocationName, sessionNotes, vehicle ?? undefined);
+        await handleSaveSession(sessionTitle || 'Drive', startLocationName, endLocationName, sessionNotes, vehicle ?? undefined);
         resetFields();
     } 
 

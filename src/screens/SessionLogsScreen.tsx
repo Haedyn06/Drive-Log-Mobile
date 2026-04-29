@@ -5,8 +5,7 @@ import DriveSessionList from '@/components/sessionLists/DriveSessionList';
 
 import { SessionLogsStyles } from '@/styles/SessionsLogsStyles';
 
-
-import type { SessionSortType } from '@/services/driveSessionService';
+import type { SessionSortType } from '@/database/methods';
 
 export default function SessionsLogsScreen() {
     const [sortType, setSortType] = useState<SessionSortType>('newest');
@@ -54,14 +53,14 @@ export default function SessionsLogsScreen() {
                 <Pressable
                     style={[
                         SessionLogsStyles.filterBtn,
-                        sortType === 'distance-desc' && SessionLogsStyles.activeFilterBtn
+                        sortType === 'furthest' && SessionLogsStyles.activeFilterBtn
                     ]}
-                    onPress={() => setSortType('distance-desc')}
+                    onPress={() => setSortType('furthest')}
                 >
                     <Text
                         style={[
                             SessionLogsStyles.filterText,
-                            sortType === 'distance-desc' && SessionLogsStyles.activeFilterText
+                            sortType === 'furthest' && SessionLogsStyles.activeFilterText
                         ]}
                     >
                         Furthest
@@ -72,14 +71,14 @@ export default function SessionsLogsScreen() {
                 <Pressable
                     style={[
                         SessionLogsStyles.filterBtn,
-                        sortType === 'duration-desc' && SessionLogsStyles.activeFilterBtn
+                        sortType === 'time' && SessionLogsStyles.activeFilterBtn
                     ]}
-                    onPress={() => setSortType('duration-desc')}
+                    onPress={() => setSortType('time')}
                 >
                     <Text
                         style={[
                             SessionLogsStyles.filterText,
-                            sortType === 'duration-desc' && SessionLogsStyles.activeFilterText
+                            sortType === 'time' && SessionLogsStyles.activeFilterText
                         ]}
                     >
                         Longest

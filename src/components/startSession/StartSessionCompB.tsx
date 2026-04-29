@@ -6,8 +6,9 @@ import * as Haptics from 'expo-haptics';
 import ConfirmationPopup from '../ConfirmationPopup';
 import LiveMapModal from '@/components/maps/LiveMapSession';
 
-import type { Coords } from '@/types/sessionObj/LocationType';
-import type { SessionCheckpoint } from '@/types/sessionObj/CheckpointType';
+import type { Coords } from '@/types/CoordinateType';
+import type { SessionCheckpoint } from '@/types/dbObj/checkPointType';
+import type { SessionRoutePoint } from '@/types/dbObj/routePointType';
 
 export type StartSessionCompBProps = {
     liveStatus: string;
@@ -17,7 +18,7 @@ export type StartSessionCompBProps = {
     altitude: number;
     locStart: Coords | null;
     locEnd: Coords | null;
-    route: Coords[];
+    route: SessionRoutePoint[];
     checkpoints: SessionCheckpoint[];
     handleLive: () => Promise<void> | void;
     handleEnd: () => Promise<void> | void;

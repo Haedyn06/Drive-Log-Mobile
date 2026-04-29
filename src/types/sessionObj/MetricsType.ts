@@ -1,34 +1,21 @@
-import type { Coords } from "@/types/sessionObj/LocationType";
-
-// Tops
-export type TopAltitude = {
-    altitude: number;
-    location: Coords;
-    timestamp?: number;
-};
-
-export type TopSpeed = {
-    speed: number;
-    location: Coords;
-    timestamp?: number;
-};
-
+import type { Coords } from "@/types/CoordinateType";
+import { SessionTopAltitude, SessionTopSpeed } from "../dbObj/topMetrics";
 
 // Metrics
-export type AltitudeMetrics = {
+export type SessionAltitudeMetrics = {
     altitudeGained: number;
-    topAltitude?: TopAltitude;
+    topAltitude?: SessionTopAltitude;
 }
 
-export type SpeedMetrics = {
+export type SessionSpeedMetrics = {
     avgSpeed: number;
-    topSpeed?: TopSpeed;
+    topSpeed?: SessionTopSpeed;
 }
 
 
 // Overall
 export type SessionMetrics = {
-    altitude: AltitudeMetrics;
-    speed: SpeedMetrics;
+    altitude: SessionAltitudeMetrics;
+    speed: SessionSpeedMetrics;
     distance: number;
 };

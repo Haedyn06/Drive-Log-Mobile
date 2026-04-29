@@ -1,41 +1,40 @@
 import { useState, useEffect } from 'react';
 import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
+import { v4 as uuidv4 } from 'uuid';
 
-import { addSession } from '@/services/driveSessionService';
-
+import { saveSession } from '@/database/methods';
 import { requestPermission, compressRouteByDistance } from '@/utils/locationAccess';
 import { avgSpeedCalc } from '@/utils/metricsCalc';
 
-
 import { useLocationTracking } from '@/composables/useLocationTracking';
 
-import type { Coords, SessionLocation } from '@/types/sessionObj/LocationType';
-
-import type { TopAltitude, TopSpeed, AltitudeMetrics, SpeedMetrics } from '@/types/sessionObj/MetricsType';
-
-import type { SessionCheckpoint } from '@/types/sessionObj/CheckpointType';
-import type { SessionStopPoint } from '@/types/sessionObj/StopPointType';
+import type { Coords } from '@/types/CoordinateType';
+import type { DriveSession } from "@/types/dbObj/driveSessionType";
+import type { SessionCheckpoint } from "@/types/dbObj/checkPointType";
+import type { SessionRoutePoint } from "@/types/dbObj/routePointType";
+import type { SessionStopPoint } from '@/types/dbObj/stopPointType';
+import type { SessionTopSpeed, SessionTopAltitude } from "@/types/dbObj/topMetrics";
 
 import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
-import { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
 
 export function useLiveDrive() {
     // Live Sessions    
     const [liveStatusSession, setLiveStatusSession] = useState('notstart'); // playing || paused || notstart
-    const [mapRoute, setMapRoute] = useState<Coords[]>([]);
 
     const [elapsedSession, setElapsedSession] = useState(0);
     const [distanceSession, setDistanceSession] = useState(0);
     const [altitudeSession, setAltitudeSession] = useState(0);
     const [altitudeGainSession, setAltitudeGainSession] = useState(0);
     const [speedSession, setSpeedSession] = useState(0);
-    const [checkpointSession, setCheckpointSession] = useState<SessionCheckpoint[]>([]);
-    const [stopSession, setStopSession] = useState<SessionStopPoint[]>([]);
+
+    const [sessionRoutePoints, setSessionRoutePoints] = useState<SessionRoutePoint[]>([]);
+    const [sessionCheckPoints, setSessionCheckPoints] = useState<SessionCheckpoint[]>([]);
+    const [sessionStopPoints, setSessionStopPoints] = useState<SessionStopPoint[]>([]);
     
     // Top
-    const [topAltitudeSession, setTopAltitudeSession] = useState<TopAltitude | null>(null);
-    const [topSpeedSession, setTopSpeedSession] = useState<TopSpeed | null>(null);
+    const [topAltitudeSession, setTopAltitudeSession] = useState<SessionTopAltitude | null>(null);
+    const [topSpeedSession, setTopSpeedSession] = useState<SessionTopSpeed | null>(null);
 
     // Initial Session
     const [locationStart, setLocationStart] = useState<Coords | null>(null);
@@ -50,7 +49,7 @@ export function useLiveDrive() {
     const { startTracking, stopTracking, getLocationName } = useLocationTracking({
         setSpeedSession, setTopSpeedSession,
         setAltitudeSession, setTopAltitudeSession, setAltitudeGainSession,
-        setDistanceSession, setMapRoute, setStopSession
+        setDistanceSession, setSessionRoutePoints, setSessionStopPoints
     });
 
     // Use Effects
@@ -84,8 +83,13 @@ export function useLiveDrive() {
 
         handleResetSession();
 
+        const sessionRoutePoint: SessionRoutePoint = {
+            location: currentCoords,
+            timestamp: Date.now()
+        };
+
         setLocationStart(currentCoords);
-        setMapRoute([currentCoords]);
+        setSessionRoutePoints([sessionRoutePoint]);
         setTimeStampStart(Date.now());
 
         return true;
@@ -147,62 +151,36 @@ export function useLiveDrive() {
 
 
 
-    async function handleSaveSession(sessionTitle:string, startLocName: string = '', endLocName: string, noteSession: string, vehicleSession?: VehicleObj) {
+    async function handleSaveSession(sessionTitle:string, startLocName: string, endLocName: string, noteSession: string, vehicleSession?: VehicleObj) {
         try {
+            const startName = startLocName.trim() || (locationStart ? await getLocationName(locationStart) : "");
 
-            const startLoc: SessionLocation = {
-                name: startLocName || await getLocationName(locationStart ?? undefined), 
-                coords: locationStart ?? undefined 
-            };
-            
-            const endLoc: SessionLocation = {
-                name: endLocName || await getLocationName(locationEnd ?? undefined), 
-                coords: locationEnd ?? undefined 
-            };
+            const endName = endLocName.trim() || (locationEnd ? await getLocationName(locationEnd) : "");
 
-            const altitudeMetric: AltitudeMetrics = {
-                altitudeGained: altitudeGainSession,
-                topAltitude: topAltitudeSession ?? undefined
-            };
-
-            const speedMetric: SpeedMetrics = {
-                avgSpeed: avgSpeedCalc(elapsedSession, distanceSession),
-                topSpeed: topSpeedSession ?? undefined
-            };
-            
-
-
-            const newSession: DriveSessionObj = {
-                id: Date.now().toString(),
-                title: sessionTitle.trim() || 'Drive',
-                date: new Date().toISOString(),
-                images: [],
+            const driveSession: DriveSession = {
+                id: uuidv4(),
+                title: sessionTitle || 'Drive',
+                date: Date.now(),
                 notes: noteSession.trim(),
-                mappedRoute: compressRouteByDistance(distanceSession, mapRoute),
-                
-                timestamps: {
-                    elapsedTime: elapsedSession,
-                    timestampStart: timeStampStart,
-                    timestampEnd: timeStampEnd
-                },
 
-                locations: {
-                    startLocation: startLoc,
-                    endLocation: endLoc
-                },
+                elapsedTime: elapsedSession,
+                timestampStart: timeStampStart,
+                timestampEnd: timeStampEnd,
 
-                metrics: {
-                    altitude: altitudeMetric,
-                    speed: speedMetric,
-                    distance: distanceSession
-                },
+                startLocationName: startName,
+                locationStart: locationStart ?? { latitude: 0, longitude: 0 },
 
-                checkpoints: checkpointSession,
-                stops: stopSession ?? [],
-                vehicle: vehicleSession ?? undefined
-            };
+                endLocationName: endName,
+                locationEnd: locationEnd ?? { latitude: 0, longitude: 0 },
 
-            await addSession(newSession);
+                averageSpeed: avgSpeedCalc(elapsedSession, distanceSession),
+                altitudeGained: altitudeGainSession,
+                distance: distanceSession,
+
+                vehicleId: vehicleSession?.id ?? undefined
+            }
+
+            saveSession(driveSession, sessionCheckPoints, sessionRoutePoints, sessionStopPoints, topSpeedSession, topAltitudeSession)
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             setOnSessionForm(false);
             handleResetSession();
@@ -220,15 +198,15 @@ export function useLiveDrive() {
 
     function handleResetSession() {
         setLiveStatusSession('notstart');
-        setMapRoute([]);
 
         setElapsedSession(0);
         setDistanceSession(0);
         setAltitudeSession(0);
         setSpeedSession(0);
 
-        setCheckpointSession([]);
-        setStopSession([]);
+        setSessionRoutePoints([]);
+        setSessionCheckPoints([]);
+        setSessionStopPoints([]);
 
         setTopAltitudeSession(null);
         setTopSpeedSession(null);
@@ -249,7 +227,7 @@ export function useLiveDrive() {
         const location = await Location.getCurrentPositionAsync({});
 
         const checkpoint: SessionCheckpoint = {
-            id: `${Date.now().toString()}chk`,
+            id: uuidv4(),
             type: types || 'checkpoint',
 
             location: {
@@ -263,17 +241,20 @@ export function useLiveDrive() {
             notes: note || '',
         };
 
-        setCheckpointSession((prev) => [...prev, checkpoint]);
+        setSessionCheckPoints((prev) => [...prev, checkpoint]);
     }
 
     return {
-        liveStatusSession, mapRoute, elapsedSession, 
-        distanceSession, altitudeSession, altitudeGainSession,
-        speedSession, checkpointSession, topAltitudeSession,
-        topSpeedSession, locationStart, timeStampStart,
-        locationEnd, timeStampEnd, onSessionForm,
-        stopSession,
+        locationStart, timeStampStart,
 
+        liveStatusSession, elapsedSession, 
+        distanceSession, altitudeSession, speedSession, altitudeGainSession,
+        topAltitudeSession, topSpeedSession, 
+        
+        sessionRoutePoints, sessionCheckPoints, sessionStopPoints,
+        
+        locationEnd, timeStampEnd, onSessionForm,
+        
         handleStartSession, handleLiveSession, handleEndSession,
         handleSaveSession, handleCancelSave,handleResetSession,
         handleCheckpointSession

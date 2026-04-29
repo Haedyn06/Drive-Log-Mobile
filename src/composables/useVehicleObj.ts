@@ -1,57 +1,60 @@
 import { useEffect, useState } from 'react';
 
-import { saveCarInfo, getCars } from '@/services/carService';
-
+import { saveVehicle, getVehicles, deleteVehicle } from '@/database/methods';
 import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
 
 export function useVehicleObj() {
-
     const [carAddVis, setCarAddVis] = useState(false);
     const [car, setCar] = useState<VehicleObj | null>(null);
     const [cars, setCars] = useState<VehicleObj[]>([]);
 
+    const loadCars = async () => {
+        try {
+            const vehicles = await getVehicles();
+            setCars(vehicles);
+        } catch (err) {
+            console.log('Load cars failed:', err);
+        }
+    };
+
+    useEffect(() => {
+        loadCars();
+    }, []);
+
     const saveCar = async (carData: Omit<VehicleObj, 'id'>) => {
         try {
-            const existing = await getCars();
+            const newCar = await saveVehicle(carData.year, carData.brand, carData.model, carData.color, carData.license ?? '');
 
-            const newCar: VehicleObj = {
-                id: Date.now().toString(),
-                ...carData,
-            };
-
-            const updatedCars = [...existing, newCar];
-
-            await saveCarInfo(updatedCars);
-            setCars(updatedCars);
+            setCars((prev) => [...prev, newCar]);
             setCar(newCar);
             setCarAddVis(false);
 
             console.log('Saved car:', newCar);
-        } catch (e) {
-            console.log('Save failed:', e);
+        } catch (err) {
+            console.log('Save failed:', err);
         }
     };
 
     const deleteCar = async (id: string) => {
         try {
-            const existing = await getCars();
+            await deleteVehicle(id);
 
-            const updated = existing.filter(car => car.id !== id);
+            setCars((prev) => prev.filter((car) => car.id !== id));
 
-            await saveCarInfo(updated);
-            setCars(updated);
+            setCar((prev) => {
+                if (prev?.id === id) return null;
+                return prev;
+            });
 
             console.log('Deleted car:', id);
-        } catch (e) {
-            console.log('Delete failed:', e);
+        } catch (err) {
+            console.log('Delete failed:', err);
         }
     };
 
     return {
         carAddVis, car, cars,
         setCarAddVis, setCar, setCars,
-        deleteCar, saveCar
-    }
-
+        loadCars, deleteCar, saveCar,
+    };
 }
-

@@ -4,6 +4,7 @@ import * as Haptics from 'expo-haptics';
 
 import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
 
+
 import FieldLabel from '@/components/FieldLabel';
 
 type CarFormData = Omit<VehicleObj, 'id'>;
@@ -11,9 +12,8 @@ type CarFormData = Omit<VehicleObj, 'id'>;
 type CarAddFormProps = {
     visible: boolean;
     onClose: () => void;
-    onSave: (carData: CarFormData) => void;
+    onSave: (carData: CarFormData) => Promise<void>;
 };
-
 export default function CarAddForm({ visible, onClose, onSave }: CarAddFormProps) {
     const [carYear, setCarYear] = useState('');
     const [carModel, setCarModel] = useState('');
@@ -22,10 +22,9 @@ export default function CarAddForm({ visible, onClose, onSave }: CarAddFormProps
     const [carLicense, setCarLicense] = useState('');
 
     const handleSave = async () => {
-        
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-        onSave({
+        await onSave({
             year: carYear.trim(),
             model: carModel.trim(),
             brand: carBrand.trim(),
@@ -38,6 +37,8 @@ export default function CarAddForm({ visible, onClose, onSave }: CarAddFormProps
         setCarBrand('');
         setCarColor('');
         setCarLicense('');
+
+        onClose();
     };
 
     return (

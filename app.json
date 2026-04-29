@@ -16,7 +16,9 @@
       "bundleIdentifier": "com.haedyn06.driveloggermobile",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": ["location"]
+        "UIBackgroundModes": [
+          "location"
+        ]
       }
     },
     "android": {
@@ -33,6 +35,9 @@
       "eas": {
         "projectId": "9cabd882-d956-46c9-9baf-83bee0b8546e"
       }
-    }
+    },
+    "plugins": [
+      "expo-sqlite"
+    ]
   }
 }

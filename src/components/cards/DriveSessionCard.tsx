@@ -3,22 +3,23 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { formatReadableElapsed, formatDistance, formatDateNum } from "@/utils/format";
 
-import type { DriveSessionObj } from "@/types/sessionObj/DriveSessionType";
+import type { DriveSession } from "@/types/dbObj/driveSessionType";
 
 type DriveSessionCardProps = {
-    item: DriveSessionObj;
+    item: DriveSession;
 };
 
 export default function DriveSessionCard({ item }: DriveSessionCardProps) {
-    const endLat = item.locations.endLocation.coords?.latitude;
-    const endLng = item.locations.endLocation.coords?.longitude;
+    const endLat = item.locationEnd.latitude
+    const endLng = item.locationEnd.longitude;
+
 
     let locationDisplay = "No end location";
 
-    if (item.locations.startLocation.name?.trim() && item.locations.endLocation.name?.trim()) {
-        locationDisplay = `${item.locations.startLocation.name} → ${item.locations.endLocation.name}`;
-    } else if (item.locations.endLocation.name?.trim()) {
-        locationDisplay = item.locations.endLocation.name;
+    if (item.startLocationName?.trim() && item.endLocationName?.trim()) {
+        locationDisplay = `${item.startLocationName} → ${item.endLocationName}`;
+    } else if (item.startLocationName?.trim()) {
+        locationDisplay = item.endLocationName;
     } else if (endLat !== undefined && endLng !== undefined) {
         locationDisplay = `${endLat.toFixed(2)}, ${endLng.toFixed(2)}`;
     }
@@ -46,14 +47,14 @@ export default function DriveSessionCard({ item }: DriveSessionCardProps) {
                     <View style={styles.metaPill}>
                         <Ionicons name="time-outline" size={13} color="#6b7280" />
                         <Text style={styles.metaText}>
-                            {formatReadableElapsed(item.timestamps.elapsedTime)}
+                            {formatReadableElapsed(item.elapsedTime)}
                         </Text>
                     </View>
 
                     <View style={styles.metaPill}>
                         <Ionicons name="speedometer-outline" size={13} color="#6b7280" />
                         <Text style={styles.metaText}>
-                            {formatDistance(item.metrics.distance)}
+                            {formatDistance(item.distance)}
                         </Text>
                     </View>
                 </View>

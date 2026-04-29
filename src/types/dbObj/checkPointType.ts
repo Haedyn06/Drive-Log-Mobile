@@ -1,4 +1,4 @@
-import type { Coords } from "@/types/sessionObj/LocationType";
+import type { Coords } from "@/types/CoordinateType";
 
 export type SessionCheckpoint = {
     id: string;
@@ -8,4 +8,10 @@ export type SessionCheckpoint = {
     timestamp: number;
     images?: string[];
     notes?: string;
+}
+
+export type SessionCheckpointImgs = {
+    id: string;
+    checkpointID: string;
+    uri: string;
 }

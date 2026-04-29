@@ -2,16 +2,19 @@ import { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Modal, StyleProp, ViewStyle } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
+import { v4 as uuidv4 } from 'uuid';
 
-import { removeCheckpointFromSession } from '@/services/driveSessionService';
+
+import { deleteCheckpoint } from '@/database/methods';
 import { formatDistance, formatSpeed, formatTimeOnly, formatReadableElapsed } from '@/utils/format';
 
 import CheckpointDetailsModal from '../CheckpointDetailsModal';
 
-import type { Coords } from '@/types/sessionObj/LocationType';
-import type { SessionCheckpoint } from '@/types/sessionObj/CheckpointType';
-import type { TopAltitude, TopSpeed } from '@/types/sessionObj/MetricsType';
-import type { SessionStopPoint } from '@/types/sessionObj/StopPointType';
+import type { Coords } from '@/types/CoordinateType';
+import type { SessionCheckpoint } from '@/types/dbObj/checkPointType';
+import type { SessionTopSpeed, SessionTopAltitude } from '@/types/dbObj/topMetrics';
+import type { SessionStopPoint } from '@/types/dbObj/stopPointType';
+import type { SessionRoutePoint } from '@/types/dbObj/routePointType';
 
 type MarkerFilter = | "all" | "topAll" | "stops" | "startEnd" | "checkpoints";
 
@@ -22,7 +25,7 @@ type DriveSessionMapProps = {
     sessionId: string;
     locStart: Coords | null;
     locEnd: Coords | null;
-    route: Coords[];
+    route: SessionRoutePoint[];
     mapStyle?: StyleProp<ViewStyle>;
     wrapperStyle?: StyleProp<ViewStyle>;
     checkpoints?: SessionCheckpoint[];
@@ -30,8 +33,8 @@ type DriveSessionMapProps = {
     timeStart: number | null;
     timeEnd?: number | null;
     distance?: number;
-    topAltitude?: TopAltitude | null;
-    topSpeed?: TopSpeed | null;
+    topAltitude?: SessionTopAltitude | null;
+    topSpeed?: SessionTopSpeed | null;
     stops?: SessionStopPoint[] | null;
 };
 
@@ -54,8 +57,8 @@ export default function DriveSessionMap({
     stops,
     previewOnly = true,
 }: DriveSessionMapProps) {
-    const initialLat = route[0]?.latitude ?? locStart?.latitude ?? 51.0447;
-    const initialLng = route[0]?.longitude ?? locStart?.longitude ?? -114.0719;
+    const initialLat = route[0]?.location.latitude ?? locStart?.latitude ?? 51.0447;
+    const initialLng = route[0]?.location.longitude ?? locStart?.longitude ?? -114.0719;
 
     const [mapRegion, setMapRegion] = useState({
         latitude: initialLat,
@@ -110,11 +113,14 @@ export default function DriveSessionMap({
     const handleRemoveCheckpoint = async () => {
         if (selectedCheckpointIndex === null) return;
 
-        await removeCheckpointFromSession(sessionId, selectedCheckpointIndex);
+        const checkpoint = localCheckpoints[selectedCheckpointIndex];
+        if (!checkpoint) return;
 
-        const updated = localCheckpoints.filter(
-            (_, index) => index !== selectedCheckpointIndex
-        );
+        // delete from DB using id
+        await deleteCheckpoint(checkpoint.id);
+
+        // update local state
+        const updated = localCheckpoints.filter((_, index) => index !== selectedCheckpointIndex);
 
         setLocalCheckpoints(updated);
 
@@ -124,9 +130,7 @@ export default function DriveSessionMap({
         }
 
         const nextIndex =
-            selectedCheckpointIndex >= updated.length
-                ? updated.length - 1
-                : selectedCheckpointIndex;
+            selectedCheckpointIndex >= updated.length ? updated.length - 1 : selectedCheckpointIndex;
 
         setSelectedCheckpointIndex(nextIndex);
         focusCheckpoint(nextIndex);
@@ -184,7 +188,7 @@ export default function DriveSessionMap({
             ))}
             
             {route.length > 1 && (
-                <Polyline coordinates={route} strokeColor="#00a2ff" strokeWidth={6} />
+                <Polyline coordinates={route.map(p => p.location)} strokeColor="#00a2ff" strokeWidth={6} />
             )}
         </MapView>
     );
@@ -261,7 +265,7 @@ export default function DriveSessionMap({
                         ))}
 
                         {route.length > 1 && (
-                            <Polyline key="route-polyline" coordinates={route}
+                            <Polyline key="route-polyline" coordinates={route.map(p => p.location)}
                                 strokeColor="#00a2ff" strokeWidth={6} />
                         )}
                     </MapView>

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Modal, View, Text, Image, StyleSheet, ScrollView, Pressable, LayoutAnimation, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import type { SessionCheckpoint } from "@/types/sessionObj/CheckpointType";
+import type { SessionCheckpoint } from "@/types/dbObj/checkPointType";
 
 import { formatDistance, formatTimeOnly } from "@/utils/format";
 import ImagePreviewComp from "./ImagePreviewComp";
