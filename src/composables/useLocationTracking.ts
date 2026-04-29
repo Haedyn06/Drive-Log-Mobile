@@ -63,10 +63,11 @@ export function useLocationTracking({
             return prev;
         });
     };
-
+    //
 
     const handleRoute = (newCoords: Coords, altitude: number) => {
-        const routeDraw = 25;
+       // const routeDraw = 25;
+        const routeDraw = 5;
 
         const newPoint: SessionRoutePoint = {
             location: { ...newCoords, altitude },
@@ -168,33 +169,5 @@ export function useLocationTracking({
         setSpeedSession(0);
     };
 
-
-    const getLocationName = async (coords?: Coords) => {
-        if (!coords) return "";
-
-        try {
-            const result = await Location.reverseGeocodeAsync({
-                latitude: coords.latitude,
-                longitude: coords.longitude,
-            });
-
-            const addr = result[0];
-            if (!addr) return "";
-
-            return [
-                addr.name,
-                addr.street,
-                addr.city,
-                addr.region,
-                addr.country,
-            ]
-                .filter(Boolean)
-                .join(", ");
-        } catch (e) {
-            console.log("Reverse geocode error:", e);
-            return "";
-        }
-    };
-
-    return { startTracking, stopTracking, getLocationName };
+    return { startTracking, stopTracking };
 }

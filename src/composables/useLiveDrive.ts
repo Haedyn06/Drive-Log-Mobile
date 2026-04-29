@@ -3,11 +3,12 @@ import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
 import { v4 as uuidv4 } from 'uuid';
 
-import { saveSession } from '@/database/methods';
+import { addSessionDB } from '@/database/methods';
 import { requestPermission, compressRouteByDistance } from '@/utils/locationAccess';
 import { avgSpeedCalc } from '@/utils/metricsCalc';
 
 import { useLocationTracking } from '@/composables/useLocationTracking';
+import { getLocationName } from '@/utils/locationAccess';
 
 import type { Coords } from '@/types/CoordinateType';
 import type { DriveSession } from "@/types/dbObj/driveSessionType";
@@ -46,7 +47,7 @@ export function useLiveDrive() {
     const [onSessionForm, setOnSessionForm] = useState(false);
 
     
-    const { startTracking, stopTracking, getLocationName } = useLocationTracking({
+    const { startTracking, stopTracking } = useLocationTracking({
         setSpeedSession, setTopSpeedSession,
         setAltitudeSession, setTopAltitudeSession, setAltitudeGainSession,
         setDistanceSession, setSessionRoutePoints, setSessionStopPoints
@@ -153,9 +154,9 @@ export function useLiveDrive() {
 
     async function handleSaveSession(sessionTitle:string, startLocName: string, endLocName: string, noteSession: string, vehicleSession?: VehicleObj) {
         try {
-            const startName = startLocName.trim() || (locationStart ? await getLocationName(locationStart) : "");
 
-            const endName = endLocName.trim() || (locationEnd ? await getLocationName(locationEnd) : "");
+            if (!startLocName.trim()) startLocName = await getLocationName(locationStart ?? undefined);
+            if (!endLocName.trim()) endLocName = await getLocationName(locationEnd ?? undefined);
 
             const driveSession: DriveSession = {
                 id: uuidv4(),
@@ -167,10 +168,10 @@ export function useLiveDrive() {
                 timestampStart: timeStampStart,
                 timestampEnd: timeStampEnd,
 
-                startLocationName: startName,
+                startLocationName: startLocName,
                 locationStart: locationStart ?? { latitude: 0, longitude: 0 },
 
-                endLocationName: endName,
+                endLocationName: endLocName.trim() || await getLocationName(),
                 locationEnd: locationEnd ?? { latitude: 0, longitude: 0 },
 
                 averageSpeed: avgSpeedCalc(elapsedSession, distanceSession),
@@ -180,7 +181,7 @@ export function useLiveDrive() {
                 vehicleId: vehicleSession?.id ?? undefined
             }
 
-            saveSession(driveSession, sessionCheckPoints, sessionRoutePoints, sessionStopPoints, topSpeedSession, topAltitudeSession)
+            await addSessionDB(driveSession, sessionCheckPoints, compressRouteByDistance(distanceSession, sessionRoutePoints), sessionStopPoints, topSpeedSession, topAltitudeSession)
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             setOnSessionForm(false);
             handleResetSession();

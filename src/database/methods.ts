@@ -16,16 +16,16 @@ export const saveDriveSession = async (session: DriveSession) => {
             INSERT INTO drive_session (
                 id, title, date, notes,
                 elapsed_time, timestamp_start, timestamp_end,
-                latitude_start, longitude_start, altitude_start,
-                latitude_end, longitude_end, altitude_end,
+                latitude_start, longitude_start, altitude_start, start_location_name,
+                latitude_end, longitude_end, altitude_end, end_location_name,
                 average_speed, altitude_gained, distance,
                 vehicle_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 session.id, session.title, session.date, session.notes ?? null,
                 session.elapsedTime, session.timestampStart, session.timestampEnd,
-                session.locationStart.latitude, session.locationStart.longitude, session.locationStart.altitude ?? null,
-                session.locationEnd.latitude, session.locationEnd.longitude, session.locationEnd.altitude ?? null,
+                session.locationStart.latitude, session.locationStart.longitude, session.locationStart.altitude ?? null, session.startLocationName,
+                session.locationEnd.latitude, session.locationEnd.longitude, session.locationEnd.altitude ?? null, session.endLocationName,
                 session.averageSpeed, session.altitudeGained, session.distance,
                 session.vehicleId ?? null
             ]
@@ -146,7 +146,7 @@ export const saveTopAltitude = async (sessionId: string, topAltitude: SessionTop
 
 
 // Save Session
-export const saveSession = async (
+export const addSessionDB = async (
     session: DriveSession,
     checkpoints: SessionCheckpoint[],
     routepoints: SessionRoutePoint[],
@@ -539,4 +539,104 @@ await db.runAsync(
 console.log("Delete checkpoint error:", err);
 throw err;
 }
+};
+
+
+export const saveSessionDB = async (sessionId: string) => {
+    try {
+        const dateSaved = Date.now();
+        await db.runAsync(`INSERT INTO session_saves (session_id, timestamp) VALUES (?, ?);`, [sessionId, dateSaved]);
+    } catch (err) {
+        throw err;
+    }
+}
+
+
+export const checkSessionSavedDB = async (sessionId: string): Promise<boolean> => {
+    try {
+        const result = await db.getFirstAsync(
+            `SELECT 1 FROM session_saves WHERE session_id = ? LIMIT 1;`,
+            [sessionId]
+        );
+
+        return !!result; // true if found, false if null
+    } catch (err) {
+        console.log("Check save error:", err);
+        return false;
+    }
+};
+
+export const unsaveSessionDB = async (sessionId: string): Promise<void> => {
+    try {
+        await db.runAsync(
+            `DELETE FROM session_saves WHERE session_id = ?;`,
+            [sessionId]
+        );
+    } catch (err) {
+        console.log("Delete save error:", err);
+        throw err;
+    }
+};
+
+export const getSavedSessions = async (
+    sortType: SessionSortType = "newest"
+): Promise<DriveSession[]> => {
+
+    const orderBy =
+        sortType === "oldest"
+            ? "ds.date ASC"
+            : sortType === "time"
+            ? "ds.elapsed_time DESC"
+            : sortType === "furthest"
+            ? "ds.distance DESC"
+            : "ds.date DESC";
+
+    const rows = await db.getAllAsync<any>(`
+        SELECT ds.*
+        FROM drive_session ds
+        INNER JOIN session_saves ss
+        ON ds.id = ss.session_id
+        ORDER BY ${orderBy};
+    `);
+
+    return rows.map((row) => ({
+        id: row.id,
+        title: row.title,
+        date: row.date,
+        notes: row.notes ?? undefined,
+
+        elapsedTime: row.elapsed_time,
+        timestampStart: row.timestamp_start,
+        timestampEnd: row.timestamp_end,
+
+        startLocationName: row.start_location_name ?? "",
+        locationStart: {
+            latitude: row.latitude_start,
+            longitude: row.longitude_start,
+            altitude: row.altitude_start ?? undefined,
+        },
+
+        endLocationName: row.end_location_name ?? "",
+        locationEnd: {
+            latitude: row.latitude_end,
+            longitude: row.longitude_end,
+            altitude: row.altitude_end ?? undefined,
+        },
+
+        averageSpeed: row.average_speed,
+        altitudeGained: row.altitude_gained,
+        distance: row.distance,
+
+        vehicleId: row.vehicle_id ?? undefined,
+    }));
+};
+
+
+export const sessionExists = async (id: string): Promise<boolean> => {
+    const row = await db.getFirstAsync(
+        `SELECT 1 FROM drive_session WHERE id = ? LIMIT 1;`,
+        [id]
+    );
+
+    return !!row;
 };

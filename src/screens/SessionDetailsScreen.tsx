@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 // import { isExist, saveSession, unsaveSession } from '@/services/savesService';
 import { editSessionTitle, editSessionNotes } from '@/database/methods';
+import { checkSessionSavedDB, saveSessionDB, unsaveSessionDB } from '@/database/methods';
 
 import { formatDateTime, formatDuration, formatDistance, formatDateNum, formatTimeOnly, formatSpeed, formatReadableElapsed } from '@/utils/format';
 import DriveSessionMap from '@/components/maps/DriveSessionMap';
@@ -35,23 +36,23 @@ export default function SessionDetailsScreen() {
     const [editedNotes, setEditedNotes] = useState(session.notes ?? '');
     const [previewIndex, setPreviewIndex] = useState<number | null>(null);
     const [previewImages, setPreviewImages] = useState<string[]>([]);
-
+    
     useEffect(() => {
         const check = async () => {
-            // const result = await isExist(session.id);
-            // setIsSaved(result);
+            const result = await checkSessionSavedDB(session.id);
+            setIsSaved(result);
         };
 
         check();
     }, [session]);
 
     const handleSave = async () => {
-        // await saveSession(session.id);
+        await saveSessionDB(session.id);
         setIsSaved(true);
     };
 
     const handleUnsave = async () => {
-        // await unsaveSession(session.id);
+        await unsaveSessionDB(session.id);
         setIsSaved(false);
     };
 
@@ -252,30 +253,33 @@ export default function SessionDetailsScreen() {
             {/* Location */}
             <View style={SessionDetailsStyles.detailsCard}>
                 <Text style={SessionDetailsStyles.sectionTitle}>Locations</Text>
-
+                
+                {/* Start */}
                 <View style={SessionDetailsStyles.locationBlock}>
                     <View style={SessionDetailsStyles.locationHeader}>
                         <Ionicons name="play-circle" size={18} color="green" />
-                        <Text style={SessionDetailsStyles.locationTitle}>Start Location</Text>
+                        <Text style={SessionDetailsStyles.locationTitle}>{session.locations.startLocation.name}</Text>
                     </View>
 
                     <Text style={SessionDetailsStyles.locationText}>
-                        {session.locations.startLocation.name?.trim() ? session.locations.startLocation.name : session.locations.startLocation.coords 
-                            ? `${session.locations.startLocation.coords.latitude.toFixed(6)}, ${session.locations.startLocation.coords.longitude.toFixed(6)}`
-                            : '--'}
+                        {session.locations.startLocation.coords ? 
+                            `${session.locations.startLocation.coords.latitude.toFixed(6)}, ${session.locations.startLocation.coords.longitude.toFixed(6)}`
+                            : '--'
+                        }
                     </Text>
                 </View>
-
+                
                 <View style={SessionDetailsStyles.locationBlock}>
                     <View style={SessionDetailsStyles.locationHeader}>
                         <Ionicons name="stop-circle" size={18} color="red" />
-                        <Text style={SessionDetailsStyles.locationTitle}>End Location</Text>
+                        <Text style={SessionDetailsStyles.locationTitle}>{session.locations.endLocation.name}</Text>
                     </View>
 
                     <Text style={SessionDetailsStyles.locationText}>
-                        {session.locations.endLocation.name?.trim() ? session.locations.endLocation.name : session.locations.endLocation.coords
-                            ? `${session.locations.endLocation.coords.latitude.toFixed(6)}, ${session.locations.endLocation.coords.longitude.toFixed(6)}`
-                            : '--'}
+                        {session.locations.endLocation.coords ?
+                            `${session.locations.endLocation.coords.latitude.toFixed(3)}, ${session.locations.endLocation.coords.longitude.toFixed(3)}`
+                            : '--'
+                        }
                     </Text>
                 </View>
             </View>

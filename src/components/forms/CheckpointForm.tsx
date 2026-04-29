@@ -28,6 +28,7 @@ export default function CheckpointFormModal({ visible, onClose }: CheckpointForm
         
         handleCheckpointSession(note, selectedType, photos);
         setNote("");
+        setPhotos([]);
         setSelectedType("checkpoint");
         onClose();
     }

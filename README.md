@@ -42,8 +42,8 @@ Checks Route For Driving And Stats
     - Fix Saving ✔
     - Fix List Of Sessions ✔
     - Fix Session Details ✔
-    - Fix Saves
-    - Fix Map
+    - Fix Saves ✔
+    - Fix Map ✔
     - Add all previous saves to sql data
     - create sql queries and functions
     - clean up

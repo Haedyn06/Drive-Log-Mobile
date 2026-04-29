@@ -1,71 +1,62 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Ionicons } from '@expo/vector-icons';
 
-import { deleteSession, getSessionById } from '@/services/driveSessionService';
-import { getSaves } from '@/services/savesService';
+import { getSavedSessions, deleteDriveSession, getFullSession } from '@/database/methods';
 
 import DriveSessionCard from '@/components/cards/DriveSessionCard';
 import ConfirmationPopup from '@/components/ConfirmationPopup';
 
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/AppNavigator';
+import type { DriveSession } from '@/types/dbObj/driveSessionType';
 import type { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
+
 type SavedSessionsProps = {
     limit?: number;
 };
 
 export default function SavedSessions({ limit }: SavedSessionsProps) {
-    const [sessions, setSessions] = useState<DriveSessionObj[]>([]);
+    const [sessions, setSessions] = useState<DriveSession[]>([]);
     const [showPopup, setShowPopup] = useState(false);
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-    const loadSessions = useCallback(async () => {
+    const loadSavedSessions = useCallback(async () => {
         try {
-            const savedIds = await getSaves();
-
-            const fullSessions = await Promise.all(
-                savedIds.map((id: string) => getSessionById(id))
-            );
-
-            const validSessions = fullSessions.filter(
-                (session): session is DriveSessionObj => session !== null
-            );
-
-            const sorted = [...validSessions].reverse();
-            const limited = limit ? sorted.slice(0, limit) : sorted;
-
-            setSessions(limited);
+            const savedSessions = await getSavedSessions();
+            if (savedSessions) setSessions(savedSessions);
         } catch (e) {
             console.log('Failed loading sessions', e);
         }
-    }, [limit]);
+    }, []);
 
     useFocusEffect(
         useCallback(() => {
-            loadSessions();
-        }, [loadSessions])
+            loadSavedSessions();
+        }, [])
     );
 
-    const handlePressSession = async (item: DriveSessionObj) => {
+    const handlePressSession = async (sessionId: string) => {
+        const fullSession = await getFullSession(sessionId);
+        if (!fullSession) return;
+
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        navigation.navigate('SessionDetails', { session: item });
+        navigation.navigate('SessionDetails', { session: fullSession });
     };
 
     const handleDeleteSession = async (id: string) => {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-        await deleteSession(id);
-        await loadSessions();
+        await deleteDriveSession(id);
+        await loadSavedSessions();
     };
 
 
-
-    const renderRightActions = (item: DriveSessionObj) => {
+    const renderRightActions = (item: DriveSession) => {
         return (
             <Pressable
                 style={styles.deleteAction}
@@ -99,7 +90,7 @@ export default function SavedSessions({ limit }: SavedSessionsProps) {
                     rightThreshold={30}
                     renderRightActions={() => renderRightActions(item)}
                 >
-                    <Pressable onPress={() => handlePressSession(item)}>
+                    <Pressable onPress={() => handlePressSession(item.id)}>
                         <DriveSessionCard item={item} />
                     </Pressable>
                 </ReanimatedSwipeable>
