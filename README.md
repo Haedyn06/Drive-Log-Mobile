@@ -16,7 +16,7 @@ Checks Route For Driving And Stats
 
 ### Versions (Alpha V1.x)
 
-#### V1.1 ✔
+#### v0.1 ✔
 1. Implement Local Storage ✔ 
 2. Add Navigation (Home, Profile, Drive) ✔
 3. Implement Data Tracking and Logic ✔
@@ -28,31 +28,36 @@ Checks Route For Driving And Stats
 9. Design + Polish ✔
 10. Test Out App ✔
 
-#### V1.2
+#### v0.2 ✔
 1. Reorganize and structure and clean code. ✔
 2. Add Max Speed Location On The Map, Make it Optional ✔
 3. Open camera, take photo and add into checkpoint obj ✔
 4. Whenever u press the checkpoint marker, modal pops up with details (Edit, Manage, Filter Checkpoints) ✔
 5. Automatic stop detection (Counts and records where u stopped and how many time u have stopped) ✔
 6. Add Checkpoint filters on the map ('checkpoint' | 'stop' | 'gas' | 'food' | 'issue' | 'scenery') ✔
-7. UI/UX refinement and improvements
+7. UI/UX refinement and improvements ✔
 
-#### V1.3
+#### v0.3
 1. Migrate Async Data To SQLite
     - Fix Saving ✔
     - Fix List Of Sessions ✔
     - Fix Session Details ✔
     - Fix Saves
     - Fix Map
+    - Add all previous saves to sql data
+    - create sql queries and functions
+    - clean up
 2. Live sessions still being recorded even in a different app or asleep (Runs in the background) 
-3. Add Settings or preferences in profile
-4. Add Imperial/Metric Options
+3. Add a favorite locations section
+4. Checkpint can be added as favorite location
+5. Free Roam Map
 
-#### V1.4
-1. Add a favorite locations section
+#### v0.4
+1. Route Replay
+2. Add Settings or preferences in profile
+3. Add Imperial/Metric Options
 
-
-#### V1.5
+#### v0.5
 1. Design and add smooth clean animations and UI.
 2. Polish, Clean and Identify Edge cases
 3. Deploy To Public
