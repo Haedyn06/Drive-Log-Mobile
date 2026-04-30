@@ -9,9 +9,14 @@ import { formatDriveTime, formatDistance, formatElevation } from '@/utils/format
 import { dbTest, copyDbForDebug, importData } from '@/services/sessiondbService';
 import { getTotalDistance, getTotalDriveTime, getTotalElevationGain } from '@/database/methods';
 
+
+import FreeMiniMap from '@/components/maps/FreeMapMini';
+import FreeFullMap from '@/components/maps/FreeMapFull';
+
 import { ProfileStyles } from '@/styles/ProfileStyle';
 
 import type { RootStackParamList } from '@/navigation/AppNavigator';
+import { Coords } from '@/types/CoordinateType';
 
 export default function ProfileScreen() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -19,7 +24,9 @@ export default function ProfileScreen() {
     const [totalDistance, setTotalDistance] = useState(0);
     const [totalDriveTime, setTotalDriveTime] = useState(0);
     const [totalElevation, setTotalElevation] = useState(0);
-    
+
+    const [fullMap, setFullMap] = useState(false);
+
     useEffect(() => {
         const loadStats = async () => {
             try {
@@ -46,7 +53,7 @@ export default function ProfileScreen() {
     return (
         <ScrollView
             style={ProfileStyles.container}
-            contentContainerStyle={ProfileStyles.content}
+            contentContainerStyle={[ProfileStyles.content, {paddingBottom: 50}]}
         >
             <View>
                 <View style={ProfileStyles.header}>
@@ -93,14 +100,16 @@ export default function ProfileScreen() {
                 </Pressable>
             </View>
 
-            <View style={{marginTop: 20}}>
-                <Text style={{textAlign: 'center', fontSize: 20, fontWeight: 'bold'}}>Roam Your Map</Text>
-                <Text style={{textAlign: 'center', fontSize: 12}}>Insert Map Here</Text>
-            </View>
+            <Pressable onPress={() => setFullMap(true)} style={{marginTop: 40}}>
+                <FreeMiniMap />
+            </Pressable>
+
+
+            <FreeFullMap visible={fullMap} onClose={() => setFullMap(false)} />
 
 
             {/* Test Buttons */}
-            <View>
+{/*             <View>
                 <Pressable style={ProfileStyles.carAddBtn} onPress={handleDBTest}>
                     <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} >DB Test</Text>
                 </Pressable>
@@ -112,7 +121,7 @@ export default function ProfileScreen() {
                 <Pressable style={ProfileStyles.carAddBtn} onPress={importData}>
                     <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} >Import To DB</Text>
                 </Pressable>
-            </View>
+            </View> */}
 
 
         </ScrollView>

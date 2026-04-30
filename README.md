@@ -44,23 +44,35 @@ Checks Route For Driving And Stats
     - Fix Session Details ✔
     - Fix Saves ✔
     - Fix Map ✔
-    - Add all previous saves to sql data
+    - Add all previous saves to sql data ✔
     - create sql queries and functions
     - clean up
-2. Live sessions still being recorded even in a different app or asleep (Runs in the background) 
-3. Add a favorite locations section
-4. Checkpint can be added as favorite location
-5. Free Roam Map
+2. Free Roam Map
+    - add 1st and 3rd person perspectives ✔
+    - add standard & satellite option ✔
+    - create pinned locations via map marker ✔
+    - option to add a pinned location while in first person
+    - display save routes w/ controls
+    - navigation arrows for pinned locations
+    - personal marker arrow
+
+3. Add a pinned locations section 
+    - pinned locations form (gets coords via inputted address)
+    - section to manage pinned locations (edit, delete, etc.)
+    - option to add checkpiint to pinned locations
+
 
 #### v0.4
 1. Route Replay
 2. Add Settings or preferences in profile
 3. Add Imperial/Metric Options
 
+
 #### v0.5
 1. Design and add smooth clean animations and UI.
 2. Polish, Clean and Identify Edge cases
-3. Deploy To Public
+3. Live sessions still being recorded even in a different app or asleep (Runs in the background) 
+4. Deploy To Public
 
 
 #### V2 (TBD)

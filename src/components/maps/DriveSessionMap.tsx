@@ -216,6 +216,7 @@ export default function DriveSessionMap({
                     <MapView ref={mapRef} key={markerFilter} region={mapRegion} onRegionChangeComplete={setMapRegion}
                         showsUserLocation={showUserLocation} followsUserLocation={liveStatus !== 'notstart'}
                         style={styles.fullScreenMap}
+                        showsTraffic
                     >
                         {locStart && (
                             <Marker key="start-marker" coordinate={locStart} pinColor="green"

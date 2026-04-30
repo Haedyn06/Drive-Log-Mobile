@@ -41,6 +41,7 @@ export function useLocationTracking({
     }, [watchSubscription]);
 
 
+    // Speed
     const handleSpeed = (safeSpeed: number, newPoint: Coords) => {
         setSpeedSession(safeSpeed);
 
@@ -52,7 +53,7 @@ export function useLocationTracking({
         });
     };
 
-
+    // Altitude
     const handleAltitude = (altitude: number, newPoint: Coords) => {
         setAltitudeSession(altitude);
 
@@ -63,8 +64,8 @@ export function useLocationTracking({
             return prev;
         });
     };
-    //
 
+    // Route
     const handleRoute = (newCoords: Coords, altitude: number) => {
        // const routeDraw = 25;
         const routeDraw = 5;
@@ -96,6 +97,7 @@ export function useLocationTracking({
         });
     };
 
+    // Stop
     const handleStop = (safeSpeed: number, newPoint: Coords) => {
         const now = Date.now();
 

@@ -114,6 +114,18 @@ export const createTablesSQL = `
         timestamp INTEGER NOT NULL,
         FOREIGN KEY (session_id) REFERENCES drive_session(id) ON DELETE CASCADE
     );
+
+
+    -- Locations
+    CREATE TABLE IF NOT EXISTS pinned_locations (
+        id TEXT PRIMARY KEY NOT NULL,
+        name TEXT NOT NULL,
+        note TEXT,
+        latitude REAL NOT NULL,
+        longitude REAL NOT NULL,
+        altitude REAL,
+        timestamp INTEGER NOT NULL
+    )
 `;
 
 

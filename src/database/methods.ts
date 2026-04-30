@@ -7,7 +7,7 @@ import type { SessionRoutePoint } from "@/types/dbObj/routePointType";
 import type { SessionStopPoint } from "@/types/dbObj/stopPointType";
 import type { SessionTopSpeed, SessionTopAltitude } from "@/types/dbObj/topMetrics";
 import type { VehicleObj } from "@/types/vehicleObj/VehicleType";
-
+import type { PinnedLocation } from "@/types/PinnedLocation";
 
 // Save Session
 export const saveDriveSession = async (session: DriveSession) => {
@@ -278,6 +278,7 @@ await db.runAsync(
 
 
 import { DriveSessionObj } from "@/types/sessionObj/DriveSessionType";
+import { Coords } from "@/types/CoordinateType";
 
 export const getFullSession = async (sessionId: string): Promise<DriveSessionObj | null> => {
 // 1. base session
@@ -578,25 +579,14 @@ export const unsaveSessionDB = async (sessionId: string): Promise<void> => {
     }
 };
 
-export const getSavedSessions = async (
-    sortType: SessionSortType = "newest"
-): Promise<DriveSession[]> => {
-
-    const orderBy =
-        sortType === "oldest"
-            ? "ds.date ASC"
-            : sortType === "time"
-            ? "ds.elapsed_time DESC"
-            : sortType === "furthest"
-            ? "ds.distance DESC"
-            : "ds.date DESC";
+export const getSavedSessions = async (): Promise<DriveSession[]> => {
 
     const rows = await db.getAllAsync<any>(`
         SELECT ds.*
         FROM drive_session ds
         INNER JOIN session_saves ss
         ON ds.id = ss.session_id
-        ORDER BY ${orderBy};
+        ORDER BY ss.timestamp DESC;
     `);
 
     return rows.map((row) => ({
@@ -639,4 +629,68 @@ export const sessionExists = async (id: string): Promise<boolean> => {
     );
 
     return !!row;
+};
+
+
+export const savePinnedLocationDB = async (id: string, name: string, note: string, location: Coords) => {
+    try {
+        const dateSaved = Date.now();
+        await db.runAsync(`
+            INSERT INTO pinned_locations (id, name, note, latitude, longitude, altitude, timestamp) 
+            VALUES (?, ?, ?, ?, ?, ?, ?);`, 
+            [
+                id, name, note, location.latitude, location.longitude, 
+                location.altitude ?? 0, dateSaved
+            ]
+        );
+    } catch (err) {
+        throw err;
+    }
+}
+
+
+
+export const getPinnedLocationsDB = async (): Promise<PinnedLocation[]> => {
+    try {
+        const rows = await db.getAllAsync<any>(`
+            SELECT * FROM pinned_locations
+            ORDER BY timestamp DESC;
+        `);
+
+        return rows.map((row) => ({
+            id: row.id,
+            name: row.name,
+            notes: row.note ?? undefined,
+            location: {
+                latitude: row.latitude,
+                longitude: row.longitude,
+                altitude: row.altitude ?? undefined,
+            },
+            timestamp: row.timestamp,
+        }));
+    } catch (err) {
+        throw err;
+    }
+};
+
+
+export const getPinnedLocationById = async (id: string): Promise<PinnedLocation | null> => {
+    const row = await db.getFirstAsync<any>(
+        `SELECT * FROM pinned_locations WHERE id = ?`,
+        [id]
+    );
+
+    if (!row) return null;
+
+    return {
+        id: row.id,
+        name: row.name,
+        notes: row.note ?? undefined,
+        location: {
+            latitude: row.latitude,
+            longitude: row.longitude,
+            altitude: row.altitude ?? undefined,
+        },
+        timestamp: row.timestamp,
+    };
 };
