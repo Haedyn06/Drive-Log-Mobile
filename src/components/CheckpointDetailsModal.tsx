@@ -8,6 +8,8 @@ import { formatDistance, formatTimeOnly } from "@/utils/format";
 import ImagePreviewComp from "./ImagePreviewComp";
 import ConfirmationPopup from "./ConfirmationPopup";
 
+import { savePinnedLocationDB, checkPinnedLocation, deletePinnedLocationDB } from "@/database/methods";
+
 type CheckpointDetailsModalProps = {
     checkpoints: SessionCheckpoint[];
     selectedIndex: number | null;
@@ -21,6 +23,10 @@ export default function CheckpointDetailsModal({ checkpoints, selectedIndex, set
     const translateY = useRef(new Animated.Value(20)).current;
     const opacity = useRef(new Animated.Value(0)).current;
     const [showPopup, setShowPopup] = useState(false);
+    const [isPinned, setIsPinned] = useState(false);
+
+    const checkpoint =
+        selectedIndex !== null ? checkpoints[selectedIndex] : null;
 
     useEffect(() => {
         const hasImages = !!checkpoint?.images?.length;
@@ -40,23 +46,49 @@ export default function CheckpointDetailsModal({ checkpoints, selectedIndex, set
                 useNativeDriver: true,
             }),
         ]).start();
-    }, [selectedIndex]);
+    }, [checkpoint, translateY, opacity]);
 
-    if (selectedIndex === null) return null;
-    const checkpoint = checkpoints[selectedIndex];
+    useEffect(() => {
+        if (!checkpoint) return;
 
+        const checkPinned = async () => {
+            const result = await checkPinnedLocation(checkpoint.id);
+            setIsPinned(result);
+        };
+
+        checkPinned();
+    }, [checkpoint]);
+
+    if (!checkpoint) return null;
+    
     const handleNext = () => {
+        if (selectedIndex === null) return;
+        
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         const nextIndex = selectedIndex === checkpoints.length - 1 ? 0 : selectedIndex + 1;
+
         setSelectedIndex(nextIndex);
         onFocusCheckpoint(nextIndex);
-    }
+    };
 
     const handlePrev = () => {
+        if (selectedIndex === null) return;
+
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         const nextIndex = selectedIndex === 0 ? checkpoints.length - 1 : selectedIndex - 1;
+
         setSelectedIndex(nextIndex);
         onFocusCheckpoint(nextIndex);
+    };
+
+    const handlePinCheckpoint = async () => {
+        await savePinnedLocationDB(checkpoint.id, checkpoint.type ?? "checkpoint", checkpoint.notes ?? "", checkpoint.location);
+        setIsPinned(true);
+    }
+
+    const handleUnpinCheckpoint = async () => {
+        await deletePinnedLocationDB(checkpoint.id);
+        setIsPinned(false);
     }
 
     return (
@@ -98,10 +130,29 @@ export default function CheckpointDetailsModal({ checkpoints, selectedIndex, set
 
                         <View style={styles.detailsContainer}>
                             <View style={styles.headingDetails}>
-                                <Text style={styles.checkpointModalTitle}>{checkpoint?.type ?? "Checkpoint"}</Text>
-                                <Pressable onPress={() => setShowPopup(true)}>
-                                    <Ionicons name="trash" size={16} />
-                                </Pressable>
+
+                                <View style={{display: 'flex', flexDirection:'row', gap:5}}>
+
+                                    {isPinned ? 
+                                        <Pressable onPress={handleUnpinCheckpoint}>
+                                            <Ionicons name="bookmark" size={20} />
+                                        </Pressable>
+                                    : 
+                                        <Pressable onPress={handlePinCheckpoint}>
+                                            <Ionicons name="bookmark-outline" size={20} />
+                                        </Pressable>
+                                    }
+
+                                    <Pressable onPress={() => setShowPopup(true)}>
+                                    </Pressable>
+
+                                    <Text style={styles.checkpointModalTitle}>{checkpoint?.type ?? "Checkpoint"}</Text>
+                                </View>
+
+                                    <Pressable onPress={() => setShowPopup(true)}>
+                                        <Ionicons name="trash" size={20} />
+                                    </Pressable>
+
                             </View>
 
                             <Text style={styles.checkpointModalText}>
@@ -122,11 +173,13 @@ export default function CheckpointDetailsModal({ checkpoints, selectedIndex, set
                         </Pressable>
                     </View>
 
-                    <View style={styles.checkpointNavRow}>
-                        <Text style={styles.countText}>
-                            {selectedIndex + 1} / {checkpoints.length}
-                        </Text>
-                    </View>
+                    {selectedIndex !== null && (
+                        <View style={styles.checkpointNavRow}>
+                            <Text style={styles.countText}>
+                                {selectedIndex + 1} / {checkpoints.length}
+                            </Text>
+                        </View>
+                    )}
                     
 
                 </Pressable>

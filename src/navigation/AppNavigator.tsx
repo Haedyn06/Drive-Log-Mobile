@@ -8,6 +8,7 @@ import SessionsLogsScreen from '@/screens/SessionLogsScreen';
 import SessionDetailsScreen from '@/screens/SessionDetailsScreen';
 import SavedSessionsScreen from '@/screens/SavedSessionsScreen';
 import ManageVehiclesScreen from '@/screens/ManageVehiclesScreen';
+import PinnedLocationsScreen from '@/screens/PinnedLocationsScreen';
 
 import type { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
 
@@ -17,6 +18,7 @@ export type RootStackParamList = {
     SessionLogs: undefined;
     SavedSessions: undefined;
     SavedVehicles: undefined;
+    SavedLocations: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -32,6 +34,7 @@ export default function AppNavigator() {
                     <Stack.Screen name="SessionLogs" component={SessionsLogsScreen} options={{ title: 'Sessions' }} />
                     <Stack.Screen name="SavedSessions" component={SavedSessionsScreen} options={{ title: 'Saves' }} />
                     <Stack.Screen name="SavedVehicles" component={ManageVehiclesScreen} options={{ title: 'Vehicles' }} />
+                    <Stack.Screen name="SavedLocations" component={PinnedLocationsScreen} options={{ title: 'Locations' }} />
                 </Stack.Navigator>
             </NavigationContainer>
 

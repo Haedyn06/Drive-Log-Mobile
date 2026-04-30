@@ -49,6 +49,7 @@ export default function ProfileScreen() {
 
     const goToSaves = () => navigation.navigate('SavedSessions');
     const goToVehicles = () => navigation.navigate('SavedVehicles');
+    const goToLocations = () => navigation.navigate('SavedLocations');
 
     return (
         <ScrollView
@@ -95,7 +96,7 @@ export default function ProfileScreen() {
                 <Pressable style={ProfileStyles.optBtn} onPress={goToVehicles}>
                     <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold'}}>Vehicles</Text>
                 </Pressable>
-                <Pressable style={ProfileStyles.optBtn}>
+                <Pressable style={ProfileStyles.optBtn} onPress={goToLocations}>
                     <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold'}}>Locations</Text>
                 </Pressable>
             </View>

@@ -694,3 +694,25 @@ export const getPinnedLocationById = async (id: string): Promise<PinnedLocation 
         timestamp: row.timestamp,
     };
 };
+
+
+export const checkPinnedLocation = async (id: string): Promise<boolean> => {
+    const row = await db.getFirstAsync(
+        `SELECT 1 FROM pinned_locations WHERE id = ? LIMIT 1`,
+        [id]
+    );
+
+    return row !== null && row !== undefined;
+};
+
+
+export const deletePinnedLocationDB = async (id: string): Promise<void> => {
+    try {
+        await db.runAsync(
+            `DELETE FROM pinned_locations WHERE id = ?`,
+            [id]
+        );
+    } catch (err) {
+        throw err;
+    }
+};

@@ -38,34 +38,37 @@ Checks Route For Driving And Stats
 7. UI/UX refinement and improvements ✔
 
 #### v0.3
-1. Migrate Async Data To SQLite
+1. Migrate Async Data To SQLite ✔
     - Fix Saving ✔
     - Fix List Of Sessions ✔
     - Fix Session Details ✔
     - Fix Saves ✔
     - Fix Map ✔
     - Add all previous saves to sql data ✔
-    - create sql queries and functions
-    - clean up
-2. Free Roam Map
+
+2. Add a pinned locations section ✔
+    - pinned locations form (gets coords via inputted address) ✔
+    - section to manage pinned locations (edit, delete, etc.) ✔
+    - option to add checkpiint to pinned locations ✔
+    - add navigation option to navigate to pinned location ✔
+
+3. Free Roam Map
     - add 1st and 3rd person perspectives ✔
     - add standard & satellite option ✔
     - create pinned locations via map marker ✔
     - option to add a pinned location while in first person
-    - display save routes w/ controls
     - navigation arrows for pinned locations
+    - display save routes w/ controls
     - personal marker arrow
 
-3. Add a pinned locations section 
-    - pinned locations form (gets coords via inputted address)
-    - section to manage pinned locations (edit, delete, etc.)
-    - option to add checkpiint to pinned locations
+4. Clean Up
 
 
 #### v0.4
 1. Route Replay
-2. Add Settings or preferences in profile
-3. Add Imperial/Metric Options
+2. Create first and third person when driving session on live
+3. Add Settings or preferences in profile
+4. Add Imperial/Metric Options
 
 
 #### v0.5
