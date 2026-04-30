@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { getSavedSessions, deleteDriveSession, getFullSession } from '@/database/methods';
 
 import DriveSessionCard from '@/components/cards/DriveSessionCard';
-import ConfirmationPopup from '@/components/ConfirmationPopup';
+import ConfirmationPopup from '@/components/modals/ConfirmationPopup';
 
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/AppNavigator';

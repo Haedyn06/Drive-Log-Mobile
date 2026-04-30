@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { deletePinnedLocationDB } from "@/database/methods";
 import { getLocationName } from "@/utils/locationAccess";
-import ConfirmationPopup from "../ConfirmationPopup";
+import ConfirmationPopup from "@/components/modals/ConfirmationPopup";
 
 type PinnedLocationCardProps = {
     pinnedLocation: PinnedLocation;

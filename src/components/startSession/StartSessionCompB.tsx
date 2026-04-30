@@ -3,7 +3,7 @@ import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
-import ConfirmationPopup from '../ConfirmationPopup';
+import ConfirmationPopup from '@/components/modals/ConfirmationPopup';
 import LiveMapModal from '@/components/maps/LiveMapSession';
 
 import type { Coords } from '@/types/CoordinateType';

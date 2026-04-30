@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics';
 import HomeScreen from '@/screens/HomeScreen';
 import NewSessionScreen from '@/screens/NewSessionScreen';
 import ProfileScreen from '@/screens/ProfileScreen';
+import TestingScreen from '@/screens/TestingScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -13,6 +14,7 @@ const getTabIcon = (routeName: string, focused: boolean) => {
         Home: { active: 'home', inactive: 'home-outline' },
         Drive: { active: 'car', inactive: 'car-outline' },
         Profile: { active: 'person', inactive: 'person-outline' },
+        Testing: { active: 'flask', inactive: 'flask-outline' },
     };
 
     return focused ? icons[routeName].active : icons[routeName].inactive;
@@ -36,6 +38,12 @@ const tabs = [
         component: ProfileScreen,
         haptic: Haptics.ImpactFeedbackStyle.Light,
         title: 'Profile',
+    },
+    {
+        name: 'Testing',
+        component: TestingScreen,
+        haptic: Haptics.ImpactFeedbackStyle.Light,
+        title: 'Testing',
     },
 ];
 

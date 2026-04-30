@@ -14,6 +14,25 @@ export const dbTest = async () => {
   console.log(sessions);
 };
 
+export const migratePinnedLocations = async () => {
+  try {
+    await db.execAsync(`
+      ALTER TABLE pinned_locations ADD COLUMN address TEXT;
+    `);
+
+    await db.execAsync(`
+      ALTER TABLE pinned_locations ADD COLUMN country TEXT;
+    `);
+
+    await db.execAsync(`
+      ALTER TABLE pinned_locations ADD COLUMN city TEXT;
+    `);
+
+    console.log("Migration done");
+  } catch (err) {
+    console.log("Migration error (probably already added):", err);
+  }
+};
 
 
 

@@ -5,7 +5,7 @@ import * as Haptics from 'expo-haptics';
 import { useNavigation } from '@react-navigation/native';
 
 import { formatTime, formatDistance } from '@/utils/format';
-import ConfirmationPopup from '@/components/ConfirmationPopup';
+import ConfirmationPopup from '@/components/modals/ConfirmationPopup';
 
 type StartSessionCompAProps = {
     liveStatus: string;

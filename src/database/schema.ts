@@ -120,6 +120,9 @@ export const createTablesSQL = `
     CREATE TABLE IF NOT EXISTS pinned_locations (
         id TEXT PRIMARY KEY NOT NULL,
         name TEXT NOT NULL,
+        address TEXT,
+        country TEXT,
+        city TEXT
         note TEXT,
         latitude REAL NOT NULL,
         longitude REAL NOT NULL,

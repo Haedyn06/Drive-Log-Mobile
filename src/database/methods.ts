@@ -1,6 +1,8 @@
 import { db } from "./db";
 import { v4 as uuidv4 } from 'uuid';
 
+import { getLocationParts } from "@/utils/locationAccess";
+
 import type { DriveSession } from "@/types/dbObj/driveSessionType";
 import type { SessionCheckpoint } from "@/types/dbObj/checkPointType";
 import type { SessionRoutePoint } from "@/types/dbObj/routePointType";
@@ -634,16 +636,37 @@ export const sessionExists = async (id: string): Promise<boolean> => {
 
 export const savePinnedLocationDB = async (id: string, name: string, note: string, location: Coords) => {
     try {
+
+        const loc = await getLocationParts(location);
+        
+        const addr = `${loc?.name}, ${loc?.street}` || '';
+        const country = loc?.country || '';
+        const city = loc?.city || '';
+        
         const dateSaved = Date.now();
+        console.log('Saving Addr2');
+        console.log(`Address: ${addr}`);        
+        console.log(`Country: ${country}`);        
+        console.log(`City: ${city}`);        
+
         await db.runAsync(`
-            INSERT INTO pinned_locations (id, name, note, latitude, longitude, altitude, timestamp) 
-            VALUES (?, ?, ?, ?, ?, ?, ?);`, 
+            INSERT INTO pinned_locations (
+                id, name, note,
+                address, country, city, 
+                latitude, longitude, altitude, 
+                timestamp
+            ) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`, 
             [
-                id, name, note, location.latitude, location.longitude, 
-                location.altitude ?? 0, dateSaved
+                id, name, note, 
+                addr, country, city,
+                location.latitude, location.longitude, location.altitude ?? 0, 
+                dateSaved
             ]
         );
+        console.log('Saving Addr Success');
     } catch (err) {
+        console.log(err);
         throw err;
     }
 }
@@ -660,6 +683,9 @@ export const getPinnedLocationsDB = async (): Promise<PinnedLocation[]> => {
         return rows.map((row) => ({
             id: row.id,
             name: row.name,
+            address: row.address,
+            country: row.country,
+            city: row.city,
             notes: row.note ?? undefined,
             location: {
                 latitude: row.latitude,

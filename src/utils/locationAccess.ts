@@ -74,3 +74,28 @@ export const getLocationName = async (coords?: Coords) => {
         return "";
     }    
 }
+
+export const getLocationParts = async (coords?: Coords) => {
+    if (!coords) return null;
+
+    try {
+        const result = await Location.reverseGeocodeAsync({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+        });
+
+        const addr = result[0];
+        if (!addr) return null;
+
+        return {
+            name: addr.name,
+            street: addr.street,
+            city: addr.city,
+            region: addr.region,
+            country: addr.country,
+        };
+    } catch (e) {
+        console.log("Reverse geocode error:", e);
+        return null;
+    }
+};

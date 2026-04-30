@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { deleteCheckpoint } from '@/database/methods';
 import { formatDistance, formatSpeed, formatTimeOnly, formatReadableElapsed } from '@/utils/format';
 
-import CheckpointDetailsModal from '../CheckpointDetailsModal';
+import CheckpointDetails from '@/components/modals/CheckpointDetailsComp';
 
 import type { Coords } from '@/types/CoordinateType';
 import type { SessionCheckpoint } from '@/types/dbObj/checkPointType';
@@ -301,7 +301,7 @@ export default function DriveSessionMap({
 
                     {/* Bottom Overlay */}
                     <View style={styles.bottomOverlay}>
-                        <CheckpointDetailsModal
+                        <CheckpointDetails
                             checkpoints={localCheckpoints}
                             selectedIndex={selectedCheckpointIndex}
                             setSelectedIndex={setSelectedCheckpointIndex}

@@ -11,7 +11,7 @@ import { checkSessionSavedDB, saveSessionDB, unsaveSessionDB } from '@/database/
 
 import { formatDateTime, formatDuration, formatDistance, formatDateNum, formatTimeOnly, formatSpeed, formatReadableElapsed } from '@/utils/format';
 import DriveSessionMap from '@/components/maps/DriveSessionMap';
-import ImagePreviewComp from '@/components/ImagePreviewComp';
+import ImagePreviewComp from '@/components/modals/ImagePreviewComp';
 
 import { SessionDetailsStyles } from '@/styles/SessionDetailsStyle';
 

@@ -5,12 +5,12 @@ import { Ionicons } from "@expo/vector-icons";
 import type { SessionCheckpoint } from "@/types/dbObj/checkPointType";
 
 import { formatDistance, formatTimeOnly } from "@/utils/format";
-import ImagePreviewComp from "./ImagePreviewComp";
-import ConfirmationPopup from "./ConfirmationPopup";
+import ImagePreviewComp from "@/components/modals/ImagePreviewComp";
+import ConfirmationPopup from "@/components/modals/ConfirmationPopup";
 
 import { savePinnedLocationDB, checkPinnedLocation, deletePinnedLocationDB } from "@/database/methods";
 
-type CheckpointDetailsModalProps = {
+type CheckpointDetailsProps = {
     checkpoints: SessionCheckpoint[];
     selectedIndex: number | null;
     setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
@@ -18,7 +18,7 @@ type CheckpointDetailsModalProps = {
     onDelete: () => void;
 };
 
-export default function CheckpointDetailsModal({ checkpoints, selectedIndex, setSelectedIndex, onFocusCheckpoint, onDelete }: CheckpointDetailsModalProps) {
+export default function CheckpointDetails({ checkpoints, selectedIndex, setSelectedIndex, onFocusCheckpoint, onDelete }: CheckpointDetailsProps) {
     const [previewIndex, setPreviewIndex] = useState<number | null>(null);
     const translateY = useRef(new Animated.Value(20)).current;
     const opacity = useRef(new Animated.Value(0)).current;

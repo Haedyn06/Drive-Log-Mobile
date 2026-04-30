@@ -3,7 +3,7 @@ import React from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 
-import ConfirmationPopup from '@/components/ConfirmationPopup';
+import ConfirmationPopup from '@/components/modals/ConfirmationPopup';
 
 import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
 

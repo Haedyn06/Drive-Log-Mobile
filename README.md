@@ -49,15 +49,15 @@ Checks Route For Driving And Stats
 2. Add a pinned locations section ✔
     - pinned locations form (gets coords via inputted address) ✔
     - section to manage pinned locations (edit, delete, etc.) ✔
-    - option to add checkpiint to pinned locations ✔
+    - option to add checkpoint to pinned locations ✔
     - add navigation option to navigate to pinned location ✔
 
 3. Free Roam Map
     - add 1st and 3rd person perspectives ✔
     - add standard & satellite option ✔
     - create pinned locations via map marker ✔
-    - option to add a pinned location while in first person
-    - navigation arrows for pinned locations
+    - option to add a pinned location while in first person ✔
+    - navigation arrows for pinned locations ✔
     - display save routes w/ controls
     - personal marker arrow
 
