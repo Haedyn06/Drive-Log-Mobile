@@ -742,3 +742,21 @@ export const deletePinnedLocationDB = async (id: string): Promise<void> => {
         throw err;
     }
 };
+
+export const getFullSavedSessions = async (): Promise<DriveSessionObj[]> => {
+    const savedRows = await db.getAllAsync<any>(`
+        SELECT session_id
+        FROM session_saves
+        ORDER BY timestamp DESC;
+    `);
+
+    const fullSessions = await Promise.all(
+        savedRows.map(async (row) => {
+            return await getFullSession(row.session_id);
+        })
+    );
+
+    return fullSessions.filter(
+        (session): session is DriveSessionObj => session !== null
+    );
+};

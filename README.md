@@ -58,8 +58,8 @@ Checks Route For Driving And Stats
     - create pinned locations via map marker ✔
     - option to add a pinned location while in first person ✔
     - navigation arrows for pinned locations ✔
-    - display save routes w/ controls
-    - personal marker arrow
+    - display save routes w/ controls ✔
+    - personal marker arrow 
 
 4. Clean Up
 

@@ -105,6 +105,9 @@ export const formatSpeed = (speed: number, unit: string = 'metric') => {
 }
 
 // Distance Format
+export const formatToKm = (meters: number) => (meters / 1000);
+export const formatToMiles = (meters: number) => (meters * 0.000621371);
+
 export const formatDistance = (meters: number) => {
     return meters >= 1000 ? `${(meters / 1000).toFixed(2)} km` : `${meters.toFixed(0)} m`;
 };
