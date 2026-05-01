@@ -7,8 +7,7 @@ import ConfirmationPopup from '@/components/modals/ConfirmationPopup';
 import LiveMapModal from '@/components/maps/LiveMapSession';
 
 import type { Coords } from '@/types/CoordinateType';
-import type { SessionCheckpoint } from '@/types/dbObj/checkPointType';
-import type { SessionRoutePoint } from '@/types/dbObj/routePointType';
+import type { SessionRoutePoint, SessionCheckpoint } from '@/types/dbObj/mapPointTypes';
 
 export type StartSessionCompBProps = {
     liveStatus: string;

@@ -3,7 +3,7 @@ import { Modal, View, Text, TextInput, Pressable, StyleSheet, ScrollView, Keyboa
 import * as Haptics from 'expo-haptics';
 import { v4 as uuidv4 } from 'uuid';
 
-import { savePinnedLocationDB } from '@/database/methods';
+import { savePinnedLocationDB } from '@/database/methods/pinnedLocations';
 
 import FieldLabel from '@/components/FieldLabel';
 import { Coords } from '@/types/CoordinateType';

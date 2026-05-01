@@ -59,9 +59,9 @@ Checks Route For Driving And Stats
     - option to add a pinned location while in first person ✔
     - navigation arrows for pinned locations ✔
     - display save routes w/ controls ✔
-    - personal marker arrow 
 
-4. Clean Up
+4. Clean Up ✔
+5. Test & Design
 
 
 #### v0.4

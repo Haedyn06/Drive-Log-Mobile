@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
-import { getPinnedLocationsDB } from "@/database/methods";
+import { getAllPinnedLocations } from "@/services/pinnedLocationService";
 
 import type { PinnedLocation } from "@/types/PinnedLocation";
 
@@ -14,7 +14,7 @@ export default function PinnedLocationsScreen() {
     const [pinLocForm, setPinLocForm] = useState(false);
 
     const loadPinnedLocs = async () => {
-        const data = await getPinnedLocationsDB();
+        const data = await getAllPinnedLocations();
         setPinnedLocs(data);
     };
 

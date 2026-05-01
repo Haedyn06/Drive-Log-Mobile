@@ -3,7 +3,7 @@ import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
 import { v4 as uuidv4 } from 'uuid';
 
-import { addSessionDB } from '@/database/methods';
+import { addSession } from '@/services/sessionService';
 import { requestPermission, compressRouteByDistance } from '@/utils/locationAccess';
 import { avgSpeedCalc } from '@/utils/metricsCalc';
 
@@ -12,9 +12,7 @@ import { getLocationName } from '@/utils/locationAccess';
 
 import type { Coords } from '@/types/CoordinateType';
 import type { DriveSession } from "@/types/dbObj/driveSessionType";
-import type { SessionCheckpoint } from "@/types/dbObj/checkPointType";
-import type { SessionRoutePoint } from "@/types/dbObj/routePointType";
-import type { SessionStopPoint } from '@/types/dbObj/stopPointType';
+import type { SessionRoutePoint, SessionStopPoint, SessionCheckpoint } from '@/types/dbObj/mapPointTypes';
 import type { SessionTopSpeed, SessionTopAltitude } from "@/types/dbObj/topMetrics";
 
 import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
@@ -181,7 +179,7 @@ export function useLiveDrive() {
                 vehicleId: vehicleSession?.id ?? undefined
             }
 
-            await addSessionDB(driveSession, sessionCheckPoints, compressRouteByDistance(distanceSession, sessionRoutePoints), sessionStopPoints, topSpeedSession, topAltitudeSession)
+            await addSession(driveSession, sessionCheckPoints, compressRouteByDistance(distanceSession, sessionRoutePoints), sessionStopPoints, topSpeedSession, topAltitudeSession)
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             setOnSessionForm(false);
             handleResetSession();

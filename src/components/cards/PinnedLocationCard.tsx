@@ -3,15 +3,14 @@ import { View, Text, Pressable, StyleSheet, Linking, Platform  } from "react-nat
 import type { PinnedLocation } from "@/types/PinnedLocation";
 import { Ionicons } from "@expo/vector-icons";
 
-import { deletePinnedLocationDB } from "@/database/methods";
-import { getLocationName } from "@/utils/locationAccess";
+
+import { deletePinnedLocationDB } from "@/database/methods/pinnedLocations";
+import { navigateMapLocation } from "@/utils/locationAccess";
 import ConfirmationPopup from "@/components/modals/ConfirmationPopup";
 
 type PinnedLocationCardProps = {
     pinnedLocation: PinnedLocation;
 }
-
-
 
 export default function PinnedLocationCard({pinnedLocation}: PinnedLocationCardProps) {
     const [confirmPopUp, setConfirmPopup] = useState(false);
@@ -22,21 +21,6 @@ export default function PinnedLocationCard({pinnedLocation}: PinnedLocationCardP
         await deletePinnedLocationDB(pinnedLocation.id);
         setConfirmPopup(false);
     }
-
-    const handleNavigate = async () => {
-        const { latitude, longitude } = pinnedLocation.location;
-
-        const url = Platform.select({
-            ios: `http://maps.apple.com/?daddr=${latitude},${longitude}`,
-            android: `google.navigation:q=${latitude},${longitude}`,
-            default: `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`,
-        });
-
-        if (!url) return;
-
-        await Linking.openURL(url);
-    };
-
 
     return (
         <View style={styles.pinnedLocContainer}>
@@ -63,7 +47,7 @@ export default function PinnedLocationCard({pinnedLocation}: PinnedLocationCardP
 
 
             <View>
-                <Pressable style={styles.navBtn} onPress={handleNavigate}>
+                <Pressable style={styles.navBtn} onPress={() => navigateMapLocation(pinnedLocation.location.latitude, pinnedLocation.location.longitude)}>
                     <Text style={{fontSize:14, textAlign:'center', fontWeight:'bold', color:'white'}}>Navigate</Text>
                 </Pressable>
             </View>

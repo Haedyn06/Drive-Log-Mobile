@@ -1,6 +1,4 @@
-import { SessionCheckpoint } from "@/types/dbObj/checkPointType";
-import { SessionStopPoint } from "@/types/dbObj/stopPointType";
-import { SessionRoutePoint } from "@/types/dbObj/routePointType";
+import type { SessionRoutePoint, SessionStopPoint, SessionCheckpoint } from "@/types/dbObj/mapPointTypes";
 
 import { SessionTimestamps } from "./TimestampsType";
 import { SessionLocations } from "./LocationsType";

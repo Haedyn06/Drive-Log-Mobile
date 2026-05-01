@@ -1,8 +1,10 @@
 import { getDistance } from "geolib";
+import { Platform, Linking } from "react-native";
 import * as Location from 'expo-location';
 
 import type { Coords } from "@/types/CoordinateType";
-import type { SessionRoutePoint } from "@/types/dbObj/routePointType";
+import type { SessionRoutePoint } from "@/types/dbObj/mapPointTypes";
+
 
 export const requestPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -98,4 +100,16 @@ export const getLocationParts = async (coords?: Coords) => {
         console.log("Reverse geocode error:", e);
         return null;
     }
+};
+
+export const navigateMapLocation = async (lat:number, lon:number) => {
+    const url = Platform.select({
+        ios: `http://maps.apple.com/?daddr=${lat},${lon}`,
+        android: `google.navigation:q=${lat},${lon}`,
+        default: `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`,
+    });
+
+    if (!url) return;
+
+    await Linking.openURL(url);
 };

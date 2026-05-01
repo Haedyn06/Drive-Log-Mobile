@@ -3,8 +3,9 @@ import { Text, View, ScrollView, Pressable } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 
 import { dbTest, copyDbForDebug, importData, migratePinnedLocations } from '@/services/sessiondbService';
-
 import { TestingStyles } from '@/styles/TestingStyle';
+import { getAllPinnedLocations } from '@/services/pinnedLocationService';
+import { getSavedFullSessions } from '@/services/savedSessionService';
 
 function TestButtons () {
     const handleDBTest = async () => await dbTest();
@@ -30,6 +31,7 @@ function TestButtons () {
 function TestBottomSheet () {
     const snapPoints = useMemo(() => ['20%', '70%'], []);
 
+
     return (
         <View style={TestingStyles.container}>
             <BottomSheet snapPoints={snapPoints}>
@@ -48,10 +50,14 @@ function TestBottomSheet () {
 
 export default function TestingScreen() {
 
+    const asd = async () => {
+        await getSavedFullSessions();
+    }
     return (
         <View style={TestingStyles.container}>
-            <View>
-            </View>
+            <Pressable style={TestingStyles.btn} onPress={() => asd()}>
+                <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} >DB Test</Text>
+            </Pressable>
         </View>
     );
 }

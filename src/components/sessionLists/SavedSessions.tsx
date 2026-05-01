@@ -5,7 +5,10 @@ import * as Haptics from 'expo-haptics';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Ionicons } from '@expo/vector-icons';
 
-import { getSavedSessions, deleteDriveSession, getFullSession } from '@/database/methods';
+// import { deleteDriveSession, getFullSession } from '@/database/methods';
+import { deleteDriveSessionDB } from '@/database/methods/driveSessions';
+import { getFullSessionObj } from '@/services/sessionService';
+import { getSavedSessions } from '@/services/savedSessionService';
 
 import DriveSessionCard from '@/components/cards/DriveSessionCard';
 import ConfirmationPopup from '@/components/modals/ConfirmationPopup';
@@ -42,7 +45,7 @@ export default function SavedSessions({ limit }: SavedSessionsProps) {
     );
 
     const handlePressSession = async (sessionId: string) => {
-        const fullSession = await getFullSession(sessionId);
+        const fullSession = await getFullSessionObj(sessionId);
         if (!fullSession) return;
 
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -51,7 +54,7 @@ export default function SavedSessions({ limit }: SavedSessionsProps) {
 
     const handleDeleteSession = async (id: string) => {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-        await deleteDriveSession(id);
+        await deleteDriveSessionDB(id);
         await loadSavedSessions();
     };
 

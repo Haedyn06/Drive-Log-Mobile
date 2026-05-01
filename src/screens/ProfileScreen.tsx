@@ -5,9 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 
 
 import { formatDriveTime, formatDistance, formatElevation } from '@/utils/format';
-
-import { dbTest, copyDbForDebug, importData } from '@/services/sessiondbService';
-import { getTotalDistance, getTotalDriveTime, getTotalElevationGain } from '@/database/methods';
+import { getTotalDistanceDB, getTotalDriveTimeDB, getTotalElevationGainDB } from '@/database/methods/driveSessions';
 
 
 import FreeMiniMap from '@/components/maps/FreeMapMini';
@@ -30,9 +28,9 @@ export default function ProfileScreen() {
     useEffect(() => {
         const loadStats = async () => {
             try {
-                const distance = await getTotalDistance();
-                const time = await getTotalDriveTime();
-                const elevation = await getTotalElevationGain();
+                const distance = await getTotalDistanceDB();
+                const time = await getTotalDriveTimeDB();
+                const elevation = await getTotalElevationGainDB();
 
                 setTotalDistance(distance);
                 setTotalDriveTime(time);
@@ -44,8 +42,6 @@ export default function ProfileScreen() {
 
         loadStats();
     }, []);
-
-    const handleDBTest = async () => await dbTest();
 
     const goToSaves = () => navigation.navigate('SavedSessions');
     const goToVehicles = () => navigation.navigate('SavedVehicles');

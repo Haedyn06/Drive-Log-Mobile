@@ -1,20 +1,9 @@
 import React, { useState } from "react";
-import {
-    Modal,
-    View,
-    Text,
-    TextInput,
-    Pressable,
-    StyleSheet,
-    ScrollView,
-    KeyboardAvoidingView,
-    Platform,
-    Alert,
-} from "react-native";
+import { Modal, View, Text, TextInput, Pressable, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import * as Location from "expo-location";
 import { v4 as uuidv4 } from "uuid";
 
-import { savePinnedLocationDB } from "@/database/methods";
+import { savePinnedLocationDB } from "@/database/methods/pinnedLocations";
 import FieldLabel from "@/components/FieldLabel";
 import type { Coords } from "@/types/CoordinateType";
 

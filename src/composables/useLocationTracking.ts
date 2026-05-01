@@ -5,9 +5,9 @@ import { getDistance } from 'geolib';
 import { requestPermission } from '@/utils/locationAccess';
 
 import { Coords } from '@/types/CoordinateType';
-import type { SessionRoutePoint } from '@/types/dbObj/routePointType';
+
+import type { SessionRoutePoint, SessionStopPoint } from '@/types/dbObj/mapPointTypes';
 import type { SessionTopSpeed, SessionTopAltitude } from "@/types/dbObj/topMetrics";
-import type { SessionStopPoint } from '@/types/dbObj/stopPointType';
 
 type UseLocationTrackingProps = {
     setSpeedSession: React.Dispatch<React.SetStateAction<number>>;

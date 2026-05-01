@@ -2,213 +2,38 @@ import { useState, useEffect, useRef } from "react";
 import { Modal, View, Pressable, StyleSheet, Text } from "react-native";
 import MapView, { Marker, Region, Polyline } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
-import * as Location from "expo-location";
 
-import { wait } from "@/utils/times";
-import { getPinnedLocationsDB, getFullSavedSessions } from "@/database/methods";
-import { formatDateNum, formatToKm, formatTimeOnly, formatDistance } from "@/utils/format";
+import { formatDateNum, formatTimeOnly, formatDistance } from "@/utils/format";
 
 import PinLocationMapped from "@/components/forms/PinLocationMapped";
 import PinLocationSheet from "@/components/bottomSheets/PinLocationsSheet";
 import SavedSessionsSheet from "../bottomSheets/SavedSessionsSheet";
 
-import type { Coords } from "@/types/CoordinateType";
-import type { PinnedLocation } from "@/types/PinnedLocation";
-import type { DriveSessionObj } from "@/types/sessionObj/DriveSessionType";
-import type { SessionRoutePoint } from "@/types/dbObj/routePointType";
+// import { useSharedFreeMap } from "@/context/FreeMapContext";
+import { useFreeMap } from "@/composables/useFreeMap";
 
-import BottomSheet from "@gorhom/bottom-sheet";
 
 type FreeFullMapProps = {
     visible: boolean;
     onClose: () => void;
 };
 
-type MapType = "standard" | "satellite" | "hybrid";
-type FPSType = "first" | "third";
-type FilterType = "none" | "pinned" | "saved";
-
 export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
-    const mapRef = useRef<MapView | null>(null);
-    const headingRef = useRef(0);
-    const sheetRef = useRef<BottomSheet>(null);
+    const {
+        mapRef, headingRef, sheetRef,
+        region, heading,
+        mapType, fpsType, filterType,
+        pinMode, pinLoc, pinMapForm, pinnedLocations, 
+        savedSessions, savedSession,
 
-    const [region, setRegion] = useState<any>(null);
-    const [mapType, setMapType] = useState<MapType>("standard");
-    const [fpsType, setFpsType] = useState<FPSType>("third");
-    const [filterType, setFilterType] = useState<FilterType>('none');
-    const [heading, setHeading] = useState(0);
-    const [pinMode, setPinMode] = useState(false);
-    const [pinLoc, setPinLoc] = useState<Coords>();
-    const [pinMapForm, setPinMapForm] = useState(false);
+        setRegion, setPinMode, 
 
-    const [pinnedLocations, setPinnedLocations] = useState<PinnedLocation[]>([]);
-    const [savedSessions, setSavedSessions] = useState<DriveSessionObj[]>([]);
-    const [savedSession, setSavedSession] = useState<DriveSessionObj | null>();
+        handlefocusLoc, handleRecenter, resetValues,
+        handleMapType, handleFPSType, handleFilterType,
+        handleSaveLoc, handleCancelLoc, handlePinMapClose, handleFirstPinLoc,
+        handleMapRoute
 
-
-    useEffect(() => {
-        (async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") return;
-
-            const loc = await Location.getCurrentPositionAsync({});
-
-            setRegion({
-                latitude: loc.coords.latitude, longitude: loc.coords.longitude,
-                latitudeDelta: 0.005,
-                longitudeDelta: 0.005,
-            });
-        })();
-    }, []);
-
-    
-    useEffect(() => {
-        let sub: Location.LocationSubscription | null = null;
-
-        const smoothHeading = (prev: number, next: number, factor = 0.15) => {
-            let diff = ((next - prev + 540) % 360) - 180;
-            return (prev + diff * factor + 360) % 360;
-        };
-
-        const start = async () => {
-            sub = await Location.watchHeadingAsync((data) => {
-                const raw =
-                    data.trueHeading >= 0 ? data.trueHeading : data.magHeading;
-
-                const smoothed = smoothHeading(headingRef.current, raw);
-                headingRef.current = smoothed;
-
-                setHeading(smoothed);
-            });
-        };
-
-        start();
-
-        return () => sub?.remove();
-    }, []);
-
-
-    useEffect(() => {
-        if (fpsType !== "first") return;
-
-        mapRef.current?.animateCamera(
-            { heading },
-            { duration: 100 }
-        );
-    }, [heading, fpsType]);
-
-    const handleRecenter = async () => {
-        const loc = await Location.getCurrentPositionAsync({});
-
-        mapRef.current?.animateCamera(
-            {
-                center: { latitude: loc.coords.latitude, longitude: loc.coords.longitude },
-                altitude: 500, zoom: 18, pitch: 0, heading: 0,
-            },
-            { duration: 200 }
-        );
-    };
-
-    const handleFPSType = async () => {
-        const next = fpsType === "first" ? "third" : "first";
-        setFpsType(next);
-
-        const loc = await Location.getCurrentPositionAsync({});
-
-        if (!mapRef.current) return;
-
-        if (next === "first") {
-            await handleRecenter();
-            wait(1000);
-            setMapType("standard");
-            mapRef.current.animateCamera(
-                {center: { latitude: loc.coords.latitude, longitude: loc.coords.longitude }, altitude: 250, zoom: 20, pitch: 50, heading: heading},
-                { duration: 500 }
-            );
-        } else {
-            mapRef.current.animateCamera(
-                {center: { latitude: loc.coords.latitude, longitude: loc.coords.longitude }, pitch: 0, heading: 0, altitude: 1500, zoom: 14},
-                { duration: 500 }
-            );
-        }
-    };
-
-    const handleMapType = (typeMap: MapType) => setMapType(typeMap);
-
-    const handleFilterType = async (typeFilter: FilterType) => {
-        if (typeFilter == filterType) { 
-            setFilterType('none');
-            setPinnedLocations([]);
-            setSavedSessions([]);
-            return;
-        }
-        
-        if (typeFilter == 'saved') {
-            setFilterType('saved');
-            setPinnedLocations([]);
-            const data = await getFullSavedSessions();
-            setSavedSessions(data);
-        } else if (typeFilter == 'pinned') {
-            setFilterType('pinned')
-            setSavedSessions([]);
-            const data = await getPinnedLocationsDB();
-            setPinnedLocations(data);
-        } 
-            
-    }
-
-    const handleSaveLoc = (lat = region.latitude, lon = region.longitude) => {
-        setPinLoc({latitude: lat, longitude: lon});
-        setPinMode(false);
-        setPinMapForm(true);
-    }
-
-    const handleCancelLoc = () => setPinMode(false);
-
-    const handlePinMapClose = () => setPinMapForm(false);
-
-    const handlefocusLoc = async (lat:number, lon:number, altitude = 1200) => {
-        mapRef.current?.animateCamera(
-            {
-                center: { latitude: lat, longitude: lon },
-                altitude: altitude, zoom: 18, pitch: 0, heading: 0,
-            },
-            { duration: 500 }
-        );
-    }
-
-    const handleMapRoute = async (session: DriveSessionObj) => {
-        const routePoints = session.mappedRoute ?? [];
-
-        if (session.id === savedSession?.id && savedSession) {
-            setSavedSession(null);
-            return;
-        }
-
-        const pos = routePoints.at((Math.round(routePoints.length / 2)));
-        const distance = formatToKm(session.metrics.distance);
-        let alt = 0;
-        
-        if (distance <= 1) alt = 10000;
-        else if (distance <= 10) alt = 20000;
-        else if (distance <= 20) alt = 30000;
-        else if (distance <= 30) alt = 50000;
-        else if (distance <= 50) alt = 120000;
-        else if (distance <= 100 ) alt = 500000;
-        else if (distance <= 500 ) alt = 5000000;
-        else alt = 50000000
-
-        setSavedSession(session);
-        handlefocusLoc(pos?.location.latitude ?? 0, pos?.location.longitude ?? 0, alt);
-    };
-
-
-    const handleFirstPinLoc = async () => {
-        const loc = await Location.getCurrentPositionAsync({});
-        handleSaveLoc(loc.coords.latitude, loc.coords.longitude);
-    }
-
+    } = useFreeMap();
     
     return (
         <Modal visible={visible} animationType="slide">
@@ -235,14 +60,10 @@ export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
                         {savedSession && (
                             <View>
                                 {savedSession.mappedRoute && (
-                                    <Polyline
-                                        coordinates={savedSession.mappedRoute.map(p => ({
-                                            latitude: p.location.latitude,
-                                            longitude: p.location.longitude,
+                                    <Polyline coordinates={savedSession.mappedRoute.map(p => ({
+                                            latitude: p.location.latitude, longitude: p.location.longitude
                                         }))}
-                                        strokeColor="#00a2ff"
-                                        strokeWidth={6}
-                                    />
+                                        strokeColor="#00a2ff" strokeWidth={6} />
                                 )}
 
                                 {savedSession.locations.startLocation.coords && (
@@ -256,7 +77,6 @@ export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
                                         description={`${formatTimeOnly(savedSession.timestamps.timestampEnd)}`} pinColor="red" />
                                 )}
                             </View>
-
                         )}
                     </MapView>
                 )}
@@ -266,6 +86,7 @@ export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
                 <View style={styles.topContainer}>
                     {/* Top Left */}
                     <View style={styles.topLeftContainer}>
+                        
                         {/* Filters */}
                         <View style={{display:'flex', flexDirection:'row', gap:10}}>
                             <Pressable onPress={() => handleFilterType('pinned')} style={[styles.filterBtn, {backgroundColor: filterType === 'pinned' ? 'black' : 'none'}]}>
@@ -280,10 +101,10 @@ export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
                         {/* Map Perspective */}
                         <View style={{display:'flex', flexDirection:'row', gap:12}}>
                             {mapType === 'standard' &&
-                                    <Pressable onPress={handleFPSType} style={{backgroundColor:'white', padding:8, borderRadius:6 }}>
-                                        {fpsType === "first" ? 
-                                            <Text style={{textAlign:'center'}}>Third-Person</Text> : <Text style={{textAlign:'center'}}>First-Person</Text>}
-                                    </Pressable>
+                                <Pressable onPress={handleFPSType} style={{backgroundColor:'white', padding:8, borderRadius:6 }}>
+                                    {fpsType === "first" ? 
+                                        <Text style={{textAlign:'center'}}>Third-Person</Text> : <Text style={{textAlign:'center'}}>First-Person</Text>}
+                                </Pressable>
                             }
 
                             {fpsType === 'third' && 
@@ -297,17 +118,21 @@ export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
                                     <Text style={{textAlign:'center'}}>Pin Location</Text>
                                 </Pressable>
                             }
-
-
                         </View>
                     </View>
 
                     {/* Top Right */}
                     <View style={styles.topRightContainer}>
-                        <Pressable style={styles.closeBtn} onPress={onClose}>
+                        <Pressable style={styles.closeBtn} 
+                            onPress={() => {
+                                resetValues();
+                                onClose();
+                            }}
+                        >
                             <Ionicons name="close" size={28} color="white" />
                         </Pressable>
-
+                        
+                        {/* Map Type View */}
                         {fpsType !== "first" &&
                             <View style={{display:'flex', flexDirection:'column', gap:5, marginTop:10}}>
                                 <Pressable style={styles.typeOpt} onPress={() => handleMapType("standard")}>
@@ -364,7 +189,7 @@ export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
                                     <Text style={{ color: "white", fontWeight: "700" }}>Cancel</Text>
                                 </Pressable>
 
-                                <Pressable style={styles.savePinBtn} onPress={handleSaveLoc}>
+                                <Pressable style={styles.savePinBtn} onPress={() => handleSaveLoc(region.latitude, region.longitude)}>
                                     <Text style={{ color: "white", fontWeight: "700" }}>Save Pin</Text>
                                 </Pressable>
                             </View>
@@ -375,7 +200,7 @@ export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
                 
                 {filterType === 'pinned' && <PinLocationSheet sheetRef={sheetRef} pinLocs={pinnedLocations} onFocusLoc={handlefocusLoc} />}
 
-                {filterType === 'saved' && <SavedSessionsSheet sheetRef={sheetRef} savedSess={savedSessions} routeMap={handleMapRoute} />}
+                {filterType === 'saved' && <SavedSessionsSheet sheetRef={sheetRef} savedSess={savedSessions} selectedSess={savedSession} routeMap={handleMapRoute} />}
 
                 <PinLocationMapped visible={pinMapForm} onClose={handlePinMapClose} location={pinLoc ?? {latitude: 0, longitude: 0}} />
             </View>

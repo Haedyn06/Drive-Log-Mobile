@@ -1,7 +1,7 @@
 import { db } from "@/database/db";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
-import { loadPreviousSessions, migrateOldSessionsToSQLite } from "@/data/migrateData";
+import { loadPreviousSessions, migrateOldSessionsToSQLite } from "data/migrateData";
 
 
 export const dbTest = async () => {

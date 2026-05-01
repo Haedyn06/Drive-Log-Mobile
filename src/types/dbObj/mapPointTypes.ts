@@ -1,4 +1,15 @@
-import type { Coords } from "@/types/CoordinateType";
+import { Coords } from "@/types/CoordinateType"
+
+export type SessionRoutePoint = {
+    location: Coords;
+    timestamp: number;
+}
+
+export type SessionStopPoint = {
+    location: Coords;
+    duration: number;
+    timestamp: number;
+}
 
 export type SessionCheckpoint = {
     id: string;

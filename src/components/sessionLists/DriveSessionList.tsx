@@ -5,7 +5,8 @@ import * as Haptics from 'expo-haptics';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Ionicons } from '@expo/vector-icons';
 
-import { getDriveSessions, deleteDriveSession, getFullSession, type SessionSortType } from '@/database/methods';
+import { getAllDriveSessions, getFullSessionObj } from '@/services/sessionService';
+import { deleteDriveSessionDB, type SessionSortType } from '@/database/methods/driveSessions';
 
 import DriveSessionCard from '@/components/cards/DriveSessionCard';
 import ConfirmationPopup from '@/components/modals/ConfirmationPopup';
@@ -28,7 +29,7 @@ const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>(
 
     const loadSessions = useCallback(async () => {
         try {
-            const data = await getDriveSessions(limit, sortType);
+            const data = await getAllDriveSessions(limit, sortType);
             setSessions(data);
         } catch (e) {
             throw e;
@@ -43,7 +44,7 @@ const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>(
 
     const handlePressSession = async (item: DriveSession) => {
         try {
-            const fullSession = await getFullSession(item.id);
+            const fullSession = await getFullSessionObj(item.id);
             
             if (!fullSession) return;
             navigation.navigate("SessionDetails", { session: fullSession });
@@ -54,7 +55,7 @@ const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>(
 
     const handleDeleteSession = async (id: string) => {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-        await deleteDriveSession(id);
+        await deleteDriveSessionDB(id);
         await loadSessions();
     };
 

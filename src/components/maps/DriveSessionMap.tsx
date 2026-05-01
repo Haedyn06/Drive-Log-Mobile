@@ -5,16 +5,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 
-import { deleteCheckpoint } from '@/database/methods';
+import { deleteCheckpointDB } from '@/database/methods/driveSessions';
 import { formatDistance, formatSpeed, formatTimeOnly, formatReadableElapsed } from '@/utils/format';
 
 import CheckpointDetails from '@/components/modals/CheckpointDetailsComp';
 
 import type { Coords } from '@/types/CoordinateType';
-import type { SessionCheckpoint } from '@/types/dbObj/checkPointType';
 import type { SessionTopSpeed, SessionTopAltitude } from '@/types/dbObj/topMetrics';
-import type { SessionStopPoint } from '@/types/dbObj/stopPointType';
-import type { SessionRoutePoint } from '@/types/dbObj/routePointType';
+import type { SessionRoutePoint, SessionStopPoint, SessionCheckpoint } from '@/types/dbObj/mapPointTypes';
 
 type MarkerFilter = | "all" | "topAll" | "stops" | "startEnd" | "checkpoints";
 
@@ -117,7 +115,7 @@ export default function DriveSessionMap({
         if (!checkpoint) return;
 
         // delete from DB using id
-        await deleteCheckpoint(checkpoint.id);
+        await deleteCheckpointDB(checkpoint.id);
 
         // update local state
         const updated = localCheckpoints.filter((_, index) => index !== selectedCheckpointIndex);

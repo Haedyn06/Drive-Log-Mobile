@@ -9,7 +9,7 @@ import DriveSessionMap from '@/components/maps/DriveSessionMap';
 import FocusDriveSessionCard from '@/components/cards/FocusDriveSessionCard';
 import StartSessionCompB from '@/components/startSession/StartSessionCompB';
 import LiveMapModal from '@/components/maps/LiveMapSession';
-import { getFullSession, getLatestSessionId } from '@/database/methods';
+import { getFullSessionObj, getAllDriveSessions } from '@/services/sessionService';
 
 import { NewSessionStyles } from '@/styles/NewSessionStyle';
 
@@ -40,8 +40,9 @@ export default function NewSessionScreen() {
         useCallback(() => {
             async function loadData() {
                 try {
-                    const sessionid =  await getLatestSessionId();
-                    if (sessionid) setRecentSession(await getFullSession(sessionid));
+                    const sessions = await getAllDriveSessions(1, 'newest');
+                    const sessionid = sessions[0].id;
+                    if (sessionid) setRecentSession(await getFullSessionObj(sessionid));
                 } catch (e) {
                     console.log('Failed loading data', e);
                 }

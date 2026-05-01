@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { saveVehicle, getVehicles, deleteVehicle } from '@/database/methods';
+import { saveVehicleDB, deleteVehicleDB } from '@/database/methods/vehicle';
+import { getAllVehicles } from '@/services/vehicleService';
 import type { VehicleObj } from '@/types/vehicleObj/VehicleType';
 
 export function useVehicleObj() {
@@ -10,7 +11,7 @@ export function useVehicleObj() {
 
     const loadCars = async () => {
         try {
-            const vehicles = await getVehicles();
+            const vehicles = await getAllVehicles();
             setCars(vehicles);
         } catch (err) {
             console.log('Load cars failed:', err);
@@ -23,7 +24,7 @@ export function useVehicleObj() {
 
     const saveCar = async (carData: Omit<VehicleObj, 'id'>) => {
         try {
-            const newCar = await saveVehicle(carData.year, carData.brand, carData.model, carData.color, carData.license ?? '');
+            const newCar = await saveVehicleDB(carData.year, carData.brand, carData.model, carData.color, carData.license ?? '');
 
             setCars((prev) => [...prev, newCar]);
             setCar(newCar);
@@ -37,7 +38,7 @@ export function useVehicleObj() {
 
     const deleteCar = async (id: string) => {
         try {
-            await deleteVehicle(id);
+            await deleteVehicleDB(id);
 
             setCars((prev) => prev.filter((car) => car.id !== id));
 

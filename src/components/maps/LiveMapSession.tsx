@@ -7,8 +7,7 @@ import { formatTimeOnly } from '@/utils/format';
 import CheckpointFormModal from '@/components/forms/CheckpointForm';
 
 import type { Coords } from '@/types/CoordinateType';
-import type { SessionRoutePoint } from '@/types/dbObj/routePointType';
-import type { SessionCheckpoint } from '@/types/dbObj/checkPointType';
+import type { SessionRoutePoint, SessionCheckpoint } from '@/types/dbObj/mapPointTypes';
 
 type LiveMapModalProps = {
     visible: boolean;

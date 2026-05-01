@@ -6,8 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 // import { isExist, saveSession, unsaveSession } from '@/services/savesService';
-import { editSessionTitle, editSessionNotes } from '@/database/methods';
-import { checkSessionSavedDB, saveSessionDB, unsaveSessionDB } from '@/database/methods';
+import { editSessionTitleDB, editSessionNotesDB } from '@/database/methods/driveSessions';
+import { checkSessionSavedDB, saveSessionDB, unsaveSessionDB } from '@/database/methods/savedSessions';
 
 import { formatDateTime, formatDuration, formatDistance, formatDateNum, formatTimeOnly, formatSpeed, formatReadableElapsed } from '@/utils/format';
 import DriveSessionMap from '@/components/maps/DriveSessionMap';
@@ -61,7 +61,7 @@ export default function SessionDetailsScreen() {
 
         if (!trimmed) return;
 
-        await editSessionTitle(session.id, trimmed);
+        await editSessionTitleDB(session.id, trimmed);
         setTitle(trimmed);
         setEditedTitle(trimmed);
         setIsEditingTitle(false);
@@ -74,7 +74,7 @@ export default function SessionDetailsScreen() {
 
 
     const handleEditNotes = async () => {
-        await editSessionNotes(session.id, editedNotes);
+        await editSessionNotesDB(session.id, editedNotes);
         setNotes(editedNotes);
         setIsEditingNotes(false);
     };
