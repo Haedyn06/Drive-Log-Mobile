@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import type { PinnedLocation } from "@/types/PinnedLocation";
@@ -7,45 +7,99 @@ import { Ionicons } from '@expo/vector-icons';
 import FreeMapControls from '../FreeMapControls';
 import { navigateMapLocation } from '@/utils/locationAccess';
 
+import PinnedLocCardB from '@/components/cards/PinnedLocCardB';
+
+import type { FPSType } from '@/composables/useFreeMap';
+
 type PinLocationSheetProps = {
     sheetRef: React.RefObject<BottomSheet | null>;
-    pinLocs: PinnedLocation[];
     onFocusLoc: (lat: number, lon: number) => void;
     btnControls: any;
+    pinMode: boolean;
+    setPinMode: React.Dispatch<React.SetStateAction<boolean>>; 
+    selPinLoc: string | null;
+    handlePrevPin: () => void;
+    handleNextPin: () => void;
+    handleSavePin: (lat:number, lon:number) => void;
+    region: any;
+    fpsType: FPSType;
+    handleFirstPinLoc: () => void;
 };
-export default function PinLocationSheet({ sheetRef, pinLocs, onFocusLoc, btnControls=null }: PinLocationSheetProps) {
-    const snapPoints = useMemo(() => ['10%', '45%'], []);
-    const handleSelect = (pinnedLoc: PinnedLocation) => onFocusLoc(pinnedLoc.location.latitude, pinnedLoc.location.longitude);
+export default function PinLocationSheet({ sheetRef, onFocusLoc, btnControls=null, pinMode, setPinMode, selPinLoc, handlePrevPin, handleNextPin, handleSavePin, region, fpsType, handleFirstPinLoc}: PinLocationSheetProps) {
+    const [isFirst, setIsFirst] = useState(false);
+    const snapPoints = useMemo(
+        () => (fpsType === "first" ? ["10%", "20%"] : ["10%", "20%", "40%"]),
+        [fpsType]
+    );    
+
+    useEffect(() => {
+        if (fpsType === 'first') setIsFirst(true);
+        else setIsFirst(false);
+    }, [fpsType])
+
+    const handlePinMode = async () => {        
+        if (pinMode) {
+            if (fpsType !== 'first') sheetRef.current?.snapToIndex(2);
+
+        } else {
+            sheetRef.current?.snapToIndex(1);
+        }
+
+        setPinMode(!pinMode);
+    }
+
+    const handleSave = () => {
+        if (fpsType == 'first') handleFirstPinLoc();
+        else handleSavePin(region.latitude, region.longitude);
+    }
+
 
     return (
         <BottomSheet ref={sheetRef} index={0} snapPoints={snapPoints}
             enableDynamicSizing={false} enableOverDrag={false} handleIndicatorStyle={{ backgroundColor: '#999' }}
             handleComponent={btnControls}
+            enableHandlePanningGesture={!pinMode}
+            enableContentPanningGesture={!pinMode}
+            onChange={(index) => {
+            }}
         >
 
             <BottomSheetView style={styles.container}>
                 <View style={styles.handleBar} />
                 <Text style={styles.title}>Pinned Locations</Text>
-                <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                    {pinLocs && pinLocs.map ((i, index) => (
-                        <View key={i.id} style={styles.pinnedLocation}>
-                            <Pressable onPress={() => navigateMapLocation(i.location.latitude, i.location.longitude)}>
-                                <View style={{flex:1, flexDirection:'row', gap:4}}>
-                                    <Text style={{fontWeight:'bold'}}>{i.name} ({`${i.city}, ${i.country}`})</Text>
-                                </View>
-                                
-                                <View>
-                                    <Text>({`${i.location.latitude.toFixed(0)}, ${i.location.longitude.toFixed(0)}`})</Text>
-                                    <Text>Notes: {i.notes || '...'}</Text>
-                                </View>
-                            </Pressable>
+                
+                <View style={styles.pinBtns}>
+                    <Pressable style={styles.pinBtn} onPress={() => {handlePinMode()}}>
+                        {pinMode ? 
+                            <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold' }}>Cancel</Text> : 
+                            <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold' }}>Pin A Location</Text>
+                        }
+                    </Pressable>
 
-                            <Pressable style={{alignSelf:'center'}} onPress={() => handleSelect(i)}>
-                                <Text style={{color:'blue'}}>Select</Text>
-                            </Pressable>
-                        </View>
-                    ))}
-                </ScrollView>
+                    {pinMode && (
+                        <Pressable style={styles.pinBtn} onPress={() => {handleSave()}}> 
+                                <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold' }}>Save</Text>
+                        </Pressable>
+                    )
+
+                    }
+                </View>
+
+                
+                <View style={styles.cardRow}>
+                    <Pressable style={styles.arrowBtn} onPress={handlePrevPin}>
+                        <Ionicons name="chevron-back" size={26} color="white" />
+                    </Pressable>
+
+                    <View style={{ flex: 1 }}>
+                        <PinnedLocCardB onFocusLoc={onFocusLoc} pinnedLocId={selPinLoc} fpsType={fpsType} />
+                    </View>
+
+                    <Pressable style={styles.arrowBtn} onPress={handleNextPin}>
+                        <Ionicons name="chevron-forward" size={26} color="white" />
+                    </Pressable>
+                </View>
+                
             </BottomSheetView>
         </BottomSheet>
     );
@@ -67,23 +121,29 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
 
-    scroll: {
-        flex: 1,
-        height: 500
-    },
-
-    scrollContent: {
-        padding: 12,
-        paddingTop: 18,
-        paddingBottom: 220,
-    },
-
     title: {
         fontSize: 24,
         fontWeight: '600',
         marginBottom: 20,
         textAlign: 'center'
     },
+
+    pinBtns: {
+        flex:1,
+        flexDirection: 'row',
+        alignSelf: 'center',
+        gap:10,
+        justifyContent: 'center',
+        marginBottom: 40,
+    },
+
+    pinBtn: {
+        padding: 12,
+        borderWidth: 2,
+        borderRadius: 16,
+        backgroundColor: 'black',
+    },
+
     coords: {
         fontSize: 14,
         color: '#666',
@@ -94,10 +154,33 @@ const styles = StyleSheet.create({
     },
 
     pinnedLocation: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 6,
-        borderTopWidth: 1,
+        width: "100%",
+        padding: 14,
+        borderRadius: 14,
+        backgroundColor: "#f2f2f2",
     },
+
+    cardRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
+        gap: 10,
+    },
+
+
+    arrowBtn: {
+        width: 42,
+        height: 42,
+        borderRadius: 21,
+        backgroundColor: "#111",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+
+    cardNav: {
+        width: "100%",
+    },
+
+
 });

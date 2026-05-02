@@ -21,7 +21,7 @@ export default function SavedSessionsSheet({ sheetRef, savedSess, selectedSess, 
 
     const handleSelect = async (session: DriveSessionObj) => {
         routeMap(session);
-        // sheetRef.current?.snapToIndex(0);
+        sheetRef.current?.snapToIndex(0);
     }
 
     return (
@@ -32,13 +32,14 @@ export default function SavedSessionsSheet({ sheetRef, savedSess, selectedSess, 
             <BottomSheetView style={styles.container}>
                 <View style={styles.handleBar} />
                 <Text style={styles.title}>Saved Sessions</Text>
-                <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} 
-                    showsVerticalScrollIndicator={false}>
-                    {savedSess.map((i) => (
-                        <Pressable key={i.id} onPress={() => handleSelect(i)}>
-                            <DriveSessionCardB item={i} style={{borderColor: selectedSess && i.id === selectedSess.id ? 'green':'#e5e7eb'}} />
-                        </Pressable>
-                    ))}
+                <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                    <View style={styles.sessionList}>
+                        {savedSess.map((i) => (
+                            <Pressable key={i.id} onPress={() => handleSelect(i)}>
+                                <DriveSessionCardB item={i} style={{borderColor: selectedSess && i.id === selectedSess.id ? 'green':'#e5e7eb'}} />
+                            </Pressable>
+                        ))}
+                    </View>
                 </ScrollView>
             </BottomSheetView>
         </BottomSheet>
@@ -69,6 +70,10 @@ const styles = StyleSheet.create({
     scrollContent: {
         paddingTop: 18,
         paddingBottom: 220,
+    },
+
+    sessionList: {
+        paddingHorizontal: 18,
     },
 
     title: {

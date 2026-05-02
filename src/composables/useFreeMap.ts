@@ -36,7 +36,9 @@ export function useFreeMap() {
 
     const [savedSessions, setSavedSessions] = useState<DriveSessionObj[]>([]);
     const [savedSession, setSavedSession] = useState<DriveSessionObj | null>();
-    const centerTrigger = 0.0003;
+    const centerTrigger = 0.0006;
+
+    const [selectedPinnedLoc, setSelectedPinLoc] = useState<string | null>(null);
 
 // Use Effects
 
@@ -86,7 +88,11 @@ export function useFreeMap() {
         mapRef.current?.animateCamera({heading}, {duration: 100});
     }, [heading, fpsType]);
 
-
+    useEffect(() => {
+        if (!selectedPinnedLoc && pinnedLocations.length > 0) {
+            setSelectedPinLoc(pinnedLocations[0].id);
+        }
+    }, [pinnedLocations, selectedPinnedLoc]);
 
 // Map Methods
     const handlefocusLoc = async (lat:number, lon:number, altitude = 1200) => {
@@ -121,7 +127,7 @@ export function useFreeMap() {
     const handleMapPerspective = async () => {
         const next = fpsType === "first" ? "third" : "first";
         const isCentered = await checkCentered();
-        
+        setPinMode(false);
         if (!mapRef.current) return;
         
         if (next === 'first') {
@@ -205,6 +211,7 @@ export function useFreeMap() {
             const data = await getAllPinnedLocations();
             setSavedSession(null);
             setPinnedLocations(data);
+            setSelectedPinLoc(data[0].id);
         } 
             
     }
@@ -227,6 +234,32 @@ export function useFreeMap() {
         const loc = await Location.getCurrentPositionAsync({});
         handleSaveLoc(loc.coords.latitude, loc.coords.longitude);
     }
+
+    const togglePinMode = async () => setPinMode(!pinMode);
+
+
+    const handlePrevPinnedLoc = () => {
+        if (pinnedLocations.length === 0) return;
+
+        const i = pinnedLocations.findIndex(p => p.id === selectedPinnedLoc);
+        const currentIndex = i === -1 ? 0 : i;
+
+        const prevIndex =
+            currentIndex <= 0 ? pinnedLocations.length - 1 : currentIndex - 1;
+
+        setSelectedPinLoc(pinnedLocations[prevIndex].id);
+    };
+
+    const handleNextPinnedLoc = () => {
+        if (pinnedLocations.length === 0) return;
+
+        const i = pinnedLocations.findIndex(p => p.id === selectedPinnedLoc);
+        const currentIndex = i === -1 ? 0 : i;
+
+        const nextIndex = currentIndex >= pinnedLocations.length - 1 ? 0 : currentIndex + 1;
+
+        setSelectedPinLoc(pinnedLocations[nextIndex].id);
+    };
 
 
 
@@ -253,7 +286,7 @@ export function useFreeMap() {
         else alt = 50000000
 
         setSavedSession(session);
-        handlefocusLoc(pos?.location.latitude ?? 0, pos?.location.longitude ?? 0, alt);
+        if (fpsType === 'third') handlefocusLoc(pos?.location.latitude ?? 0, pos?.location.longitude ?? 0, alt);
     };
 
 
@@ -262,14 +295,14 @@ export function useFreeMap() {
         mapRef, headingRef, sheetRef,
         region, heading,
         mapType, fpsType, filterType,
-        pinMode, pinLoc, pinMapForm, pinnedLocations, 
+        pinMode, pinLoc, pinMapForm, pinnedLocations, selectedPinnedLoc, 
         savedSessions, savedSession,
 
-        setRegion, setPinMode, 
+        setRegion, setPinMode, togglePinMode, setSelectedPinLoc,
 
         handlefocusLoc, handleRecenter, resetValues, checkCentered,
-        handleMapType, handleMapPerspective, handleFilterType,
-        handleSaveLoc, handleCancelLoc, handlePinMapClose, handleFirstPinLoc,
+        handleMapType, handleMapPerspective, handleFilterType, 
+        handleSaveLoc, handleCancelLoc, handlePinMapClose, handleFirstPinLoc, handlePrevPinnedLoc, handleNextPinnedLoc,
         handleMapRoute
     };
 }

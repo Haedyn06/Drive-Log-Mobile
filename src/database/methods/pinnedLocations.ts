@@ -64,3 +64,5 @@ export const deletePinnedLocationDB = async (id: string): Promise<void> => {
         throw err;
     }
 };
+
+
