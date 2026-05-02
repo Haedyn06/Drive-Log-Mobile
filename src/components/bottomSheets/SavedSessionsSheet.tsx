@@ -12,10 +12,11 @@ type SavedSessionsSheetProps = {
     sheetRef: React.RefObject<BottomSheet | null>;
     savedSess: DriveSessionObj[];
     selectedSess?: DriveSessionObj | null;
-    routeMap: (session: DriveSessionObj) => void;    
+    routeMap: (session: DriveSessionObj) => void;
+    btnControls: any;
 };
 
-export default function SavedSessionsSheet({ sheetRef, savedSess, selectedSess, routeMap }: SavedSessionsSheetProps) {
+export default function SavedSessionsSheet({ sheetRef, savedSess, selectedSess, routeMap, btnControls }: SavedSessionsSheetProps) {
     const snapPoints = useMemo(() => ['10%', '45%'], []);
 
     const handleSelect = async (session: DriveSessionObj) => {
@@ -24,12 +25,13 @@ export default function SavedSessionsSheet({ sheetRef, savedSess, selectedSess, 
     }
 
     return (
-        <BottomSheet ref={sheetRef} index={0} snapPoints={snapPoints}
-            enableDynamicSizing={false} enableOverDrag={false} handleIndicatorStyle={{ backgroundColor: '#999' }}
+        <BottomSheet ref={sheetRef} index={0} snapPoints={snapPoints} enableDynamicSizing={false} 
+            enableOverDrag={false} handleIndicatorStyle={{ backgroundColor: '#999' }}
+            handleComponent={btnControls}
         >
             <BottomSheetView style={styles.container}>
+                <View style={styles.handleBar} />
                 <Text style={styles.title}>Saved Sessions</Text>
-
                 <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} 
                     showsVerticalScrollIndicator={false}>
                     {savedSess.map((i) => (
@@ -46,7 +48,17 @@ export default function SavedSessionsSheet({ sheetRef, savedSess, selectedSess, 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        paddingTop: 12,
+    },
+
+    handleBar: {
+        width: 50,
+        height: 4,
+        marginBottom: 12,
+        borderRadius: 999,
+        backgroundColor: "#999",
+        marginTop: 10,
+        alignSelf: 'center'
     },
 
     scroll: {

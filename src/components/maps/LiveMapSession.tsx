@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, Modal, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 
-import { formatTimeOnly } from '@/utils/format';
+import { formatDistance, formatTimeOnly } from '@/utils/format';
 import CheckpointFormModal from '@/components/forms/CheckpointForm';
 
 import type { Coords } from '@/types/CoordinateType';
@@ -81,10 +81,6 @@ export default function LiveMapModal({
                         <Marker coordinate={locStart} title="Start" pinColor="green" />
                     )}
 
-                    {locEnd && (
-                        <Marker coordinate={locEnd} title="End" pinColor="red" />
-                    )}
-
                     {checkpoints.map((i) => (
                         <Marker
                             key={i.id}
@@ -116,11 +112,7 @@ export default function LiveMapModal({
 
                         <View style={styles.statPill}>
                             <Text style={styles.statLabel}>Distance</Text>
-                            <Text style={styles.statValue}>
-                                {distance >= 1000
-                                    ? `${(distance / 1000).toFixed(1)} km`
-                                    : `${distance.toFixed(0)} m`}
-                            </Text>
+                            <Text style={styles.statValue}>{formatDistance(distance)}</Text>
                         </View>
 
                         <View style={styles.statPill}>

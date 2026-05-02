@@ -13,9 +13,9 @@ import type { Coords } from "@/types/CoordinateType";
 import type { PinnedLocation } from "@/types/PinnedLocation";
 import type { DriveSessionObj } from "@/types/sessionObj/DriveSessionType";
 
-type MapType = "standard" | "satellite" | "hybrid";
-type FPSType = "first" | "third";
-type FilterType = "none" | "pinned" | "saved";
+export type MapType = "standard" | "hybrid";
+export type FPSType = "first" | "third";
+export type FilterType = "none" | "pinned" | "saved";
 
 export function useFreeMap() {
     const mapRef = useRef<MapView | null>(null);
@@ -36,6 +36,7 @@ export function useFreeMap() {
 
     const [savedSessions, setSavedSessions] = useState<DriveSessionObj[]>([]);
     const [savedSession, setSavedSession] = useState<DriveSessionObj | null>();
+    const centerTrigger = 0.0003;
 
 // Use Effects
 
@@ -49,8 +50,7 @@ export function useFreeMap() {
 
             setRegion({
                 latitude: loc.coords.latitude, longitude: loc.coords.longitude,
-                latitudeDelta: 0.005,
-                longitudeDelta: 0.005,
+                latitudeDelta: 0.005, longitudeDelta: 0.005,
             });
         })();
     }, []);
@@ -108,6 +108,30 @@ export function useFreeMap() {
         );
     };
 
+    const checkCentered = async (currentRegion = region) => {
+        const loc = await Location.getCurrentPositionAsync({});
+        if (!currentRegion) return false;
+
+        const latDiff = Math.abs(currentRegion.latitude - loc.coords.latitude);
+        const lonDiff = Math.abs(currentRegion.longitude - loc.coords.longitude);
+
+        return latDiff < centerTrigger && lonDiff < centerTrigger;
+    };
+
+    const handleMapPerspective = async () => {
+        const next = fpsType === "first" ? "third" : "first";
+        const isCentered = await checkCentered();
+        
+        if (!mapRef.current) return;
+        
+        if (next === 'first') {
+            if (isCentered) await handleFirstPerson();
+            else await handleRecenter();
+        } else await handleThirdPerson();
+    }
+
+
+
     const resetValues = () => {
         setMapType('standard');
         setFpsType('third');
@@ -123,31 +147,43 @@ export function useFreeMap() {
 
 
 // Handle Type Methods
-    const handleMapType = (typeMap: MapType) => setMapType(typeMap);
+    const handleMapType = () => {
+        if (mapType === 'hybrid') setMapType('standard');
+        else setMapType('hybrid');
+    }
 
-    const handleFPSType = async () => {
-        const next = fpsType === "first" ? "third" : "first";
-        setFpsType(next);
-
+    const handleFirstPerson = async () => {
         const loc = await Location.getCurrentPositionAsync({});
-
         if (!mapRef.current) return;
+        
+        setMapType("standard");
+        await handleRecenter();
+        await wait(200);
+        setFpsType('first');
+        mapRef.current.animateCamera(
+            {
+                center: { latitude: loc.coords.latitude, longitude: loc.coords.longitude }, 
+                altitude: 250, zoom: 20, pitch: 50, heading: heading
+            },
+            { duration: 500 }
+        );
+    }
 
-        if (next === "first") {
-            await handleRecenter();
-            wait(1000);
-            setMapType("standard");
-            mapRef.current.animateCamera(
-                {center: { latitude: loc.coords.latitude, longitude: loc.coords.longitude }, altitude: 250, zoom: 20, pitch: 50, heading: heading},
-                { duration: 500 }
-            );
-        } else {
-            mapRef.current.animateCamera(
-                {center: { latitude: loc.coords.latitude, longitude: loc.coords.longitude }, pitch: 0, heading: 0, altitude: 1500, zoom: 14},
-                { duration: 500 }
-            );
-        }
-    };
+    const handleThirdPerson = async () => {
+        const loc = await Location.getCurrentPositionAsync({});
+        if (!mapRef.current) return;
+        
+        setFpsType('third');
+        mapRef.current.animateCamera(
+            {
+                center: { latitude: loc.coords.latitude, longitude: loc.coords.longitude }, 
+                pitch: 0, heading: 0, altitude: 1500, zoom: 14
+            },
+            { duration: 500 }
+        );
+    }
+
+
 
     const handleFilterType = async (typeFilter: FilterType) => {
         if (typeFilter == filterType) { 
@@ -209,9 +245,9 @@ export function useFreeMap() {
         
         if (distance <= 1) alt = 10000;
         else if (distance <= 10) alt = 20000;
-        else if (distance <= 20) alt = 30000;
-        else if (distance <= 30) alt = 50000;
-        else if (distance <= 50) alt = 120000;
+        else if (distance <= 20) alt = 35000;
+        else if (distance <= 30) alt = 55000;
+        else if (distance <= 80) alt = 120000;
         else if (distance <= 100 ) alt = 500000;
         else if (distance <= 500 ) alt = 5000000;
         else alt = 50000000
@@ -231,8 +267,8 @@ export function useFreeMap() {
 
         setRegion, setPinMode, 
 
-        handlefocusLoc, handleRecenter, resetValues,
-        handleMapType, handleFPSType, handleFilterType,
+        handlefocusLoc, handleRecenter, resetValues, checkCentered,
+        handleMapType, handleMapPerspective, handleFilterType,
         handleSaveLoc, handleCancelLoc, handlePinMapClose, handleFirstPinLoc,
         handleMapRoute
     };

@@ -243,7 +243,7 @@ export default function DriveSessionMap({
                         )}
 
                         {showStops && stops?.map((i, index) => (
-                            <Marker key={`stop-marker-${index}`} coordinate={i.location} pinColor="orange" title="Stop" 
+                            <Marker key={`stop-marker-${index}`} coordinate={i.location} pinColor="orange" title={`Stop #${(index+1).toFixed()}`} 
                                 description={`${formatReadableElapsed(i.duration) || ""} • ${formatTimeOnly(i.timestamp)}`}
                             >
                                 <Ionicons name="stop-circle-outline" size={40} color="red" />
