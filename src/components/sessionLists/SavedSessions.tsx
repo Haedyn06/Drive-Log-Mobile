@@ -1,34 +1,32 @@
 import { useCallback, useState, useEffect } from 'react';
-import { Text, View, Pressable, StyleSheet } from 'react-native';
+import { Text, View, Pressable, StyleSheet, ViewStyle } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Ionicons } from '@expo/vector-icons';
 
-// import { deleteDriveSession, getFullSession } from '@/database/methods';
-import { deleteDriveSessionDB } from '@/database/methods/driveSessions';
-import { getFullSessionObj } from '@/services/sessionService';
 import { getSavedSessions } from '@/services/savedSessionService';
+import { unsaveSessionDB } from '@/database/methods/savedSessions';
+
 
 import DriveSessionCard from '@/components/cards/DriveSessionCard';
 import ConfirmationPopup from '@/components/modals/ConfirmationPopup';
 
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '@/navigation/AppNavigator';
 import type { DriveSession } from '@/types/dbObj/driveSessionType';
 import type { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
 
 type SavedSessionsProps = {
     limit?: number;
+    onSelect: (id: string) => void;
+    selSession?: DriveSessionObj | null;
+    cardStyle?: ViewStyle;
 };
 
-export default function SavedSessions({ limit }: SavedSessionsProps) {
+export default function SavedSessions({ limit, onSelect, selSession=null, cardStyle }: SavedSessionsProps) {
     const [sessions, setSessions] = useState<DriveSession[]>([]);
     const [showPopup, setShowPopup] = useState(false);
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
     
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
     const loadSavedSessions = useCallback(async () => {
         try {
             const savedSessions = await getSavedSessions();
@@ -44,32 +42,17 @@ export default function SavedSessions({ limit }: SavedSessionsProps) {
         }, [])
     );
 
-    const handlePressSession = async (sessionId: string) => {
-        const fullSession = await getFullSessionObj(sessionId);
-        if (!fullSession) return;
-
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        navigation.navigate('SessionDetails', { session: fullSession });
-    };
-
     const handleDeleteSession = async (id: string) => {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-        await deleteDriveSessionDB(id);
+        await unsaveSessionDB(id);
         await loadSavedSessions();
     };
 
-
     const renderRightActions = (item: DriveSession) => {
         return (
-            <Pressable
-                style={styles.deleteAction}
-                onPress={() => {
-                    setSelectedSessionId(item.id);
-                    setShowPopup(true);
-                }}
-            >
-                <Ionicons name="trash-outline" size={22} color="#fff" />
-                <Text style={styles.deleteText}>Delete</Text>
+            <Pressable style={styles.deleteAction} onPress={() => handleDeleteSession(item.id)}>
+                <Ionicons name="bookmark" size={22} color="#fff" />
+                {/* <Text style={styles.deleteText}>Unsave</Text> */}
             </Pressable>
         );
     };
@@ -85,35 +68,17 @@ export default function SavedSessions({ limit }: SavedSessionsProps) {
     return (
         <View>
             {sessions.map((item) => (
-                <ReanimatedSwipeable
-                    key={item.id}
-                    friction={1.2}
-                    overshootRight
-                    overshootFriction={2.5}
-                    rightThreshold={30}
-                    renderRightActions={() => renderRightActions(item)}
-                >
-                    <Pressable onPress={() => handlePressSession(item.id)}>
-                        <DriveSessionCard item={item} />
+                <ReanimatedSwipeable key={item.id} friction={1.2} overshootRight overshootFriction={2.5} rightThreshold={30} renderRightActions={() => renderRightActions(item)} >
+                    <Pressable onPress={() => onSelect(item.id)}>
+                        {selSession?.id === item.id ? (
+                                <DriveSessionCard item={item} style={{borderColor: selSession && item.id === selSession.id ? 'green':'#e5e7eb'}} />
+                            ) : (
+                                <DriveSessionCard item={item} />
+                            )
+                        }
                     </Pressable>
                 </ReanimatedSwipeable>
             ))}
-
-            <ConfirmationPopup
-                visible={showPopup}
-                label="delete this session"
-                onCancel={() => {
-                    setShowPopup(false);
-                    setSelectedSessionId(null);
-                }}
-                onConfirm={async () => {
-                    if (!selectedSessionId) return;
-
-                    await handleDeleteSession(selectedSessionId);
-                    setShowPopup(false);
-                    setSelectedSessionId(null);
-                }}
-            />
         </View>
     );
 }
@@ -124,7 +89,7 @@ const styles = StyleSheet.create({
         width: 92,
         marginBottom: 12,
         borderRadius: 22,
-        backgroundColor: '#dc2626',
+        backgroundColor: '#dc9926',
         justifyContent: 'center',
         alignItems: 'center',
         gap: 4,

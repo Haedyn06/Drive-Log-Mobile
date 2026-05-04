@@ -124,20 +124,6 @@ export function useFreeMap() {
         return latDiff < centerTrigger && lonDiff < centerTrigger;
     };
 
-    const handleMapPerspective = async () => {
-        const next = fpsType === "first" ? "third" : "first";
-        const isCentered = await checkCentered();
-        setPinMode(false);
-        if (!mapRef.current) return;
-        
-        if (next === 'first') {
-            if (isCentered) await handleFirstPerson();
-            else await handleRecenter();
-        } else await handleThirdPerson();
-    }
-
-
-
     const resetValues = () => {
         setMapType('standard');
         setFpsType('third');
@@ -189,17 +175,20 @@ export function useFreeMap() {
         );
     }
 
+    const handleMapPerspective = async () => {
+        const next = fpsType === "first" ? "third" : "first";
+        const isCentered = await checkCentered();
+        setPinMode(false);
+        if (!mapRef.current) return;
+        
+        if (next === 'first') {
+            if (isCentered) await handleFirstPerson();
+            else await handleRecenter();
+        } else await handleThirdPerson();
+    }
 
 
     const handleFilterType = async (typeFilter: FilterType) => {
-        if (typeFilter == filterType) { 
-            setFilterType('none');
-            setPinnedLocations([]);
-            setSavedSessions([]);
-            setSavedSession(null);
-            return;
-        }
-        
         if (typeFilter == 'saved') {
             setFilterType('saved');
             setPinnedLocations([]);
@@ -211,8 +200,8 @@ export function useFreeMap() {
             const data = await getAllPinnedLocations();
             setSavedSession(null);
             setPinnedLocations(data);
-            setSelectedPinLoc(data[0].id);
-        } 
+            setSelectedPinLoc(null);
+        } else resetValues();
             
     }
 
@@ -248,6 +237,12 @@ export function useFreeMap() {
             currentIndex <= 0 ? pinnedLocations.length - 1 : currentIndex - 1;
 
         setSelectedPinLoc(pinnedLocations[prevIndex].id);
+    };
+
+    const refreshPinnedLocations = async () => {
+        const data = await getAllPinnedLocations();
+        setPinnedLocations(data);
+        setSelectedPinLoc(null);
     };
 
     const handleNextPinnedLoc = () => {
@@ -303,6 +298,7 @@ export function useFreeMap() {
         handlefocusLoc, handleRecenter, resetValues, checkCentered,
         handleMapType, handleMapPerspective, handleFilterType, 
         handleSaveLoc, handleCancelLoc, handlePinMapClose, handleFirstPinLoc, handlePrevPinnedLoc, handleNextPinnedLoc,
+        refreshPinnedLocations,
         handleMapRoute
     };
 }

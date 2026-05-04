@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
 import ConfirmationPopup from '@/components/modals/ConfirmationPopup';
-import LiveMapModal from '@/components/maps/LiveMapSession';
+import LiveMapFull from '@/components/maps/LiveMapFull';
 
 import type { Coords } from '@/types/CoordinateType';
 import type { SessionRoutePoint, SessionCheckpoint } from '@/types/dbObj/mapPointTypes';
@@ -114,7 +114,7 @@ export default function StartSessionCompB({
                 </View>
             )}
 
-            <LiveMapModal
+            <LiveMapFull
                 visible={mapVisible}
                 onClose={() => setMapVisible(false)}
                 liveStatus={liveStatus}

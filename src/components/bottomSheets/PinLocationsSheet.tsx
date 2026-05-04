@@ -24,8 +24,9 @@ type PinLocationSheetProps = {
     region: any;
     fpsType: FPSType;
     handleFirstPinLoc: () => void;
+    refreshLocs: () => void;
 };
-export default function PinLocationSheet({ sheetRef, onFocusLoc, btnControls=null, pinMode, setPinMode, selPinLoc, handlePrevPin, handleNextPin, handleSavePin, region, fpsType, handleFirstPinLoc}: PinLocationSheetProps) {
+export default function PinLocationSheet({ sheetRef, onFocusLoc, btnControls=null, pinMode, setPinMode, selPinLoc, handlePrevPin, handleNextPin, handleSavePin, region, fpsType, handleFirstPinLoc, refreshLocs}: PinLocationSheetProps) {
     const [isFirst, setIsFirst] = useState(false);
     const snapPoints = useMemo(
         () => (fpsType === "first" ? ["10%", "20%"] : ["10%", "20%", "40%"]),
@@ -72,7 +73,7 @@ export default function PinLocationSheet({ sheetRef, onFocusLoc, btnControls=nul
                     <Pressable style={styles.pinBtn} onPress={() => {handlePinMode()}}>
                         {pinMode ? 
                             <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold' }}>Cancel</Text> : 
-                            <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold' }}>Pin A Location</Text>
+                            <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold' }}>Pin Location</Text>
                         }
                     </Pressable>
 
@@ -92,7 +93,7 @@ export default function PinLocationSheet({ sheetRef, onFocusLoc, btnControls=nul
                     </Pressable>
 
                     <View style={{ flex: 1 }}>
-                        <PinnedLocCardB onFocusLoc={onFocusLoc} pinnedLocId={selPinLoc} fpsType={fpsType} />
+                        <PinnedLocCardB onFocusLoc={onFocusLoc} pinnedLocId={selPinLoc} fpsType={fpsType} onDeleted={refreshLocs} />
                     </View>
 
                     <Pressable style={styles.arrowBtn} onPress={handleNextPin}>
@@ -161,6 +162,7 @@ const styles = StyleSheet.create({
     },
 
     cardRow: {
+        paddingHorizontal: 14,
         flexDirection: "row",
         alignItems: "center",
         width: "100%",

@@ -32,9 +32,11 @@ export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
         handlefocusLoc, handleRecenter, resetValues, checkCentered,
         handleMapType, handleMapPerspective, handleFilterType,
         handleSaveLoc, handleCancelLoc, handlePinMapClose, handleFirstPinLoc, handlePrevPinnedLoc, handleNextPinnedLoc,
+        refreshPinnedLocations,
         handleMapRoute
 
     } = useFreeMap();
+
 
     const btnControls = () => (
         <FreeMapControls style={{top:-90}} handlePerspective={handleMapPerspective} fpsType={fpsType} filterType={filterType} handleFilterType={handleFilterType} />
@@ -118,12 +120,12 @@ export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
                         
                         {/* Map Type View */}
                             <View style={{display:'flex', flexDirection:'column', gap:5, marginTop:40}}>
-                                <Pressable style={styles.typeOpt} onPress={handleMapType}>
-                                    <Ionicons name={mapType === 'standard' ? 'map-outline' : 'map'} size={24} color='white' />
+                                <Pressable style={styles.typeOpt} onPress={() => handleFilterType('pinned')}>
+                                    <Ionicons name={pinMode ? 'menu' : 'menu-outline'} size={25} color='white' />
                                 </Pressable>
 
-                                <Pressable style={styles.typeOpt} onPress={() => handleFilterType('pinned')}>
-                                    <Ionicons name={pinMode ? 'location' : 'location-outline'} size={25} color='white' />
+                                <Pressable style={styles.typeOpt} onPress={handleMapType}>
+                                    <Ionicons name={mapType === 'standard' ? 'map-outline' : 'map'} size={24} color='white' />
                                 </Pressable>
                             </View>
 
@@ -156,12 +158,12 @@ export default function FreeFullMap({ visible, onClose }: FreeFullMapProps) {
                 {filterType === 'pinned' && 
                     <PinLocationSheet sheetRef={sheetRef} onFocusLoc={handlefocusLoc} fpsType={fpsType} handleFirstPinLoc={handleFirstPinLoc} 
                         btnControls={btnControls} pinMode={pinMode} setPinMode={setPinMode} selPinLoc={selectedPinnedLoc} 
-                        handleNextPin={handleNextPinnedLoc} handlePrevPin={handlePrevPinnedLoc} handleSavePin={handleSaveLoc} region={region}
+                        handleNextPin={handleNextPinnedLoc} handlePrevPin={handlePrevPinnedLoc} handleSavePin={handleSaveLoc} region={region} refreshLocs={refreshPinnedLocations}
                     />
                 }
                 {filterType === 'saved' && <SavedSessionsSheet sheetRef={sheetRef} savedSess={savedSessions} selectedSess={savedSession} routeMap={handleMapRoute} btnControls={btnControls} />}
 
-                <PinLocationMapped visible={pinMapForm} onClose={handlePinMapClose} location={pinLoc ?? {latitude: 0, longitude: 0}} />
+                <PinLocationMapped visible={pinMapForm} onClose={handlePinMapClose} location={pinLoc ?? {latitude: 0, longitude: 0}} onRefresh={refreshPinnedLocations} />
             </View>
         </Modal>
     );
@@ -271,6 +273,6 @@ const styles = StyleSheet.create({
 
     btnControls: {
         top: -20,
-        left: 0
+        left: -80
     }
 });

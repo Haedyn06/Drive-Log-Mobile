@@ -5,7 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { formatDistance } from '@/utils/format';
 
 import DriveSessionCardB from '../cards/DriveSessionCardB';
-
+import SavedSessions from '@/components/sessionLists/SavedSessions';
+import { getFullSessionObj } from '@/services/sessionService';
 import type { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';
 
 type SavedSessionsSheetProps = {
@@ -18,11 +19,14 @@ type SavedSessionsSheetProps = {
 
 export default function SavedSessionsSheet({ sheetRef, savedSess, selectedSess, routeMap, btnControls }: SavedSessionsSheetProps) {
     const snapPoints = useMemo(() => ['10%', '45%'], []);
+    
+    const handleSelect = async (sessionId: string) => {
+        const fullSession = await getFullSessionObj(sessionId);
+        if (!fullSession) return;
 
-    const handleSelect = async (session: DriveSessionObj) => {
-        routeMap(session);
+        routeMap(fullSession);
         sheetRef.current?.snapToIndex(0);
-    }
+    };
 
     return (
         <BottomSheet ref={sheetRef} index={0} snapPoints={snapPoints} enableDynamicSizing={false} 
@@ -34,11 +38,7 @@ export default function SavedSessionsSheet({ sheetRef, savedSess, selectedSess, 
                 <Text style={styles.title}>Saved Sessions</Text>
                 <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                     <View style={styles.sessionList}>
-                        {savedSess.map((i) => (
-                            <Pressable key={i.id} onPress={() => handleSelect(i)}>
-                                <DriveSessionCardB item={i} style={{borderColor: selectedSess && i.id === selectedSess.id ? 'green':'#e5e7eb'}} />
-                            </Pressable>
-                        ))}
+                        <SavedSessions onSelect={handleSelect} selSession={selectedSess} />
                     </View>
                 </ScrollView>
             </BottomSheetView>

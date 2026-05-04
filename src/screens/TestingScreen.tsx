@@ -36,9 +36,7 @@ function TestBottomSheet () {
         <View style={TestingStyles.container}>
             <BottomSheet snapPoints={snapPoints}>
                 <BottomSheetView style={{ flex: 1, padding: 20 }}>
-
                     <Text>Test</Text>
-
                 </BottomSheetView>
             </BottomSheet>
         </View> 

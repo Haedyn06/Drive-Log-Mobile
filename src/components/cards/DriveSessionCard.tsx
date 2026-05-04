@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { formatReadableElapsed, formatDistance, formatDateNum } from "@/utils/format";
@@ -7,9 +7,10 @@ import type { DriveSession } from "@/types/dbObj/driveSessionType";
 
 type DriveSessionCardProps = {
     item: DriveSession;
+    style?: ViewStyle;
 };
 
-export default function DriveSessionCard({ item }: DriveSessionCardProps) {
+export default function DriveSessionCard({ item, style }: DriveSessionCardProps) {
     const endLat = item.locationEnd.latitude
     const endLng = item.locationEnd.longitude;
 
@@ -25,7 +26,7 @@ export default function DriveSessionCard({ item }: DriveSessionCardProps) {
     }
 
     return (
-        <View style={styles.card}>
+        <View style={[styles.card, style]}>
             <View style={styles.iconWrap}>
                 <View style={styles.icon}>
                     <Ionicons name="car-sport-outline" size={22} color="#2563eb" />

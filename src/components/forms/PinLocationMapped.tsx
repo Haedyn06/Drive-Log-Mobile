@@ -13,8 +13,9 @@ type PinLocationMappedProps = {
     visible: boolean;
     onClose: () => void;
     location: Coords;
+    onRefresh: () => void;
 };
-export default function PinLocationMapped({ visible, onClose, location }: PinLocationMappedProps) {
+export default function PinLocationMapped({ visible, onClose, location, onRefresh }: PinLocationMappedProps) {
     const [locName, setLocName] = useState('');
     const [locNotes, setLocNotes] = useState('');
 
@@ -22,6 +23,7 @@ export default function PinLocationMapped({ visible, onClose, location }: PinLoc
     const handleSave = async () => {
         await savePinnedLocationDB(uuidv4(), locName, locNotes, location)
         console.log('saved ' + location.latitude + ', ' + location.longitude);
+        onRefresh();
         onClose();
 
         setLocName('');

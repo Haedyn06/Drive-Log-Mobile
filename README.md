@@ -62,6 +62,8 @@ Checks Route For Driving And Stats
 
 4. Clean Up ✔
 5. Test & Design
+    - LiveMapMini
+    - FreeMap UI
 
 
 #### v0.4

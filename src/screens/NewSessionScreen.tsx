@@ -8,7 +8,8 @@ import SaveSessionModal from '@/components/forms/SaveSession';
 import DriveSessionMap from '@/components/maps/DriveSessionMap';
 import FocusDriveSessionCard from '@/components/cards/FocusDriveSessionCard';
 import StartSessionCompB from '@/components/startSession/StartSessionCompB';
-import LiveMapModal from '@/components/maps/LiveMapSession';
+import LiveMapFull from '@/components/maps/LiveMapFull';
+import LiveMapMini from '@/components/maps/LiveMapMini';
 import { getFullSessionObj, getAllDriveSessions } from '@/services/sessionService';
 
 import { NewSessionStyles } from '@/styles/NewSessionStyle';
@@ -141,8 +142,7 @@ export default function NewSessionScreen() {
                         </Pressable>
                     </View>
 
-
-                    <LiveMapModal
+                    <LiveMapFull
                         visible={routeModalVisible}
                         onClose={() => setRouteModalVisible(false)}
                         liveStatus={liveStatusSession}
@@ -158,6 +158,7 @@ export default function NewSessionScreen() {
                         altitude={altitudeSession}
                         checkpoints={sessionCheckPoints}
                     />
+
                 </>
             )}
 
