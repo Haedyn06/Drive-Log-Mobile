@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from '@/screens/HomeScreen';
 import NewSessionScreen from '@/screens/NewSessionScreen';
 import ProfileScreen from '@/screens/ProfileScreen';
-import TestingScreen from '@/screens/TestingScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -13,7 +12,6 @@ const getTabIcon = (routeName: string, focused: boolean) => {
         Home: { active: 'home', inactive: 'home-outline' },
         Drive: { active: 'car', inactive: 'car-outline' },
         Profile: { active: 'person', inactive: 'person-outline' },
-        Testing: { active: 'flask', inactive: 'flask-outline' },
     };
 
     return focused ? icons[routeName].active : icons[routeName].inactive;
@@ -34,12 +32,7 @@ const tabs = [
         name: 'Profile',
         component: ProfileScreen,
         title: 'Profile',
-    },
-    {
-        name: 'Testing',
-        component: TestingScreen,
-        title: 'Testing',
-    },
+    }
 ];
 
 
