@@ -34,6 +34,8 @@ type LiveMapFullProps = {
     handleReset: () => void;
 };
 
+import type { MapType } from '@/composables/useFreeMap';
+
 export default function LiveMapFull({ 
         visible, onClose, liveStatus,
         elapsed, speed, distance, altitude, 
@@ -54,6 +56,7 @@ export default function LiveMapFull({
     const [region, setRegion] = useState<any>(null);
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [resetPopup, setResetPopup] = useState(false);
+    const [mapType, setMapType] = useState<MapType>('standard');
     const drawerProgress = useSharedValue(1);
 
 
@@ -101,7 +104,10 @@ export default function LiveMapFull({
         mapRef.current?.animateCamera({heading}, {duration: 100});
     }, [heading, povType]);
 
-
+    const toggleMapView = () => {
+        if (mapType === 'standard') setMapType('hybrid');
+        else setMapType('standard');
+    }
 
     const handleRecenter = async () => {
         const loc = await Location.getCurrentPositionAsync({});
@@ -198,6 +204,7 @@ export default function LiveMapFull({
                     scrollEnabled={povType === "third"} rotateEnabled
                     pitchEnabled={povType === "third"} zoomEnabled
                     toolbarEnabled={povType === "third"}
+                    mapType={mapType}
                     
                     followsUserLocation={liveStatus !== isNotStart && povType === 'first'}
                     initialRegion={region} ref={mapRef}
@@ -254,6 +261,13 @@ export default function LiveMapFull({
                     {/* Left */}
                     <View style={styles.bottomLeft}>
                         <Animated.View style={[styles.drawerItems, drawerStyle]}>
+                            <Pressable style={styles.mapBtn} onPress={toggleMapView}>
+                                {mapType === "standard" ? 
+                                    (<Ionicons name='map-outline' size={30} color='white' />) : 
+                                    (<Ionicons name='map' size={30} color='white' />)
+                                }                        
+                            </Pressable>
+
                             <Pressable style={styles.resetBtn} onPress={handleReset}>
                                 <Ionicons name="refresh" size={30} color="#fff" />
                             </Pressable>
@@ -400,8 +414,7 @@ const styles = StyleSheet.create({
     bottomRight: {
         height: '100%',
         display: 'flex',
-        gap: 10
-
+        flexDirection: 'column',
     },
 
     closeBtn: {
@@ -437,6 +450,18 @@ const styles = StyleSheet.create({
         marginTop: 'auto'
     },
 
+
+    mapBtn: {
+        width: 60, 
+        height: 60, 
+        borderRadius: 60, 
+        backgroundColor: "#111", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        zIndex: 999, 
+        elevation: 999,
+        marginTop: 'auto'
+    },
 
     checkpntBtn: {
         width: 60,

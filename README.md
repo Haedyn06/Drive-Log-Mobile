@@ -60,17 +60,18 @@ Checks Route For Driving And Stats
     - navigation arrows for pinned locations ✔
     - display save routes w/ controls ✔
 
-4. Clean Up ✔
-5. Test & Design ✔
+4. Create first and third person when driving session on live
+
+5. Clean Up ✔
+
+6. Test & Design ✔
     - LiveMapMini ✔
     - FreeMap UI ✔
 
-
 #### v0.4
 1. Route Replay
-2. Create first and third person when driving session on live
-3. Add Settings or preferences in profile
-4. Add Imperial/Metric Options
+2. Add Settings or preferences in profile
+3. Add Imperial/Metric Options
 
 
 #### v0.5
