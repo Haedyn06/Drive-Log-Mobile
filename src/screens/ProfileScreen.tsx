@@ -85,6 +85,10 @@ export default function ProfileScreen() {
                 </View>
             </View>
 
+            <Pressable onPress={() => setFullMap(true)} style={{marginTop: 20}}>
+                <FreeMiniMap />
+            </Pressable>
+
             <View style={ProfileStyles.optBtnContainer}>
                 <Pressable style={ProfileStyles.optBtn} onPress={goToSaves}>
                     <Text style={{fontSize: 20, textAlign: 'center', alignSelf: 'center', fontWeight: 'bold'}}>Saves</Text>
@@ -96,10 +100,6 @@ export default function ProfileScreen() {
                     <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold'}}>Locations</Text>
                 </Pressable>
             </View>
-
-            <Pressable onPress={() => setFullMap(true)} style={{marginTop: 40}}>
-                <FreeMiniMap />
-            </Pressable>
 
             <FreeFullMap visible={fullMap} onClose={() => setFullMap(false)} />
         </ScrollView>

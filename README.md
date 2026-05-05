@@ -75,10 +75,11 @@ Checks Route For Driving And Stats
 
 
 #### v0.5
-1. Design and add smooth clean animations and UI.
-2. Polish, Clean and Identify Edge cases
-3. Live sessions still being recorded even in a different app or asleep (Runs in the background) 
-4. Deploy To Public
+1. Create a build for the app
+2. Design and add smooth clean animations and UI.
+3. Polish, Clean and Identify Edge cases
+4. Live sessions still being recorded even in a different app or asleep (Runs in the background) 
+5. Deploy To Public
 
 
 #### V2 (TBD)
