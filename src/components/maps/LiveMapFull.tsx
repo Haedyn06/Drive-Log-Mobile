@@ -121,7 +121,7 @@ export default function LiveMapFull({
         mapRef.current.animateCamera(
             {
                 center: { latitude: loc.coords.latitude, longitude: loc.coords.longitude }, 
-                altitude: 250, zoom: 20, pitch: 60, heading: heading
+                altitude: 450, zoom: 20, pitch: 30, heading: heading
             },
             { duration: 500 }
         );
@@ -195,8 +195,8 @@ export default function LiveMapFull({
                     style={styles.fullScreenMap}
                     showsCompass showsScale showsTraffic showsBuildings showsIndoors showsUserLocation 
                     
-                    scrollEnabled={povType === "third"} rotateEnabled={povType === "third"}
-                    pitchEnabled={povType === "third"} zoomEnabled={povType === "third"}
+                    scrollEnabled={povType === "third"} rotateEnabled
+                    pitchEnabled={povType === "third"} zoomEnabled
                     toolbarEnabled={povType === "third"}
                     
                     followsUserLocation={liveStatus !== isNotStart && povType === 'first'}

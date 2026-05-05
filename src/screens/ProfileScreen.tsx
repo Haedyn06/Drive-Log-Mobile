@@ -101,26 +101,7 @@ export default function ProfileScreen() {
                 <FreeMiniMap />
             </Pressable>
 
-
             <FreeFullMap visible={fullMap} onClose={() => setFullMap(false)} />
-
-
-            {/* Test Buttons */}
-{/*             <View>
-                <Pressable style={ProfileStyles.carAddBtn} onPress={handleDBTest}>
-                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} >DB Test</Text>
-                </Pressable>
-
-                <Pressable style={ProfileStyles.carAddBtn} onPress={copyDbForDebug}>
-                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} >Get DB</Text>
-                </Pressable>
-
-                <Pressable style={ProfileStyles.carAddBtn} onPress={importData}>
-                    <Text style={{fontSize: 18, color:'white', textAlign: 'center', fontWeight: 'bold'}} >Import To DB</Text>
-                </Pressable>
-            </View> */}
-
-
         </ScrollView>
     );
 }

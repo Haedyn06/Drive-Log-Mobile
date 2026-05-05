@@ -4,7 +4,6 @@ import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 
 import { dbTest, copyDbForDebug, importData, migratePinnedLocations } from '@/services/sessiondbService';
 import { TestingStyles } from '@/styles/TestingStyle';
-import { getAllPinnedLocations } from '@/services/pinnedLocationService';
 import { getSavedFullSessions } from '@/services/savedSessionService';
 
 function TestButtons () {

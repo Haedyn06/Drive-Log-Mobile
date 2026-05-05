@@ -52,7 +52,7 @@ Checks Route For Driving And Stats
     - option to add checkpoint to pinned locations ✔
     - add navigation option to navigate to pinned location ✔
 
-3. Free Roam Map
+3. Free Roam Map ✔
     - add 1st and 3rd person perspectives ✔
     - add standard & satellite option ✔
     - create pinned locations via map marker ✔
@@ -61,9 +61,9 @@ Checks Route For Driving And Stats
     - display save routes w/ controls ✔
 
 4. Clean Up ✔
-5. Test & Design
-    - LiveMapMini
-    - FreeMap UI
+5. Test & Design ✔
+    - LiveMapMini ✔
+    - FreeMap UI ✔
 
 
 #### v0.4

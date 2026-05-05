@@ -120,24 +120,8 @@ export default function NewSessionScreen() {
 
                     <View style={NewSessionStyles.mapCard}>
                         <Pressable onPress={() => setRouteModalVisible(true)}>
-                            <DriveSessionMap
-                                title=""
-                                liveStatus={liveStatusSession}
-                                showUserLocation
-                                sessionId=''
-                                locStart={locationStart}
-                                locEnd={locationEnd}
-                                route={sessionRoutePoints}
-                                mapStyle={{ height: 230 }}
-                                wrapperStyle={NewSessionStyles.mapWrapperOverride}
-                                checkpoints={sessionCheckPoints}
-                                previewOnly={false}
-                                timeEnd={timeStampEnd}
-                                timeStart={timeStampStart}
-                                distance={distanceSession}
-                                topSpeed={topSpeedSession}
-                                topAltitude={topAltitudeSession}
-                                stops={sessionStopPoints}
+                            <LiveMapMini timeStart={timeStampStart} locStart={locationStart} route={sessionRoutePoints} 
+                                checkpoints={sessionCheckPoints} mapStyle={{height:230}} wrapperStyle={NewSessionStyles.mapWrapperOverride}
                             />
                         </Pressable>
                     </View>

@@ -4,10 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { DriveSessionProvider } from '@/context/DriveSessionContext';
 
 import NavigationBar from '@/navigation/NavBar';
-import SessionsLogsScreen from '@/screens/SessionLogsScreen';
-import SessionDetailsScreen from '@/screens/SessionDetailsScreen';
-import SavedSessionsScreen from '@/screens/SavedSessionsScreen';
-import ManageVehiclesScreen from '@/screens/ManageVehiclesScreen';
+import SessionsLogsScreen from '@/screens/sections/SessionLogsScreen';
+import SessionDetailsScreen from '@/screens/sections/SessionDetailsScreen';
+import SavedSessionsScreen from '@/screens/sections/SavedSessionsScreen';
+import ManageVehiclesScreen from '@/screens/sections/ManageVehiclesScreen';
 import PinnedLocationsScreen from '@/screens/PinnedLocationsScreen';
 
 import type { DriveSessionObj } from '@/types/sessionObj/DriveSessionType';

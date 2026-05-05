@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable, Modal, StyleProp, ViewStyle } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
@@ -74,7 +74,6 @@ export default function DriveSessionMap({
 
     const showAll = markerFilter === "all";
 
-    const showStartEnd = showAll || markerFilter === "startEnd";
     const showTopAll = showAll || markerFilter === "topAll";
     const showStops = showAll || markerFilter === "stops";
     const showCheckpoints = showAll || markerFilter === "checkpoints";
@@ -107,7 +106,34 @@ export default function DriveSessionMap({
         );
     };
 
-    
+    const miniPreviewCamera = useMemo(() => {
+        const routePoints = route ?? [];
+        const pos = routePoints[Math.floor(routePoints.length / 2)];
+        const distanceKM = (distance ?? 0) / 1000;
+        let alt = 50000000;
+
+        if (distance !== undefined) {
+            if (distanceKM <= 1) alt = 10000;
+            else if (distanceKM <= 10) alt = 15000;
+            else if (distanceKM) alt = 25000;
+            else if (distanceKM) alt = 55000;
+            else if (distanceKM) alt = 120000;
+            else if (distanceKM) alt = 500000;
+            else if (distanceKM) alt = 5000000;
+        }
+
+        return {
+            center: {
+                latitude: pos?.location.latitude ?? initialLat,
+                longitude: pos?.location.longitude ?? initialLng,
+            },
+            altitude: alt,
+            pitch: 0,
+            heading: 0,
+        };
+    }, [route, distance, initialLat, initialLng]);
+
+
     const handleRemoveCheckpoint = async () => {
         if (selectedCheckpointIndex === null) return;
 
@@ -137,16 +163,16 @@ export default function DriveSessionMap({
 
     const mapContent = (
         <MapView
-            key={route.length === 0 ? 'empty-map' : 'active-map'}
+            key={`${route.length}-${distance ?? 0}`}
             style={[styles.map, mapStyle]}
+            camera={miniPreviewCamera}
             showsUserLocation={showUserLocation}
-            followsUserLocation={liveStatus !== 'notstart'}
+            followsUserLocation={false}
             scrollEnabled={!previewOnly}
             zoomEnabled={!previewOnly}
             rotateEnabled={!previewOnly}
             pitchEnabled={!previewOnly}
             toolbarEnabled={!previewOnly}
-            initialRegion={{ latitude: initialLat, longitude: initialLng, latitudeDelta: 0.01, longitudeDelta: 0.01 }}
         >
             {locStart && (
                 <Marker coordinate={locStart} title={`Start (0m)`} description={`${formatTimeOnly(timeStart)}`} pinColor="green" />
@@ -155,15 +181,6 @@ export default function DriveSessionMap({
             {locEnd && (
                 <Marker coordinate={locEnd} title={`End (${formatDistance(distance ?? 0)})`} description={`${formatTimeOnly(timeEnd)}`} pinColor="red" />
             )}
-
-            {topSpeed?.location && (
-                <Marker coordinate={topSpeed?.location} title={`Top Speed (${formatSpeed(topSpeed.speed ?? 0)})`} description={`${formatTimeOnly(topSpeed.timestamp ?? 0)}`} pinColor="blue" />
-            )}
-
-            {topAltitude?.location && (
-                <Marker coordinate={topAltitude?.location} title={`Highest Altitude (${formatSpeed(topAltitude.altitude ?? 0)})`} description={`${formatTimeOnly(topAltitude.timestamp ?? 0)}`} pinColor="blue" />
-            )}
-
 
             {stops?.map((i, index) => (
                 <Marker

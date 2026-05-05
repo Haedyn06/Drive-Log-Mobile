@@ -1,6 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
 
 import HomeScreen from '@/screens/HomeScreen';
 import NewSessionScreen from '@/screens/NewSessionScreen';
@@ -24,34 +23,25 @@ const tabs = [
     {
         name: 'Home',
         component: HomeScreen,
-        haptic: Haptics.ImpactFeedbackStyle.Light,
         title: 'Home',
     },
     {
         name: 'Drive',
         component: NewSessionScreen,
-        haptic: Haptics.ImpactFeedbackStyle.Light,
         title: 'Drive',
     },
     {
         name: 'Profile',
         component: ProfileScreen,
-        haptic: Haptics.ImpactFeedbackStyle.Light,
         title: 'Profile',
     },
     {
         name: 'Testing',
         component: TestingScreen,
-        haptic: Haptics.ImpactFeedbackStyle.Light,
         title: 'Testing',
     },
 ];
 
-const withHaptics = (style: Haptics.ImpactFeedbackStyle) => ({
-    tabPress: async () => {
-        await Haptics.impactAsync(style);
-    },
-});
 
 export default function NavigationBar() {
     return (
@@ -63,8 +53,7 @@ export default function NavigationBar() {
             })} >
                 
             {tabs.map((tab) => 
-                <Tab.Screen key={tab.name} name={tab.name} component={tab.component} listeners={withHaptics(tab.haptic)} 
-                    options={{ headerShown: true, headerTitle: tab.title }} />
+                <Tab.Screen key={tab.name} name={tab.name} component={tab.component} options={{ headerShown: true, headerTitle: tab.title }} />
             )}
         </Tab.Navigator>
     );

@@ -1,13 +1,24 @@
 import { useState, useEffect } from "react";
-import MapView from "react-native-maps";
+import MapView, {Marker, Polyline} from "react-native-maps";
 import * as Location from "expo-location";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, StyleProp, ViewStyle } from "react-native";
+
+
+import { formatTimeOnly, formatDistance, formatSpeed } from "@/utils/format";
+
+import type { SessionRoutePoint, SessionCheckpoint } from "@/types/dbObj/mapPointTypes";
+import type { Coords } from "@/types/CoordinateType";
 
 type LiveMapMiniProps = {
-    height?: number;
+    timeStart: number | null;
+    locStart: Coords | null;
+    route: SessionRoutePoint[];
+    checkpoints: SessionCheckpoint[];
+    mapStyle?: StyleProp<ViewStyle>;
+    wrapperStyle?: StyleProp<ViewStyle>;
 };
 
-export default function LiveMapMini({ height = 400 }: LiveMapMiniProps) {
+export default function LiveMapMini({ timeStart, locStart, route = [], checkpoints, mapStyle, wrapperStyle }: LiveMapMiniProps) {
     const [region, setRegion] = useState<any>(null);
 
     useEffect(() => {
@@ -42,9 +53,9 @@ export default function LiveMapMini({ height = 400 }: LiveMapMiniProps) {
     }, []);
 
     return (
-        <View style={[styles.container, { height }]}>
+        <View style={[styles.container, wrapperStyle]}>
             <MapView
-                style={styles.map}
+                style={[styles.map, mapStyle]}
                 region={region ?? undefined}
                 scrollEnabled={false}
                 zoomEnabled={false}
@@ -52,19 +63,29 @@ export default function LiveMapMini({ height = 400 }: LiveMapMiniProps) {
                 pitchEnabled={false}
                 pointerEvents="none"
                 showsUserLocation
-            />
+            >
+                {locStart && (
+                    <Marker coordinate={locStart} title={`Start (0m)`} description={`${formatTimeOnly(timeStart)}`} pinColor="green" />
+                )}
+
+                {checkpoints?.map((i) => (
+                    <Marker key={i.id} coordinate={i.location}
+                        title={i.type ? `${i.type} (${formatDistance(Number(i.distance)) ?? 0})` : "Checkpoint"}
+                        description={`${i.notes || ""} • ${formatTimeOnly(i.timestamp)}`} pinColor="blue" />
+                ))}
+                
+                {route.length > 1 && (
+                    <Polyline coordinates={route.map(p => p.location)} strokeColor="#00a2ff" strokeWidth={6} />
+                )}
+            </MapView>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: "100%",
-        padding: 20,
-        borderRadius: 12,
-        overflow: "hidden",
-        backgroundColor: "#eee",
-        borderWidth: 1,
+        borderRadius: 10,
+        overflow: 'hidden',
     },
 
     title: {
@@ -75,7 +96,7 @@ const styles = StyleSheet.create({
     },
 
     map: {
-        flex: 1,
-        borderRadius: 12,
+        width: '100%',
+        height: 250,
     },
 });
