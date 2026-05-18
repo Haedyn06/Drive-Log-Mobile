@@ -234,6 +234,7 @@ export const SessionDetailsStyles = StyleSheet.create({
 
     inEditTitle: {
         flexDirection: 'row',
+        gap: 8
     },
 
     editTitleBtn: {

@@ -21,11 +21,7 @@ export default function ManageVehiclesScreen() {
 
     return (
     <View style={SessionLogsStyles.container}>
-        <ScrollView style={SessionLogsStyles.screen} contentContainerStyle={SessionLogsStyles.content} 
-            showsVerticalScrollIndicator={false} >
-            <View style={SessionLogsStyles.header}>
-                <Text style={SessionLogsStyles.title}>Vehicles</Text>
-            </View>
+        <ScrollView style={SessionLogsStyles.screen} contentContainerStyle={SessionLogsStyles.content} showsVerticalScrollIndicator={false} >
 
             <View style={{ padding: 20 }}>
                 <Pressable style={ProfileStyles.carAddBtn} onPress={handleAddCar}>

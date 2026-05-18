@@ -76,13 +76,12 @@ export default function StartSessionCompB({
                                         ? styles.liveDotPaused : styles.liveDotReady ]} />
                                 <Text style={styles.liveText}>{statusLabel}</Text>
                         </View>
-
-                        <Pressable
-                            style={styles.mapBtn}
-                            onPress={() => setMapVisible(true)}
-                        >
+                        
+                        {  liveStatus !== isNotStart && (
+                            <Pressable style={styles.mapBtn} onPress={() => setMapVisible(true)} >
                                 <Ionicons name="map-outline" size={22} color="#1e293b" />
-                        </Pressable>
+                            </Pressable>
+                        )}
                     </View>
 
 

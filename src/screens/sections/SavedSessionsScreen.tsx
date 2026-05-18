@@ -27,9 +27,6 @@ export default function SavedSessionsScreen() {
                 contentContainerStyle={SessionLogsStyles.content}
                 showsVerticalScrollIndicator={false}
             >
-                <View style={SessionLogsStyles.header}>
-                    <Text style={SessionLogsStyles.title}>Saved Drives</Text>
-                </View>
 
                 <View style={SessionLogsStyles.listSection}>
                     <SavedSessions onSelect={handlePressSession} />

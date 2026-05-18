@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-
 // import { isExist, saveSession, unsaveSession } from '@/services/savesService';
 import { editSessionTitleDB, editSessionNotesDB } from '@/database/methods/driveSessions';
 import { checkSessionSavedDB, saveSessionDB, unsaveSessionDB } from '@/database/methods/savedSessions';
@@ -97,12 +96,13 @@ export default function SessionDetailsScreen() {
                     
                     {isSaved ? 
                         <Pressable onPress={handleUnsave}>
-                            <Text>Unsave</Text>
+                            {/* <Text>Unsave</Text> */}
+                            <Ionicons name='bookmark' size={22} color="#000000" />
                         </Pressable>
                     : 
                     
                         <Pressable onPress={handleSave}>
-                            <Text>Save</Text>
+                            <Ionicons name='bookmark-outline' size={22} color="#000000" />
                         </Pressable>
                     }
                 </View>
@@ -125,10 +125,10 @@ export default function SessionDetailsScreen() {
                         </View>
                     ) : (
                         <View style={SessionDetailsStyles.inEditTitle}>
-                            <Text style={[SessionDetailsStyles.title, { flex: 1 }]}>{title}</Text>
+                            <Text style={[SessionDetailsStyles.title]}>{title}</Text>
 
                             <Pressable onPress={() => setIsEditingTitle(true)} style={SessionDetailsStyles.editTitleBtn}>
-                                <Ionicons name="create-outline" size={18} color="#333" />
+                                <Ionicons name="create-outline" size={18} color="#333" style={{}} />
                             </Pressable>
                         </View>
                     )}
@@ -263,7 +263,7 @@ export default function SessionDetailsScreen() {
 
                     <Text style={SessionDetailsStyles.locationText}>
                         {session.locations.startLocation.coords ? 
-                            `${session.locations.startLocation.coords.latitude.toFixed(6)}, ${session.locations.startLocation.coords.longitude.toFixed(6)}`
+                            `${session.locations.startLocation.coords.latitude.toFixed(4)}, ${session.locations.startLocation.coords.longitude.toFixed(6)}`
                             : '--'
                         }
                     </Text>
@@ -277,7 +277,7 @@ export default function SessionDetailsScreen() {
 
                     <Text style={SessionDetailsStyles.locationText}>
                         {session.locations.endLocation.coords ?
-                            `${session.locations.endLocation.coords.latitude.toFixed(3)}, ${session.locations.endLocation.coords.longitude.toFixed(3)}`
+                            `${session.locations.endLocation.coords.latitude.toFixed(6)}, ${session.locations.endLocation.coords.longitude.toFixed(6)}`
                             : '--'
                         }
                     </Text>

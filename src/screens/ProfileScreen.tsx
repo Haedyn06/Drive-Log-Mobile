@@ -14,7 +14,6 @@ import FreeFullMap from '@/components/maps/FreeMapFull';
 import { ProfileStyles } from '@/styles/ProfileStyle';
 
 import type { RootStackParamList } from '@/navigation/AppNavigator';
-import { Coords } from '@/types/CoordinateType';
 
 export default function ProfileScreen() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -46,6 +45,7 @@ export default function ProfileScreen() {
     const goToSaves = () => navigation.navigate('SavedSessions');
     const goToVehicles = () => navigation.navigate('SavedVehicles');
     const goToLocations = () => navigation.navigate('SavedLocations');
+    const goToSettings = () => navigation.navigate('SettingsSection');
 
     return (
         <ScrollView
@@ -100,6 +100,10 @@ export default function ProfileScreen() {
                     <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold'}}>Locations</Text>
                 </Pressable>
             </View>
+
+            <Pressable style={ProfileStyles.settingsBtn} onPress={goToSettings}>
+                <Text style={{fontSize:16, fontWeight:'bold'}}>Settings</Text>
+            </Pressable>
 
             <FreeFullMap visible={fullMap} onClose={() => setFullMap(false)} />
         </ScrollView>

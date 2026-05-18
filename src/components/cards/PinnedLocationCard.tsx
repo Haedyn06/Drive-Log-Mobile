@@ -46,7 +46,11 @@ export default function PinnedLocationCard({pinnedLocation}: PinnedLocationCardP
             )}
 
 
-            <View>
+            <View style={{display: 'flex', flexDirection: 'row', gap: 8, width:'100%', justifyContent: 'center'}}>
+                <Pressable style={styles.navBtn} onPress={() => navigateMapLocation(pinnedLocation.location.latitude, pinnedLocation.location.longitude)}>
+                    <Text style={{fontSize:14, textAlign:'center', fontWeight:'bold', color:'white'}}>View on Map</Text>
+                </Pressable>
+
                 <Pressable style={styles.navBtn} onPress={() => navigateMapLocation(pinnedLocation.location.latitude, pinnedLocation.location.longitude)}>
                     <Text style={{fontSize:14, textAlign:'center', fontWeight:'bold', color:'white'}}>Navigate</Text>
                 </Pressable>
@@ -93,9 +97,7 @@ const styles = StyleSheet.create({
         borderWidth:2,
         marginTop:15,
         borderRadius:8,
-        backgroundColor:'black'
-
-
-
+        backgroundColor:'black',
+        width: '48%',
     }
 });

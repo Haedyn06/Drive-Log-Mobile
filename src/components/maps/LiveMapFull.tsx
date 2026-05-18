@@ -99,10 +99,10 @@ export default function LiveMapFull({
 
 
     // Track Orientation
-    useEffect(() => {
-        if (povType !== "first") return;
-        mapRef.current?.animateCamera({heading}, {duration: 100});
-    }, [heading, povType]);
+    // useEffect(() => {
+    //     if (povType !== "first") return;
+    //     mapRef.current?.animateCamera({heading}, {duration: 100});
+    // }, [heading, povType]);
 
     const toggleMapView = () => {
         if (mapType === 'standard') setMapType('hybrid');
@@ -127,7 +127,7 @@ export default function LiveMapFull({
         mapRef.current.animateCamera(
             {
                 center: { latitude: loc.coords.latitude, longitude: loc.coords.longitude }, 
-                altitude: 450, zoom: 20, pitch: 30, heading: heading
+                altitude: 1000, zoom: 20, pitch: 0, heading: heading
             },
             { duration: 500 }
         );
@@ -227,7 +227,9 @@ export default function LiveMapFull({
                         <Polyline coordinates={route.map(p => p.location)} strokeColor="#00a2ff" strokeWidth={6} />
                     )}
                 </MapView>
+                
 
+                {/* Top */}
                 <View style={styles.topOverlay}>
                     <Text style={styles.elapsedText}>
                         {Math.floor(elapsed / 3600000).toString().padStart(2, '0')}:
@@ -254,30 +256,33 @@ export default function LiveMapFull({
                             </Text>
                         </View>
                     </View>
+
+                    {/* Prefs */}
+                    <View style={{display: 'flex', marginLeft: 'auto', gap:12}}>
+                        <Pressable style={styles.povBtn} onPress={handlePov}>
+                            {povType === "first" ? 
+                                (<Ionicons name='navigate' size={30} color='white' />) : 
+                                (<Ionicons name='navigate-outline' size={30} color='white' />)
+                            }                        
+                        </Pressable>
+
+                        <Pressable style={styles.mapBtn} onPress={toggleMapView}>
+                            {mapType === "standard" ? 
+                                (<Ionicons name='map-outline' size={30} color='white' />) : 
+                                (<Ionicons name='map' size={30} color='white' />)
+                            }                        
+                        </Pressable>
+                    </View>
                 </View>
+
+
                 {/* Bottom */}
                 <View style={styles.bottomOverlay}>
-
                     {/* Left */}
                     <View style={styles.bottomLeft}>
                         <Animated.View style={[styles.drawerItems, drawerStyle]}>
-                            <Pressable style={styles.mapBtn} onPress={toggleMapView}>
-                                {mapType === "standard" ? 
-                                    (<Ionicons name='map-outline' size={30} color='white' />) : 
-                                    (<Ionicons name='map' size={30} color='white' />)
-                                }                        
-                            </Pressable>
-
                             <Pressable style={styles.resetBtn} onPress={handleReset}>
                                 <Ionicons name="refresh" size={30} color="#fff" />
-                            </Pressable>
-
-                            <Pressable style={styles.finishBtn} onPress={handleFinish}>
-                                <Ionicons name="flag-outline" size={22} color="#111" />
-                            </Pressable>
-
-                            <Pressable style={styles.checkpntBtn} onPress={handleCheckpointForm}>
-                                <Ionicons name="add-circle-outline" size={30} color="#fff" />
                             </Pressable>
 
                             <Pressable style={styles.closeBtn} onPress={onClose}>
@@ -299,17 +304,20 @@ export default function LiveMapFull({
                         <Pressable style={styles.controlBtn} onPress={handleLive}>
                             <Ionicons name={mainIcon} size={30} color="#fff" />
                         </Pressable>
+
+                        <Pressable style={styles.checkpntBtn} onPress={handleCheckpointForm}>
+                            <Ionicons name="add-circle-outline" size={30} color="#fff" />
+                        </Pressable>
+
+                        <Pressable style={styles.finishBtn} onPress={handleFinish}>
+                            <Ionicons name="flag-outline" size={22} color="#111" />
+                        </Pressable>
                     </View>
 
 
                     {/* Right */}
                     <View style={styles.bottomRight}>
-                        <Pressable style={styles.povBtn} onPress={handlePov}>
-                            {povType === "first" ? 
-                                (<Ionicons name='navigate' size={30} color='white' />) : 
-                                (<Ionicons name='navigate-outline' size={30} color='white' />)
-                            }                        
-                        </Pressable>
+
                     </View>
 
                 </View>
@@ -402,12 +410,12 @@ const styles = StyleSheet.create({
     },
 
     bottomMiddle: {
-        height: '100%',
+        marginTop: 'auto',
         width: '50%',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
-        gap: 5,
+        gap: 10,
     },
 
 
@@ -439,8 +447,8 @@ const styles = StyleSheet.create({
     },
 
     povBtn: {
-        width: 70, 
-        height: 70, 
+        width: 60, 
+        height: 60, 
         borderRadius: 60, 
         backgroundColor: "#111", 
         alignItems: "center", 
@@ -471,6 +479,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 8,
+        marginTop:'auto'
     },
 
     resetBtn: {
@@ -481,6 +490,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 8,
+        marginTop:'auto'
     },
 
     finishBtn: {

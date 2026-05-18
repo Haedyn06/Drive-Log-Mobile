@@ -92,5 +92,23 @@ export const ProfileStyles = StyleSheet.create({
         shadowRadius: 12,
         elevation: 3,
 
+    },
+
+
+    settingsBtn: {
+        marginTop: 10,
+        padding: 18,
+        display: 'flex',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderRadius: 12,
+        backgroundColor: "#ffffff",
+        borderColor: "#e5e7eb",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.05,
+        shadowRadius: 12,
+        elevation: 3,
+
     }
 });
